@@ -144,6 +144,9 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Social Proof - right after hero for max conversion */}
+        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
+
         {/* About */}
         <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
