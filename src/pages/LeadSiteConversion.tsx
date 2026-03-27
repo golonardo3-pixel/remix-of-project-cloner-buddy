@@ -52,10 +52,10 @@ const LeadSiteConversion = () => {
     : content.services.map((s: { title: string }) => s.title);
 
   const benefits = [
-    { icon: Zap, title: "Atendimento Rápido", desc: "Resposta imediata no WhatsApp" },
-    { icon: Shield, title: "Profissional Qualificado", desc: `Referência em ${lead.city}` },
-    { icon: Clock, title: "Horário Flexível", desc: "Seg a Sáb, inclusive feriados" },
-    { icon: CheckCircle, title: "Satisfação Garantida", desc: `+${content.reviewCount || 50} clientes satisfeitos` },
+    { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
+    { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
+    { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
+    { icon: CheckCircle, title: "Resultado Comprovado", desc: `+${content.reviewCount || 50} clientes resolveram aqui` },
   ];
 
   return (
