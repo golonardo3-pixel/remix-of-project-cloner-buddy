@@ -69,7 +69,7 @@ const LeadSiteConversion = () => {
           className="flex items-center justify-center gap-2 px-4 py-3 text-white font-bold text-sm md:text-base"
         >
           <MessageCircle className="w-5 h-5" />
-          📲 FALE AGORA NO WHATSAPP – Atendimento Imediato
+          📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar
         </a>
       </header>
 
