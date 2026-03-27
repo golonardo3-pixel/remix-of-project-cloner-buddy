@@ -88,7 +88,7 @@ const LeadSiteConversion = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-sm font-bold animate-pulse"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <Zap className="w-4 h-4" /> VAGAS LIMITADAS HOJE
+              <Zap className="w-4 h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
             </div>
 
             <h1 className="text-white font-display text-3xl md:text-5xl font-bold leading-tight mb-4">
