@@ -138,7 +138,7 @@ const LeadSite = () => {
                 style={{ backgroundColor: "#25D366", color: "#fff" }}
               >
                 <MessageCircle className="w-5 h-5" />
-                Chamar no WhatsApp agora
+                {content.ctaText}
               </a>
             </div>
           </div>
