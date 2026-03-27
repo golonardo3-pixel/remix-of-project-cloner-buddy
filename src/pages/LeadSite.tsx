@@ -299,8 +299,8 @@ const LeadSite = () => {
               Fale com {displayName}
             </h2>
             <p className="text-base md:text-lg max-w-md mx-auto mb-10 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
-              Atendimento rápido em {lead.city} e região.
-              {lead.niche === "baterias" ? " Levamos a bateria até você com instalação no local e garantia." : ` Entre em contato e atendemos você em ${lead.city}.`}
+              Não espere mais. Chame agora e seja atendido em {lead.city} e região.
+              {lead.niche === "baterias" ? " Bateria na sua porta com instalação no local e garantia." : ` Cada minuto que você espera é um minuto perdido.`}
             </p>
             <a
               href={whatsappLink}
