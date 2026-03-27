@@ -120,6 +120,7 @@ const AddLeadDialog = ({ open, onOpenChange }: Props) => {
         instagram: instagram.trim() || null,
         services_list: servicesArray.length > 0 ? servicesArray : null,
         description: description.trim() || null,
+        photos: photoUrls.length > 0 ? photoUrls : null,
       } as any);
       if (error) throw error;
       setUploading(false);
