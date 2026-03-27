@@ -6,6 +6,8 @@ import { getGalleryImages, getNicheColors } from "@/lib/gallery-images";
 import { MessageCircle, Star, MapPin, Phone, Clock, ExternalLink, Instagram } from "lucide-react";
 import LeadSiteGallery from "@/components/LeadSiteGallery";
 import LeadSiteContactForm from "@/components/LeadSiteContactForm";
+import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
+import { generateReviews } from "@/lib/review-generator";
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
