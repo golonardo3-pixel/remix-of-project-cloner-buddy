@@ -126,8 +126,8 @@ const LeadSite = () => {
               {content.heroSubtitle}
             </p>
             {/* Urgency badge */}
-            <div className="inline-block px-4 py-2 rounded-full mb-8 text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
-              ⚡ Atendimento hoje – vagas limitadas
+            <div className="inline-block px-4 py-2 rounded-full mb-8 text-sm font-semibold animate-pulse" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
+              {content.urgencyBadge}
             </div>
             <div>
               <a
