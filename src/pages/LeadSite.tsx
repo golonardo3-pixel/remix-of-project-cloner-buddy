@@ -185,45 +185,7 @@ const LeadSite = () => {
           </div>
         </section>
 
-        {/* Reviews / Social Proof */}
-        <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Depoimentos</p>
-            <h2 className="salon-heading mb-5">Clientes satisfeitos</h2>
-            <div className="w-16 h-0.5 mx-auto mb-5" style={{ backgroundColor: `hsl(${colors.accent})` }} />
-            {content.reviewCount > 0 && (
-              <div className="flex items-center justify-center gap-2 mt-4">
-                <div className="flex gap-0.5">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="w-5 h-5" style={{ fill: `hsl(${colors.accent})`, color: `hsl(${colors.accent})` }} />
-                  ))}
-                </div>
-                <span className="text-muted-foreground text-sm font-medium">
-                  {content.reviewCount} avaliações
-                </span>
-              </div>
-            )}
-          </div>
-          {content.reviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {content.reviews.map((r) => (
-                <div key={r.name} className="rounded-lg p-8 shadow-sm" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
-                  <div className="flex gap-0.5 mb-4">
-                    {Array.from({ length: r.rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4" style={{ fill: `hsl(${colors.accent})`, color: `hsl(${colors.accent})` }} />
-                    ))}
-                  </div>
-                  <p className="text-foreground text-sm leading-relaxed mb-5 italic">"{r.text}"</p>
-                  <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider">— {r.name}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground text-lg">Seja o primeiro cliente a avaliar!</p>
-            </div>
-          )}
-        </section>
+
 
         {/* Contact Form */}
         <section className="py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
