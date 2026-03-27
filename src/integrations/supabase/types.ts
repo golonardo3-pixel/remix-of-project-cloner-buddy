@@ -25,6 +25,7 @@ export type Database = {
           instagram: string | null
           niche: string
           phone: string
+          photos: string[] | null
           services_list: string[] | null
           slug: string
           updated_at: string
@@ -39,6 +40,7 @@ export type Database = {
           instagram?: string | null
           niche: string
           phone: string
+          photos?: string[] | null
           services_list?: string[] | null
           slug: string
           updated_at?: string
@@ -53,6 +55,7 @@ export type Database = {
           instagram?: string | null
           niche?: string
           phone?: string
+          photos?: string[] | null
           services_list?: string[] | null
           slug?: string
           updated_at?: string
