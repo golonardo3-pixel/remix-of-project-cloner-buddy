@@ -53,6 +53,7 @@ const LeadSite = () => {
   const gallery = getGalleryImages(lead.niche, lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
+  const generatedReviews = generateReviews(lead.niche, lead.slug);
   
   // Use Google Maps URL from lead if available, otherwise generate
   const hasGoogleMapsUrl = lead.google_maps_url;
