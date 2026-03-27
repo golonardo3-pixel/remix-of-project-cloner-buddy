@@ -121,9 +121,9 @@ const LeadSiteConversion = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-7 h-7" />
-              CHAMAR NO WHATSAPP
+              {content.ctaText.toUpperCase()}
             </a>
-            <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 5 minutos</p>
+            <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 2 minutos</p>
           </div>
         </section>
 
