@@ -251,7 +251,29 @@ const defaultGallery: GalleryImage[] = [
   { src: heroDefault, alt: "Nosso espaço profissional" },
 ];
 
-export function getGalleryImages(niche: string, uploadedPhotos?: string[]): GalleryImage[] {
+// Simple hash from string to get a deterministic seed for shuffling
+function hashCode(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+// Deterministic shuffle using slug as seed (so each lead gets a unique order)
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const result = [...arr];
+  let s = seed;
+  for (let i = result.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) & 0x7fffffff;
+    const j = s % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?: string): GalleryImage[] {
   // If there are uploaded photos, prioritize them
   const uploaded: GalleryImage[] = (uploadedPhotos || []).map((url, i) => ({
     src: url,
@@ -261,20 +283,25 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[]): Gall
   const key = niche.toLowerCase().trim();
   let nicheImages: GalleryImage[] = [];
   if (galleryMap[key]) {
-    nicheImages = galleryMap[key];
+    nicheImages = [...galleryMap[key]];
   } else {
     for (const [k, v] of Object.entries(galleryMap)) {
       if (key.includes(k) || k.includes(key)) {
-        nicheImages = v;
+        nicheImages = [...v];
         break;
       }
     }
   }
 
+  // Shuffle stock images by slug so different leads show different order
+  if (slug && nicheImages.length > 1) {
+    nicheImages = seededShuffle(nicheImages, hashCode(slug));
+  }
+
   if (uploaded.length > 0) {
-    // Uploaded photos first, then fill with niche images to reach 8+
-    const combined = [...uploaded, ...nicheImages];
-    return combined;
+    // Uploaded photos first, then fill with niche stock to reach 8+
+    const needed = Math.max(0, 8 - uploaded.length);
+    return [...uploaded, ...nicheImages.slice(0, needed)];
   }
 
   return nicheImages.length > 0 ? nicheImages : defaultGallery;

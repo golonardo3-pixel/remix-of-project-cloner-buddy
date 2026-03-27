@@ -47,8 +47,8 @@ const LeadSite = () => {
   const content = getNicheContent(lead.niche, lead.city, displayName);
   const colors = getNicheColors(lead.niche);
 
-  // Get uploaded photos from storage
-  const gallery = getGalleryImages(lead.niche);
+  // Get gallery: uploaded photos first, then niche stock (shuffled by slug)
+  const gallery = getGalleryImages(lead.niche, lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
   
