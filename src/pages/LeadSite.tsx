@@ -126,8 +126,8 @@ const LeadSite = () => {
               {content.heroSubtitle}
             </p>
             {/* Urgency badge */}
-            <div className="inline-block px-4 py-2 rounded-full mb-8 text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
-              ⚡ Atendimento hoje – vagas limitadas
+            <div className="inline-block px-4 py-2 rounded-full mb-8 text-sm font-semibold animate-pulse" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
+              {content.urgencyBadge}
             </div>
             <div>
               <a
@@ -138,7 +138,7 @@ const LeadSite = () => {
                 style={{ backgroundColor: "#25D366", color: "#fff" }}
               >
                 <MessageCircle className="w-5 h-5" />
-                Chamar no WhatsApp agora
+                {content.ctaText}
               </a>
             </div>
           </div>
@@ -147,15 +147,39 @@ const LeadSite = () => {
         {/* Social Proof - right after hero for max conversion */}
         <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
 
+        {/* Benefits Strip */}
+        <section className="py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {content.benefits.map((benefit, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm font-medium" style={{ color: `hsl(${colors.primaryForeground})` }}>
+                  <span style={{ color: `hsl(${colors.accent})` }}>✓</span>
+                  {benefit}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* About */}
         <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.aboutLabel}</p>
             <h2 className="salon-heading mb-5 whitespace-pre-line">{content.aboutHeading}</h2>
             <div className="w-16 h-0.5 mx-auto mb-8" style={{ backgroundColor: `hsl(${colors.accent})` }} />
-            <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
+            <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-8">
               {lead.description || content.aboutText}
             </p>
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded transition-all hover:brightness-110 shadow-lg"
+              style={{ backgroundColor: "#25D366", color: "#fff" }}
+            >
+              <MessageCircle className="w-5 h-5" />
+              {content.ctaText}
+            </a>
           </div>
         </section>
 
@@ -275,8 +299,8 @@ const LeadSite = () => {
               Fale com {displayName}
             </h2>
             <p className="text-base md:text-lg max-w-md mx-auto mb-10 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
-              Atendimento rápido em {lead.city} e região.
-              {lead.niche === "baterias" ? " Levamos a bateria até você com instalação no local e garantia." : ` Entre em contato e atendemos você em ${lead.city}.`}
+              Não espere mais. Chame agora e seja atendido em {lead.city} e região.
+              {lead.niche === "baterias" ? " Bateria na sua porta com instalação no local e garantia." : ` Cada minuto que você espera é um minuto perdido.`}
             </p>
             <a
               href={whatsappLink}

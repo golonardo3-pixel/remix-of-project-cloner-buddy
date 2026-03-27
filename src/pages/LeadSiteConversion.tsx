@@ -52,10 +52,10 @@ const LeadSiteConversion = () => {
     : content.services.map((s: { title: string }) => s.title);
 
   const benefits = [
-    { icon: Zap, title: "Atendimento Rápido", desc: "Resposta imediata no WhatsApp" },
-    { icon: Shield, title: "Profissional Qualificado", desc: `Referência em ${lead.city}` },
-    { icon: Clock, title: "Horário Flexível", desc: "Seg a Sáb, inclusive feriados" },
-    { icon: CheckCircle, title: "Satisfação Garantida", desc: `+${content.reviewCount || 50} clientes satisfeitos` },
+    { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
+    { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
+    { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
+    { icon: CheckCircle, title: "Resultado Comprovado", desc: `+${content.reviewCount || 50} clientes resolveram aqui` },
   ];
 
   return (
@@ -69,7 +69,7 @@ const LeadSiteConversion = () => {
           className="flex items-center justify-center gap-2 px-4 py-3 text-white font-bold text-sm md:text-base"
         >
           <MessageCircle className="w-5 h-5" />
-          📲 FALE AGORA NO WHATSAPP – Atendimento Imediato
+          📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar
         </a>
       </header>
 
@@ -88,7 +88,7 @@ const LeadSiteConversion = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-sm font-bold animate-pulse"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <Zap className="w-4 h-4" /> VAGAS LIMITADAS HOJE
+              <Zap className="w-4 h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
             </div>
 
             <h1 className="text-white font-display text-3xl md:text-5xl font-bold leading-tight mb-4">
@@ -121,9 +121,9 @@ const LeadSiteConversion = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-7 h-7" />
-              CHAMAR NO WHATSAPP
+              {content.ctaText.toUpperCase()}
             </a>
-            <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 5 minutos</p>
+            <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 2 minutos</p>
           </div>
         </section>
 
