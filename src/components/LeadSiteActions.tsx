@@ -2,6 +2,7 @@ import { ExternalLink, Copy, MessageCircle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 
 interface Props {
   slug: string;
@@ -10,7 +11,7 @@ interface Props {
 
 const LeadSiteActions = ({ slug, companyName }: Props) => {
   const [copied, setCopied] = useState(false);
-  const siteUrl = `${window.location.origin}/site/${slug}`;
+  const siteUrl = getPublicLeadSiteUrl(slug);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(siteUrl);
