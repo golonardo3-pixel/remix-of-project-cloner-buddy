@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import AddLeadDialog from "@/components/AddLeadDialog";
 import { toast } from "@/hooks/use-toast";
+import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 
 const CrmLeads = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -78,7 +79,7 @@ const CrmLeads = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-4">
-                  <Link to={`/site/${lead.slug}`} target="_blank">
+                  <Link to={getPublicLeadSiteUrl(lead.slug)} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" size="sm" className="gap-1.5">
                       <ExternalLink className="w-3.5 h-3.5" />
                       Ver Site
