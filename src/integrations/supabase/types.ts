@@ -23,10 +23,16 @@ export type Database = {
           google_maps_url: string | null
           id: string
           instagram: string | null
+          last_interaction: string | null
+          lead_status: string
           niche: string
+          notes: string | null
+          payment_status: string
           phone: string
           photos: string[] | null
+          service_value: number | null
           services_list: string[] | null
+          site_status: string
           slug: string
           updated_at: string
         }
@@ -38,10 +44,16 @@ export type Database = {
           google_maps_url?: string | null
           id?: string
           instagram?: string | null
+          last_interaction?: string | null
+          lead_status?: string
           niche: string
+          notes?: string | null
+          payment_status?: string
           phone: string
           photos?: string[] | null
+          service_value?: number | null
           services_list?: string[] | null
+          site_status?: string
           slug: string
           updated_at?: string
         }
@@ -53,10 +65,16 @@ export type Database = {
           google_maps_url?: string | null
           id?: string
           instagram?: string | null
+          last_interaction?: string | null
+          lead_status?: string
           niche?: string
+          notes?: string | null
+          payment_status?: string
           phone?: string
           photos?: string[] | null
+          service_value?: number | null
           services_list?: string[] | null
+          site_status?: string
           slug?: string
           updated_at?: string
         }
