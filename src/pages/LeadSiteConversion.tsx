@@ -91,7 +91,7 @@ const LeadSiteConversion = () => {
               <Zap className="w-4 h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
             </div>
 
-            <h1 className="text-white font-display text-3xl md:text-5xl font-bold leading-tight mb-4">
+            <h1 className="text-white font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4">
               {displayName}
             </h1>
 
