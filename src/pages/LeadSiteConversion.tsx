@@ -206,9 +206,9 @@ const LeadSiteConversion = () => {
         )}
 
         {/* Contact info + CTA */}
-        <section className="py-16 px-5">
+        <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-md mx-auto text-center">
-            <h2 className="font-display text-2xl font-bold mb-3 text-foreground">
+            <h2 className="font-display text-xl sm:text-2xl font-bold mb-3 text-foreground">
               Fale diretamente com {displayName}
             </h2>
             <p className="text-muted-foreground text-sm mb-6">
