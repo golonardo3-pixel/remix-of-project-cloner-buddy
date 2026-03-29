@@ -316,20 +316,20 @@ export interface NicheColors {
 }
 
 const nicheColorMap: Record<string, NicheColors> = {
-  "salão de beleza": { primary: "30 10% 12%", primaryForeground: "40 30% 95%", accent: "38 60% 55%", secondary: "30 15% 94%" },
+  "salão de beleza": { primary: "280 20% 18%", primaryForeground: "280 15% 97%", accent: "38 60% 55%", secondary: "280 12% 94%" },
   "barbearia": { primary: "25 15% 15%", primaryForeground: "35 30% 95%", accent: "30 50% 45%", secondary: "25 10% 92%" },
-  "estética": { primary: "340 15% 20%", primaryForeground: "340 20% 95%", accent: "340 40% 65%", secondary: "340 15% 95%" },
+  "estética": { primary: "320 18% 18%", primaryForeground: "320 15% 97%", accent: "340 45% 60%", secondary: "320 12% 95%" },
   "clínica odontológica": { primary: "200 30% 20%", primaryForeground: "200 20% 97%", accent: "200 60% 50%", secondary: "200 20% 95%" },
   "fisioterapia": { primary: "170 25% 20%", primaryForeground: "170 20% 97%", accent: "170 50% 45%", secondary: "170 15% 95%" },
-  "pet shop": { primary: "25 30% 18%", primaryForeground: "40 30% 97%", accent: "35 65% 55%", secondary: "35 20% 94%" },
+  "pet shop": { primary: "145 25% 18%", primaryForeground: "145 15% 97%", accent: "145 50% 45%", secondary: "145 15% 94%" },
   "oficina mecânica": { primary: "220 20% 18%", primaryForeground: "220 15% 97%", accent: "40 80% 50%", secondary: "220 10% 93%" },
-  "baterias": { primary: "220 25% 15%", primaryForeground: "45 90% 97%", accent: "45 90% 50%", secondary: "220 10% 93%" },
-  "restaurante": { primary: "15 20% 15%", primaryForeground: "30 25% 95%", accent: "15 60% 50%", secondary: "15 15% 94%" },
-  "hamburgueria": { primary: "0 20% 15%", primaryForeground: "40 30% 97%", accent: "40 70% 50%", secondary: "0 10% 94%" },
-  "marmitaria": { primary: "120 15% 18%", primaryForeground: "120 15% 97%", accent: "45 60% 50%", secondary: "120 10% 95%" },
+  "baterias": { primary: "0 60% 25%", primaryForeground: "45 90% 97%", accent: "45 90% 50%", secondary: "0 15% 93%" },
+  "restaurante": { primary: "0 50% 22%", primaryForeground: "0 15% 97%", accent: "20 70% 50%", secondary: "15 15% 94%" },
+  "hamburgueria": { primary: "0 40% 18%", primaryForeground: "40 30% 97%", accent: "30 75% 50%", secondary: "0 10% 94%" },
+  "marmitaria": { primary: "15 50% 20%", primaryForeground: "15 15% 97%", accent: "25 65% 50%", secondary: "15 12% 95%" },
   "academia": { primary: "0 0% 10%", primaryForeground: "0 0% 98%", accent: "0 75% 50%", secondary: "0 0% 94%" },
   "imobiliária": { primary: "215 30% 18%", primaryForeground: "215 20% 97%", accent: "38 55% 50%", secondary: "215 15% 95%" },
-  "contabilidade": { primary: "210 20% 18%", primaryForeground: "210 15% 97%", accent: "170 45% 45%", secondary: "210 10% 95%" },
+  "contabilidade": { primary: "210 20% 18%", primaryForeground: "210 15% 97%", accent: "210 50% 50%", secondary: "210 10% 95%" },
 };
 
 const defaultColors: NicheColors = {

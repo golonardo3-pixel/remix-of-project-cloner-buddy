@@ -75,14 +75,14 @@ const LeadSiteConversion = () => {
 
       <main className="pt-[48px]">
         {/* Hero — Full impact, single CTA */}
-        <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} em ${lead.city}`}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/70" />
-          <div className="relative z-10 px-5 py-16 max-w-2xl mx-auto w-full text-center">
+          <div className="absolute inset-0 bg-black/75" />
+          <div className="relative z-10 px-4 sm:px-5 py-10 md:py-16 max-w-2xl mx-auto w-full text-center">
             {/* Urgency pill */}
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-sm font-bold animate-pulse"
@@ -91,7 +91,7 @@ const LeadSiteConversion = () => {
               <Zap className="w-4 h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
             </div>
 
-            <h1 className="text-white font-display text-3xl md:text-5xl font-bold leading-tight mb-4">
+            <h1 className="text-white font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4">
               {displayName}
             </h1>
 
@@ -100,7 +100,7 @@ const LeadSiteConversion = () => {
               <span className="text-white/90 font-medium">{lead.city}</span>
             </div>
 
-            <p className="text-white/80 text-lg md:text-xl mb-6 max-w-lg mx-auto">
+            <p className="text-white/80 text-base sm:text-lg md:text-xl mb-6 max-w-lg mx-auto leading-relaxed">
               {content.heroSubtitle}
             </p>
 
@@ -117,10 +117,10 @@ const LeadSiteConversion = () => {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-10 py-5 text-xl font-bold rounded-xl shadow-2xl transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-xl font-bold rounded-xl shadow-2xl transition-transform hover:scale-105"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <MessageCircle className="w-7 h-7" />
+              <MessageCircle className="w-6 sm:w-7 h-6 sm:h-7" />
               {content.ctaText.toUpperCase()}
             </a>
             <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 2 minutos</p>
@@ -128,8 +128,8 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Benefits strip */}
-        <section className="py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-5 max-w-4xl mx-auto">
+        <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 px-4 sm:px-5 max-w-4xl mx-auto">
             {benefits.map((b) => (
               <div key={b.title} className="text-center py-4">
                 <b.icon className="w-8 h-8 mx-auto mb-2" style={{ color: `hsl(${colors.accent})` }} />
@@ -141,9 +141,9 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Services as quick checklist + CTA */}
-        <section className="py-16 px-5">
+        <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-display text-2xl md:text-3xl font-bold mb-2 text-foreground">
+            <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-foreground">
               O que oferecemos
             </h2>
             <p className="text-muted-foreground mb-8 text-sm">Toque no botão e pergunte sobre qualquer serviço</p>
@@ -175,9 +175,9 @@ const LeadSiteConversion = () => {
 
         {/* Social proof — compact reviews */}
         {content.reviews.length > 0 && (
-          <section className="py-16 px-5" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
+          <section className="py-10 md:py-16 px-4 sm:px-5" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
             <div className="max-w-3xl mx-auto">
-              <h2 className="font-display text-2xl font-bold text-center mb-8 text-foreground">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-center mb-6 md:mb-8 text-foreground">
                 O que dizem nossos clientes
               </h2>
               <div className="space-y-4">
@@ -206,9 +206,9 @@ const LeadSiteConversion = () => {
         )}
 
         {/* Contact info + CTA */}
-        <section className="py-16 px-5">
+        <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-md mx-auto text-center">
-            <h2 className="font-display text-2xl font-bold mb-3 text-foreground">
+            <h2 className="font-display text-xl sm:text-2xl font-bold mb-3 text-foreground">
               Fale diretamente com {displayName}
             </h2>
             <p className="text-muted-foreground text-sm mb-6">
@@ -245,9 +245,9 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Final urgency CTA */}
-        <section className="py-16" style={{ backgroundColor: "#25D366" }}>
-          <div className="px-5 max-w-2xl mx-auto text-center">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-white">
+        <section className="py-10 md:py-16" style={{ backgroundColor: "#25D366" }}>
+          <div className="px-4 sm:px-5 max-w-2xl mx-auto text-center">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Não perca tempo!
             </h2>
             <p className="text-white/80 text-lg mb-8">

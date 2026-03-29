@@ -84,8 +84,8 @@ const LeadSite = () => {
     >
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center justify-between px-5 py-3 max-w-5xl mx-auto">
-          <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 max-w-5xl mx-auto">
+          <h1 className="font-display text-base sm:text-xl font-semibold tracking-tight text-foreground truncate mr-2">
             {displayName}
           </h1>
           <a
@@ -103,7 +103,7 @@ const LeadSite = () => {
 
       <main className="pt-[52px]">
         {/* Hero */}
-        <section className="relative min-h-[80vh] flex items-end overflow-hidden">
+        <section className="relative min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
@@ -111,22 +111,22 @@ const LeadSite = () => {
             width={1280}
             height={832}
           />
-          {/* Dark overlay */}
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-          <div className="relative z-[2] px-5 pb-16 md:pb-24 max-w-5xl mx-auto w-full">
-            <div className="w-16 h-0.5 mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 whitespace-pre-line" style={{ color: `hsl(${colors.primaryForeground})` }}>
+          {/* Dark overlay — strong for readability */}
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/50 to-black/20" />
+          <div className="relative z-[2] px-4 sm:px-5 pb-10 md:pb-24 max-w-5xl mx-auto w-full">
+            <div className="w-12 md:w-16 h-0.5 mb-4 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
+            <h2 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-3 md:mb-4 text-white">
               {content.heroTitle}
             </h2>
-            <div className="flex items-center gap-2 mb-5">
+            <div className="flex items-center gap-2 mb-3 md:mb-5">
               <MapPin className="w-4 h-4" style={{ color: `hsl(${colors.accent})` }} />
               <span className="text-white/80 text-sm font-medium">{lead.city}</span>
             </div>
-            <p className="text-white/75 text-base md:text-lg max-w-md mb-6 font-body">
+            <p className="text-white/80 text-sm sm:text-base md:text-lg max-w-md mb-4 md:mb-6 font-body leading-relaxed">
               {content.heroSubtitle}
             </p>
             {/* Urgency badge */}
-            <div className="inline-block px-4 py-2 rounded-full mb-8 text-sm font-semibold animate-pulse" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
+            <div className="inline-block px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-6 md:mb-8 text-xs md:text-sm font-semibold animate-pulse" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
               {content.urgencyBadge}
             </div>
             <div>
@@ -134,7 +134,7 @@ const LeadSite = () => {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold rounded transition-all hover:brightness-110 shadow-lg"
+                className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded transition-all hover:brightness-110 shadow-lg"
                 style={{ backgroundColor: "#25D366", color: "#fff" }}
               >
                 <MessageCircle className="w-5 h-5" />
@@ -148,9 +148,9 @@ const LeadSite = () => {
         <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
 
         {/* Benefits Strip */}
-        <section className="py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {content.benefits.map((benefit, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm font-medium" style={{ color: `hsl(${colors.primaryForeground})` }}>
                   <span style={{ color: `hsl(${colors.accent})` }}>✓</span>
@@ -162,7 +162,7 @@ const LeadSite = () => {
         </section>
 
         {/* About */}
-        <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.aboutLabel}</p>
             <h2 className="salon-heading mb-5 whitespace-pre-line">{content.aboutHeading}</h2>
@@ -191,8 +191,8 @@ const LeadSite = () => {
         />
 
         {/* Services */}
-        <section className="py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="text-center mb-14">
               <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.servicesLabel}</p>
               <h2 className="salon-heading mb-5">{content.servicesHeading}</h2>
@@ -212,8 +212,8 @@ const LeadSite = () => {
 
 
         {/* Contact Form */}
-        <section className="py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Contato</p>
               <h2 className="salon-heading mb-5">Fale conosco</h2>
@@ -232,8 +232,8 @@ const LeadSite = () => {
         </section>
 
         {/* Google Maps */}
-        <section className="py-20">
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20">
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Localização</p>
               <h2 className="salon-heading mb-5">Onde estamos</h2>
@@ -270,7 +270,7 @@ const LeadSite = () => {
         </section>
 
         {/* QR Code */}
-        <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-md mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Avalie-nos</p>
             <h2 className="salon-heading mb-5">Sua opinião importa</h2>
@@ -293,9 +293,9 @@ const LeadSite = () => {
         </section>
 
         {/* Final CTA */}
-        <section className="py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto text-center">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-5" style={{ color: `hsl(${colors.primaryForeground})` }}>
+        <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto text-center">
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold mb-5" style={{ color: `hsl(${colors.primaryForeground})` }}>
               Fale com {displayName}
             </h2>
             <p className="text-base md:text-lg max-w-md mx-auto mb-10 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
@@ -318,7 +318,7 @@ const LeadSite = () => {
 
       {/* Footer */}
       <footer style={{ backgroundColor: `hsl(${colors.primary})` }}>
-        <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto py-14">
+        <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto py-10 md:py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
               <h3 className="font-display text-lg font-semibold mb-4" style={{ color: `hsl(${colors.primaryForeground})` }}>{displayName}</h3>
