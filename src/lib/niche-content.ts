@@ -355,7 +355,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Blend artesanal, pão fresquinho e entrega que chega quente. O ${company} entrega em ${city}. Peça agora pelo WhatsApp!`,
     heroImage: heroRestaurant,
     heroVideo: "https://videos.pexels.com/video-files/3298058/3298058-uhd_2560_1440_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Pedidos lotando em ${city} – garanta o seu agora`,
+    urgencyBadge: (city) => `⚡ Pedidos abertos agora em ${city}`,
     aboutLabel: "Por que somos os melhores?",
     aboutHeading: "Hambúrguer de verdade,\nnão massa congelada",
     aboutText: (city, company) => `Cansado de hambúrguer borrachudo e sem gosto? O ${company} usa blend fresco preparado diariamente, pão artesanal e ingredientes premium. Entrega que chega quente e crocante em ${city}. Peça pelo WhatsApp agora.`,
