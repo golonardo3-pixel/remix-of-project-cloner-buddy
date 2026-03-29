@@ -232,8 +232,8 @@ const LeadSite = () => {
         </section>
 
         {/* Google Maps */}
-        <section className="py-20">
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20">
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Localização</p>
               <h2 className="salon-heading mb-5">Onde estamos</h2>
