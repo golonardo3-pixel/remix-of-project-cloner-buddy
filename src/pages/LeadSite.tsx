@@ -103,7 +103,7 @@ const LeadSite = () => {
 
       <main className="pt-[52px]">
         {/* Hero */}
-        <section className="relative min-h-[80vh] flex items-end overflow-hidden">
+        <section className="relative min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
@@ -111,22 +111,22 @@ const LeadSite = () => {
             width={1280}
             height={832}
           />
-          {/* Dark overlay */}
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-          <div className="relative z-[2] px-5 pb-16 md:pb-24 max-w-5xl mx-auto w-full">
-            <div className="w-16 h-0.5 mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 whitespace-pre-line" style={{ color: `hsl(${colors.primaryForeground})` }}>
+          {/* Dark overlay — strong for readability */}
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/50 to-black/20" />
+          <div className="relative z-[2] px-4 sm:px-5 pb-10 md:pb-24 max-w-5xl mx-auto w-full">
+            <div className="w-12 md:w-16 h-0.5 mb-4 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
+            <h2 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-3 md:mb-4 text-white">
               {content.heroTitle}
             </h2>
-            <div className="flex items-center gap-2 mb-5">
+            <div className="flex items-center gap-2 mb-3 md:mb-5">
               <MapPin className="w-4 h-4" style={{ color: `hsl(${colors.accent})` }} />
               <span className="text-white/80 text-sm font-medium">{lead.city}</span>
             </div>
-            <p className="text-white/75 text-base md:text-lg max-w-md mb-6 font-body">
+            <p className="text-white/80 text-sm sm:text-base md:text-lg max-w-md mb-4 md:mb-6 font-body leading-relaxed">
               {content.heroSubtitle}
             </p>
             {/* Urgency badge */}
-            <div className="inline-block px-4 py-2 rounded-full mb-8 text-sm font-semibold animate-pulse" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
+            <div className="inline-block px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-6 md:mb-8 text-xs md:text-sm font-semibold animate-pulse" style={{ backgroundColor: `hsl(${colors.accent} / 0.2)`, color: `hsl(${colors.accent})` }}>
               {content.urgencyBadge}
             </div>
             <div>
@@ -134,7 +134,7 @@ const LeadSite = () => {
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold rounded transition-all hover:brightness-110 shadow-lg"
+                className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded transition-all hover:brightness-110 shadow-lg"
                 style={{ backgroundColor: "#25D366", color: "#fff" }}
               >
                 <MessageCircle className="w-5 h-5" />
