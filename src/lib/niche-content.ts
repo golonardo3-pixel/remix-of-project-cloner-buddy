@@ -132,7 +132,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Para de adiar. A ${company} tem avaliação gratuita hoje. Resultado visível na primeira sessão. Chame agora.`,
     heroImage: heroAesthetics,
     heroVideo: "https://videos.pexels.com/video-files/5765827/5765827-hd_1920_1080_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Avaliação gratuita só hoje em ${city} – agenda lotando`,
+    urgencyBadge: (city) => `⚡ Avaliação gratuita disponível em ${city}`,
     aboutLabel: "Por que agora?",
     aboutHeading: "Cada dia que passa\né um dia a mais sem resultado",
     aboutText: (city, company) => `Você já pesquisou, já pensou, já adiou. Agora é hora de agir. A ${company} trabalha com profissionais certificados, equipamentos de última geração e protocolos que entregam resultado de verdade. Mais de 70 clientes por mês confiam na gente em ${city}. Chame no WhatsApp e faça sua avaliação gratuita.`,
