@@ -162,7 +162,7 @@ const LeadSite = () => {
         </section>
 
         {/* About */}
-        <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.aboutLabel}</p>
             <h2 className="salon-heading mb-5 whitespace-pre-line">{content.aboutHeading}</h2>
