@@ -141,9 +141,9 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Services as quick checklist + CTA */}
-        <section className="py-16 px-5">
+        <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-display text-2xl md:text-3xl font-bold mb-2 text-foreground">
+            <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-foreground">
               O que oferecemos
             </h2>
             <p className="text-muted-foreground mb-8 text-sm">Toque no botão e pergunte sobre qualquer serviço</p>
