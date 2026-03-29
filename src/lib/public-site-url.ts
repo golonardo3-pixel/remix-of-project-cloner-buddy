@@ -1,4 +1,4 @@
-const DEFAULT_PUBLISHED_URL = "https://sitesnoautomatico.lovable.app";
+const DEFAULT_PUBLISHED_URL = "https://clientesnogoogle.lovable.app";
 
 const normalizeBaseUrl = (url: string) => url.replace(/\/$/, "");
 

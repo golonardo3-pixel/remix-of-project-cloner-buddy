@@ -318,7 +318,7 @@ const LeadSite = () => {
 
       {/* Footer */}
       <footer style={{ backgroundColor: `hsl(${colors.primary})` }}>
-        <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto py-14">
+        <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto py-10 md:py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
               <h3 className="font-display text-lg font-semibold mb-4" style={{ color: `hsl(${colors.primaryForeground})` }}>{displayName}</h3>

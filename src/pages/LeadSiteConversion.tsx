@@ -245,9 +245,9 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Final urgency CTA */}
-        <section className="py-16" style={{ backgroundColor: "#25D366" }}>
-          <div className="px-5 max-w-2xl mx-auto text-center">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-white">
+        <section className="py-10 md:py-16" style={{ backgroundColor: "#25D366" }}>
+          <div className="px-4 sm:px-5 max-w-2xl mx-auto text-center">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Não perca tempo!
             </h2>
             <p className="text-white/80 text-lg mb-8">
