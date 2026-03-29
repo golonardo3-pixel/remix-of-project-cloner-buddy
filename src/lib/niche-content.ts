@@ -64,11 +64,11 @@ interface NicheTemplate {
 
 const nicheTemplateMap: Record<string, NicheTemplate> = {
   "salão de beleza": {
-    heroTitle: (city) => `Cabelo destruído?\nA gente resolve hoje em ${city}`,
-    heroSubtitle: (city, company) => `Sem tempo pra esperar. A ${company} tem vaga agora pra corte, coloração e tratamento de emergência. Chame e venha.`,
+    heroTitle: (city) => `Cabelo não saiu como você queria?`,
+    heroSubtitle: (city, company) => `A ${company} resolve hoje em ${city} com corte, coloração e tratamento profissional.`,
     heroImage: heroSalon,
     heroVideo: "https://videos.pexels.com/video-files/3993557/3993557-hd_1920_1080_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Vagas acabando hoje em ${city} – garanta a sua`,
+    urgencyBadge: (city) => `⚡ Atendimento disponível agora em ${city}`,
     aboutLabel: "Por que estão nos escolhendo?",
     aboutHeading: "Resultado garantido\nou refazemos de graça",
     aboutText: (city, company) => `Você já saiu de um salão frustrada? Aqui isso não acontece. A ${company} atende com hora marcada, sem atraso, sem enrolação. Produtos de primeira linha, profissionais que entendem o que você quer. Mais de 100 clientes por mês confiam na gente em ${city}. Chame agora no WhatsApp.`,
