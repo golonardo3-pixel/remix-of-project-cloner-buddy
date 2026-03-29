@@ -148,9 +148,9 @@ const LeadSite = () => {
         <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
 
         {/* Benefits Strip */}
-        <section className="py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {content.benefits.map((benefit, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm font-medium" style={{ color: `hsl(${colors.primaryForeground})` }}>
                   <span style={{ color: `hsl(${colors.accent})` }}>✓</span>
