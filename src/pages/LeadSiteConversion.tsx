@@ -117,10 +117,10 @@ const LeadSiteConversion = () => {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-10 py-5 text-xl font-bold rounded-xl shadow-2xl transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-xl font-bold rounded-xl shadow-2xl transition-transform hover:scale-105"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <MessageCircle className="w-7 h-7" />
+              <MessageCircle className="w-6 sm:w-7 h-6 sm:h-7" />
               {content.ctaText.toUpperCase()}
             </a>
             <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 2 minutos</p>
