@@ -191,8 +191,8 @@ const LeadSite = () => {
         />
 
         {/* Services */}
-        <section className="py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="text-center mb-14">
               <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.servicesLabel}</p>
               <h2 className="salon-heading mb-5">{content.servicesHeading}</h2>
