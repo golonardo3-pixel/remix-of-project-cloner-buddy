@@ -417,7 +417,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Chega de desculpas. A ${company} tem aula experimental grátis hoje em ${city}. Comece agora e veja resultado de verdade.`,
     heroImage: heroGym,
     heroVideo: "https://videos.pexels.com/video-files/4761434/4761434-uhd_2560_1440_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Aula grátis só hoje em ${city} – vagas acabando`,
+    urgencyBadge: (city) => `⚡ Aula experimental gratuita disponível em ${city}`,
     aboutLabel: "Por que começar hoje?",
     aboutHeading: "Cada dia que você adia\né um dia perdido",
     aboutText: (city, company) => `Você sabe que precisa treinar. Sabe que vai se sentir melhor. Então por que está esperando? A ${company} tem equipamentos modernos, professores que te acompanham e resultado comprovado. Primeira aula grátis em ${city}. Chame agora.`,
