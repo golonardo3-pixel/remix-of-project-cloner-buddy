@@ -386,7 +386,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Comida caseira de verdade, com porção generosa e entrega rápida. O ${company} entrega em ${city}. Peça agora pelo WhatsApp.`,
     heroImage: heroMarmitaria,
     heroVideo: "https://videos.pexels.com/video-files/3298058/3298058-uhd_2560_1440_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Entregas do almoço lotando em ${city} – garanta a sua`,
+    urgencyBadge: (city) => `⚡ Entregas disponíveis agora em ${city}`,
     aboutLabel: "Por que pedir aqui?",
     aboutHeading: "Comida caseira de verdade,\nnão comida industrial",
     aboutText: (city, company) => `Cansado de marmita sem gosto e porção pequena? O ${company} faz comida fresca todo dia, com tempero caseiro e porção que alimenta de verdade. Entrega pontual no horário do almoço em ${city}. Peça agora pelo WhatsApp.`,
