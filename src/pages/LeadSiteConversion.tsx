@@ -100,7 +100,7 @@ const LeadSiteConversion = () => {
               <span className="text-white/90 font-medium">{lead.city}</span>
             </div>
 
-            <p className="text-white/80 text-lg md:text-xl mb-6 max-w-lg mx-auto">
+            <p className="text-white/80 text-base sm:text-lg md:text-xl mb-6 max-w-lg mx-auto leading-relaxed">
               {content.heroSubtitle}
             </p>
 
