@@ -128,8 +128,8 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Benefits strip */}
-        <section className="py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-5 max-w-4xl mx-auto">
+        <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 px-4 sm:px-5 max-w-4xl mx-auto">
             {benefits.map((b) => (
               <div key={b.title} className="text-center py-4">
                 <b.icon className="w-8 h-8 mx-auto mb-2" style={{ color: `hsl(${colors.accent})` }} />
