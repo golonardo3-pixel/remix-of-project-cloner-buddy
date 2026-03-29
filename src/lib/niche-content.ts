@@ -100,7 +100,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Chega de esperar. A ${company} tem horário livre agora. Corte impecável em 30 minutos. Chame no WhatsApp e venha.`,
     heroImage: heroBarbershop,
     heroVideo: "https://videos.pexels.com/video-files/7697571/7697571-hd_1920_1080_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Poucos horários disponíveis hoje em ${city}`,
+    urgencyBadge: (city) => `⚡ Atendimento disponível agora em ${city}`,
     aboutLabel: "Por que vir pra cá?",
     aboutHeading: "Sem espera, sem frescura\nresultado na hora",
     aboutText: (city, company) => `Você não tem tempo pra perder e a gente entende. A ${company} é corte rápido, barba alinhada e atendimento direto ao ponto. Mais de 80 cortes por semana. Se você precisa ficar pronto hoje, chame agora em ${city}.`,
