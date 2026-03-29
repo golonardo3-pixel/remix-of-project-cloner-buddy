@@ -270,7 +270,7 @@ const LeadSite = () => {
         </section>
 
         {/* QR Code */}
-        <section className="py-20 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+        <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-md mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Avalie-nos</p>
             <h2 className="salon-heading mb-5">Sua opinião importa</h2>
