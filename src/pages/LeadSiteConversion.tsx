@@ -175,9 +175,9 @@ const LeadSiteConversion = () => {
 
         {/* Social proof — compact reviews */}
         {content.reviews.length > 0 && (
-          <section className="py-16 px-5" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
+          <section className="py-10 md:py-16 px-4 sm:px-5" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
             <div className="max-w-3xl mx-auto">
-              <h2 className="font-display text-2xl font-bold text-center mb-8 text-foreground">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-center mb-6 md:mb-8 text-foreground">
                 O que dizem nossos clientes
               </h2>
               <div className="space-y-4">
