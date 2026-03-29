@@ -293,9 +293,9 @@ const LeadSite = () => {
         </section>
 
         {/* Final CTA */}
-        <section className="py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="px-5 md:px-8 lg:px-16 max-w-5xl mx-auto text-center">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-5" style={{ color: `hsl(${colors.primaryForeground})` }}>
+        <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto text-center">
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold mb-5" style={{ color: `hsl(${colors.primaryForeground})` }}>
               Fale com {displayName}
             </h2>
             <p className="text-base md:text-lg max-w-md mx-auto mb-10 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
