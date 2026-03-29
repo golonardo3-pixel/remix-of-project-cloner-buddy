@@ -448,7 +448,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Para de perder tempo em portal. A ${company} tem opções exclusivas que você não encontra em outro lugar. Chame no WhatsApp e receba ofertas agora.`,
     heroImage: heroRealestate,
     heroVideo: "https://videos.pexels.com/video-files/7578554/7578554-hd_1920_1080_30fps.mp4",
-    urgencyBadge: (city) => `⚡ Imóveis exclusivos saindo rápido em ${city} – não perca`,
+    urgencyBadge: (city) => `⚡ Imóveis exclusivos disponíveis em ${city}`,
     aboutLabel: "Por que falar com a gente?",
     aboutHeading: "Enquanto você pesquisa,\nalguém está fechando negócio",
     aboutText: (city, company) => `Aquele imóvel que você gostou? Outro alguém também gostou. A ${company} conhece cada bairro de ${city} e tem opções que não estão nos portais. Atendimento rápido pelo WhatsApp com fotos e informações completas. Mais de 140 negócios fechados em ${city}.`,
