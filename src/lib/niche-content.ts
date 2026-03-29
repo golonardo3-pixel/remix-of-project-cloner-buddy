@@ -324,7 +324,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     heroSubtitle: (city, company) => `Sem tempo pra cozinhar? O ${company} entrega comida fresca e saborosa na sua porta em ${city}. Peça pelo WhatsApp agora.`,
     heroImage: heroRestaurant,
     heroVideo: "https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4",
-    urgencyBadge: (city) => `⚡ Entrega rápida em ${city} – peça agora antes de esgotar`,
+    urgencyBadge: (city) => `⚡ Entrega rápida disponível em ${city}`,
     aboutLabel: "Por que pedir aqui?",
     aboutHeading: "Comida de verdade,\nnão comida de delivery",
     aboutText: (city, company) => `Cansado de comida sem gosto e porção miserável? O ${company} faz comida fresca, com tempero de verdade e porção que alimenta. Mais de 150 clientes satisfeitos por mês em ${city}. Peça agora pelo WhatsApp.`,
