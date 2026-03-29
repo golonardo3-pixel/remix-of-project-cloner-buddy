@@ -75,14 +75,14 @@ const LeadSiteConversion = () => {
 
       <main className="pt-[48px]">
         {/* Hero — Full impact, single CTA */}
-        <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} em ${lead.city}`}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/70" />
-          <div className="relative z-10 px-5 py-16 max-w-2xl mx-auto w-full text-center">
+          <div className="absolute inset-0 bg-black/75" />
+          <div className="relative z-10 px-4 sm:px-5 py-10 md:py-16 max-w-2xl mx-auto w-full text-center">
             {/* Urgency pill */}
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-sm font-bold animate-pulse"
