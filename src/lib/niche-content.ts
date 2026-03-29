@@ -371,7 +371,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
       { title: "Smash Burgers", desc: "Crosta crocante por fora, suculento por dentro. O mais pedido. Peça agora!" },
       { title: "Burgers Premium", desc: "Blend de costela e fraldinha com molhos artesanais. Experiência única." },
       { title: "Combos com Desconto", desc: "Hambúrguer + batata + bebida. Preço que cabe no bolso." },
-      { title: "Delivery Express", desc: "Chega quente na sua porta em ${city}. Peça pelo WhatsApp agora." },
+      { title: "Delivery Express", desc: "Chega quente na sua porta. Peça pelo WhatsApp agora." },
     ],
     reviews: [],
     reviewCount: 134,
