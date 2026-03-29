@@ -340,7 +340,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
       { title: "Pratos do Dia", desc: "Opções que mudam diariamente. Sempre fresco, sempre diferente. Peça agora." },
       { title: "Pratos Executivos", desc: "Almoço completo com preço fixo. Ideal pro dia a dia sem perder tempo." },
       { title: "Porções e Petiscos", desc: "Perfeitos pra dividir ou comer sozinho. Peça pelo WhatsApp." },
-      { title: "Delivery Express", desc: "Chega quente na sua porta. Entrega rápida em ${city} e região." },
+      { title: "Delivery Express", desc: "Chega quente na sua porta. Peça pelo WhatsApp." },
     ],
     reviews: [],
     reviewCount: 156,
