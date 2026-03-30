@@ -4,9 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Phone, ChevronRight, ChevronLeft } from "lucide-react";
-import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import LeadDetailSheet from "./LeadDetailSheet";
+import LeadCard from "./LeadCard";
 
 export const KANBAN_COLUMNS = [
   { id: "novo", label: "Novo Lead", color: "bg-blue-500" },
