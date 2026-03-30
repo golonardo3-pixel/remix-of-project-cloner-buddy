@@ -1,13 +1,17 @@
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import AddLeadDialog from "@/components/AddLeadDialog";
 import KanbanBoard from "@/components/KanbanBoard";
+import type { Lead } from "@/components/KanbanBoard";
+import CrmDashboard from "@/components/CrmDashboard";
+import CrmFilters, { EMPTY_FILTERS, type CrmFilterValues } from "@/components/CrmFilters";
 
 const CrmLeads = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filters, setFilters] = useState<CrmFilterValues>({ ...EMPTY_FILTERS });
 
   const { data: leads, isLoading } = useQuery({
     queryKey: ["leads"],
@@ -17,9 +21,41 @@ const CrmLeads = () => {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data as unknown as Lead[];
     },
   });
+
+  const niches = useMemo(() => {
+    if (!leads) return [];
+    return [...new Set(leads.map((l) => l.niche))].sort();
+  }, [leads]);
+
+  const cities = useMemo(() => {
+    if (!leads) return [];
+    return [...new Set(leads.map((l) => l.city))].sort();
+  }, [leads]);
+
+  const filteredLeads = useMemo(() => {
+    if (!leads) return [];
+    return leads.filter((l) => {
+      if (filters.search) {
+        const s = filters.search.toLowerCase();
+        if (
+          !l.company_name.toLowerCase().includes(s) &&
+          !l.niche.toLowerCase().includes(s) &&
+          !l.city.toLowerCase().includes(s)
+        )
+          return false;
+      }
+      if (filters.niche && l.niche !== filters.niche) return false;
+      if (filters.city && l.city !== filters.city) return false;
+      if (filters.status && l.lead_status !== filters.status) return false;
+      if (filters.payment && l.payment_status !== filters.payment) return false;
+      if (filters.siteStatus && l.site_status !== filters.siteStatus) return false;
+      if (filters.temperature && l.lead_temperature !== filters.temperature) return false;
+      return true;
+    });
+  }, [leads, filters]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,7 +91,17 @@ const CrmLeads = () => {
             </Button>
           </div>
         ) : (
-          <KanbanBoard leads={leads as any} />
+          <>
+            <CrmDashboard leads={leads} />
+            <CrmFilters filters={filters} onChange={setFilters} niches={niches} cities={cities} />
+            {filteredLeads.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                Nenhum lead encontrado com esses filtros.
+              </div>
+            ) : (
+              <KanbanBoard leads={filteredLeads} />
+            )}
+          </>
         )}
       </main>
 

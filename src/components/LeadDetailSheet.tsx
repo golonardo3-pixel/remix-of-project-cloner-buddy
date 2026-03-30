@@ -8,31 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Trash2, ExternalLink, Phone } from "lucide-react";
 import { KANBAN_COLUMNS } from "./KanbanBoard";
+import type { Lead } from "./KanbanBoard";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
-
-interface Lead {
-  id: string;
-  company_name: string;
-  niche: string;
-  city: string;
-  phone: string;
-  slug: string;
-  lead_status: string;
-  service_value: number | null;
-  payment_status: string;
-  site_status: string;
-  last_interaction: string | null;
-  notes: string | null;
-  created_at: string;
-  description: string | null;
-  google_maps_url: string | null;
-  instagram: string | null;
-  services_list: string[] | null;
-  photos: string[] | null;
-}
 
 interface Props {
   lead: Lead | null;
@@ -43,6 +22,7 @@ interface Props {
 const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState("");
+  const [temperature, setTemperature] = useState("morno");
   const [serviceValue, setServiceValue] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [siteStatus, setSiteStatus] = useState("");
@@ -51,6 +31,7 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
   useEffect(() => {
     if (lead) {
       setStatus(lead.lead_status);
+      setTemperature(lead.lead_temperature || "morno");
       setServiceValue(lead.service_value != null ? String(lead.service_value) : "");
       setPaymentStatus(lead.payment_status);
       setSiteStatus(lead.site_status);
@@ -65,6 +46,7 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
         .from("leads")
         .update({
           lead_status: status,
+          lead_temperature: temperature,
           service_value: serviceValue ? Number(serviceValue) : null,
           payment_status: paymentStatus,
           site_status: siteStatus,
@@ -102,11 +84,7 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
   const createdDate = new Date(lead.created_at).toLocaleDateString("pt-BR");
   const lastInteraction = lead.last_interaction
     ? new Date(lead.last_interaction).toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
+        day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit",
       })
     : "—";
 
@@ -118,14 +96,12 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
         </SheetHeader>
 
         <div className="space-y-5 mt-4">
-          {/* Info */}
           <div className="text-sm text-muted-foreground space-y-1">
             <p>{lead.niche} · {lead.city}</p>
             <p>Criado em: {createdDate}</p>
             <p>Última interação: {lastInteraction}</p>
           </div>
 
-          {/* Quick actions */}
           <div className="flex gap-2">
             <a href={`https://wa.me/${lead.phone}`} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm" className="gap-1.5">
@@ -139,7 +115,6 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
             </a>
           </div>
 
-          {/* Status */}
           <div>
             <Label>Status do Lead</Label>
             <Select value={status} onValueChange={setStatus}>
@@ -152,7 +127,18 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
             </Select>
           </div>
 
-          {/* Value */}
+          <div>
+            <Label>Temperatura</Label>
+            <Select value={temperature} onValueChange={setTemperature}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="quente">🔥 Quente</SelectItem>
+                <SelectItem value="morno">🌤 Morno</SelectItem>
+                <SelectItem value="frio">❄️ Frio</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div>
             <Label>Valor do Serviço (R$)</Label>
             <Input
@@ -163,7 +149,6 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
             />
           </div>
 
-          {/* Payment */}
           <div>
             <Label>Status do Pagamento</Label>
             <Select value={paymentStatus} onValueChange={setPaymentStatus}>
@@ -175,7 +160,6 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
             </Select>
           </div>
 
-          {/* Site status */}
           <div>
             <Label>Status do Site</Label>
             <Select value={siteStatus} onValueChange={setSiteStatus}>
@@ -189,7 +173,6 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
             </Select>
           </div>
 
-          {/* Notes */}
           <div>
             <Label>Observações</Label>
             <Textarea
@@ -200,7 +183,6 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
             />
           </div>
 
-          {/* Actions */}
           <div className="flex gap-2 pt-2">
             <Button
               onClick={() => updateMutation.mutate()}
@@ -213,9 +195,7 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
               variant="ghost"
               size="icon"
               onClick={() => {
-                if (confirm("Remover este lead permanentemente?")) {
-                  deleteMutation.mutate();
-                }
+                if (confirm("Remover este lead permanentemente?")) deleteMutation.mutate();
               }}
               className="text-destructive hover:text-destructive"
             >

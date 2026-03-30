@@ -4,17 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Phone, ChevronRight, ChevronLeft, GripVertical } from "lucide-react";
+import { ExternalLink, Phone, ChevronRight, ChevronLeft } from "lucide-react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import LeadDetailSheet from "./LeadDetailSheet";
 
 export const KANBAN_COLUMNS = [
   { id: "novo", label: "Novo Lead", color: "bg-blue-500" },
-  { id: "contato_iniciado", label: "Contato Iniciado", color: "bg-yellow-500" },
+  { id: "chamado", label: "Chamado", color: "bg-sky-500" },
+  { id: "respondeu", label: "Respondeu", color: "bg-yellow-500" },
   { id: "interessado", label: "Interessado", color: "bg-orange-500" },
   { id: "em_negociacao", label: "Em Negociação", color: "bg-purple-500" },
   { id: "fechado", label: "Fechado", color: "bg-green-500" },
-  { id: "em_producao", label: "Em Produção", color: "bg-teal-500" },
   { id: "site_entregue", label: "Site Entregue", color: "bg-emerald-600" },
   { id: "perdido", label: "Perdido", color: "bg-red-500" },
 ] as const;
@@ -33,7 +33,13 @@ const SITE_STATUS_LABELS: Record<string, string> = {
   aprovado: "Aprovado",
 };
 
-interface Lead {
+const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: string }> = {
+  quente: { emoji: "🔥", label: "Quente", className: "bg-red-100 text-red-700 border-red-200" },
+  morno: { emoji: "🌤", label: "Morno", className: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  frio: { emoji: "❄️", label: "Frio", className: "bg-blue-100 text-blue-700 border-blue-200" },
+};
+
+export interface Lead {
   id: string;
   company_name: string;
   niche: string;
@@ -41,6 +47,7 @@ interface Lead {
   phone: string;
   slug: string;
   lead_status: string;
+  lead_temperature: string;
   service_value: number | null;
   payment_status: string;
   site_status: string;
@@ -75,6 +82,26 @@ const KanbanBoard = ({ leads }: Props) => {
     },
   });
 
+  const whatsappMutation = useMutation({
+    mutationFn: async (lead: Lead) => {
+      if (lead.lead_status === "novo") {
+        const { error } = await supabase
+          .from("leads")
+          .update({ lead_status: "chamado", last_interaction: new Date().toISOString() } as any)
+          .eq("id", lead.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+  });
+
+  const handleWhatsApp = (lead: Lead) => {
+    window.open(`https://wa.me/${lead.phone}`, "_blank");
+    whatsappMutation.mutate(lead);
+  };
+
   const moveLeadToColumn = (lead: Lead, direction: "prev" | "next") => {
     const currentIdx = KANBAN_COLUMNS.findIndex((c) => c.id === lead.lead_status);
     const newIdx = direction === "next" ? currentIdx + 1 : currentIdx - 1;
@@ -93,25 +120,20 @@ const KanbanBoard = ({ leads }: Props) => {
           {KANBAN_COLUMNS.map((col) => {
             const colLeads = getColumnLeads(col.id);
             return (
-              <div
-                key={col.id}
-                className="w-[260px] shrink-0 bg-muted/50 rounded-lg border border-border"
-              >
+              <div key={col.id} className="w-[270px] shrink-0 bg-muted/50 rounded-lg border border-border">
                 <div className="p-3 border-b border-border flex items-center gap-2">
                   <div className={`w-2.5 h-2.5 rounded-full ${col.color}`} />
                   <h3 className="text-sm font-semibold text-foreground">{col.label}</h3>
-                  <Badge variant="secondary" className="ml-auto text-xs">
-                    {colLeads.length}
-                  </Badge>
+                  <Badge variant="secondary" className="ml-auto text-xs">{colLeads.length}</Badge>
                 </div>
-                <div className="p-2 space-y-2 min-h-[120px] max-h-[calc(100vh-260px)] overflow-y-auto">
+                <div className="p-2 space-y-2 min-h-[120px] max-h-[calc(100vh-300px)] overflow-y-auto">
                   {colLeads.map((lead) => (
                     <LeadCard
                       key={lead.id}
                       lead={lead}
                       onSelect={() => setSelectedLead(lead)}
                       onMove={(dir) => moveLeadToColumn(lead, dir)}
-                      showMoveButtons
+                      onWhatsApp={() => handleWhatsApp(lead)}
                     />
                   ))}
                 </div>
@@ -140,7 +162,7 @@ const KanbanBoard = ({ leads }: Props) => {
                     lead={lead}
                     onSelect={() => setSelectedLead(lead)}
                     onMove={(dir) => moveLeadToColumn(lead, dir)}
-                    showMoveButtons
+                    onWhatsApp={() => handleWhatsApp(lead)}
                   />
                 ))}
               </div>
@@ -162,21 +184,27 @@ function LeadCard({
   lead,
   onSelect,
   onMove,
-  showMoveButtons,
+  onWhatsApp,
 }: {
   lead: Lead;
   onSelect: () => void;
   onMove: (dir: "prev" | "next") => void;
-  showMoveButtons?: boolean;
+  onWhatsApp: () => void;
 }) {
   const currentIdx = KANBAN_COLUMNS.findIndex((c) => c.id === lead.lead_status);
+  const temp = TEMP_CONFIG[lead.lead_temperature] || TEMP_CONFIG.morno;
 
   return (
     <div
-      className="bg-card rounded-md border border-border p-3 cursor-pointer hover:shadow-sm transition-shadow"
+      className="bg-card rounded-md border border-border p-3 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
       onClick={onSelect}
     >
-      <h4 className="text-sm font-semibold text-foreground truncate">{lead.company_name}</h4>
+      <div className="flex items-start justify-between gap-2">
+        <h4 className="text-sm font-semibold text-foreground truncate flex-1">{lead.company_name}</h4>
+        <span className={`text-[10px] px-1.5 py-0.5 rounded-full border shrink-0 ${temp.className}`}>
+          {temp.emoji} {temp.label}
+        </span>
+      </div>
       <p className="text-xs text-muted-foreground mt-0.5 truncate">
         {lead.niche} · {lead.city}
       </p>
@@ -198,56 +226,47 @@ function LeadCard({
         </Badge>
       </div>
 
-      {showMoveButtons && (
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0"
+          disabled={currentIdx === 0}
+          onClick={(e) => { e.stopPropagation(); onMove("prev"); }}
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <div className="flex gap-1">
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0"
-            disabled={currentIdx === 0}
-            onClick={(e) => {
-              e.stopPropagation();
-              onMove("prev");
-            }}
+            className="h-7 px-2 gap-1 text-green-600 hover:text-green-700 hover:bg-green-50"
+            onClick={(e) => { e.stopPropagation(); onWhatsApp(); }}
           >
-            <ChevronLeft className="w-3.5 h-3.5" />
+            <Phone className="w-3.5 h-3.5" />
+            <span className="text-[10px] hidden sm:inline">WhatsApp</span>
           </Button>
-          <div className="flex gap-1">
-            <a
-              href={`https://wa.me/${lead.phone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-green-600">
-                <Phone className="w-3.5 h-3.5" />
-              </Button>
-            </a>
-            <a
-              href={getPublicLeadSiteUrl(lead.slug)}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <ExternalLink className="w-3.5 h-3.5" />
-              </Button>
-            </a>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0"
-            disabled={currentIdx === KANBAN_COLUMNS.length - 1}
-            onClick={(e) => {
-              e.stopPropagation();
-              onMove("next");
-            }}
+          <a
+            href={getPublicLeadSiteUrl(lead.slug)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
           >
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Button>
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Button>
+          </a>
         </div>
-      )}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0"
+          disabled={currentIdx === KANBAN_COLUMNS.length - 1}
+          onClick={(e) => { e.stopPropagation(); onMove("next"); }}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
     </div>
   );
 }
