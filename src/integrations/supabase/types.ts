@@ -25,6 +25,7 @@ export type Database = {
           instagram: string | null
           last_interaction: string | null
           lead_status: string
+          lead_temperature: string
           niche: string
           notes: string | null
           payment_status: string
@@ -46,6 +47,7 @@ export type Database = {
           instagram?: string | null
           last_interaction?: string | null
           lead_status?: string
+          lead_temperature?: string
           niche: string
           notes?: string | null
           payment_status?: string
@@ -67,6 +69,7 @@ export type Database = {
           instagram?: string | null
           last_interaction?: string | null
           lead_status?: string
+          lead_temperature?: string
           niche?: string
           notes?: string | null
           payment_status?: string
