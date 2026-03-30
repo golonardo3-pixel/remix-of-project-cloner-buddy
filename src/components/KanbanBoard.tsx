@@ -20,23 +20,6 @@ export const KANBAN_COLUMNS = [
 
 export type LeadStatus = (typeof KANBAN_COLUMNS)[number]["id"];
 
-const PAYMENT_LABELS: Record<string, string> = {
-  pendente: "Pendente",
-  pago: "Pago",
-};
-
-const SITE_STATUS_LABELS: Record<string, string> = {
-  nao_criado: "Não criado",
-  criado: "Criado",
-  enviado: "Enviado",
-  aprovado: "Aprovado",
-};
-
-const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: string }> = {
-  quente: { emoji: "🔥", label: "Quente", className: "bg-red-100 text-red-700 border-red-200" },
-  morno: { emoji: "🌤", label: "Morno", className: "bg-yellow-100 text-yellow-700 border-yellow-200" },
-  frio: { emoji: "❄️", label: "Frio", className: "bg-blue-100 text-blue-700 border-blue-200" },
-};
 
 export interface Lead {
   id: string;
