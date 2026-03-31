@@ -15,6 +15,8 @@ import heroBatteries from "@/assets/hero-batteries.jpg";
 import heroMarmitaria from "@/assets/hero-marmitaria.jpg";
 import heroRealestate from "@/assets/hero-realestate.jpg";
 import heroAccounting from "@/assets/hero-accounting.jpg";
+import heroManicure from "@/assets/hero-manicure.jpg";
+import heroLawyer from "@/assets/hero-lawyer.jpg";
 
 export interface NicheContent {
   heroTitle: string;
