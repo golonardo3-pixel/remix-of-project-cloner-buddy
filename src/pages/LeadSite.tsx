@@ -247,6 +247,14 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Urgency Strip */}
+        <section className="py-8 md:py-10 text-center" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-4 sm:px-5 max-w-3xl mx-auto">
+            <p className="text-sm md:text-base font-semibold animate-pulse" style={{ color: `hsl(${colors.primaryForeground})` }}>
+              🔥 {content.salesUrgency}
+            </p>
+          </div>
+        </section>
 
 
         {/* Contact Form */}
