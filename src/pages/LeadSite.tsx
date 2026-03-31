@@ -101,6 +101,11 @@ const LeadSite = () => {
         </div>
       </header>
 
+      {/* Demo Banner */}
+      <div className="bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium">
+        Este site é uma demonstração para este negócio
+      </div>
+
       <main className="pt-[52px]">
         {/* Hero */}
         <section className="relative min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden">
