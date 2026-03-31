@@ -657,6 +657,8 @@ const nicheNamePatterns: Record<string, (name: string) => string> = {
   "baterias": (name) => `${name} Baterias`,
   "imobiliária": (name) => `${name} Imóveis`,
   "contabilidade": (name) => `${name} Contabilidade`,
+  "manicure": (name) => `${name} Nail Designer`,
+  "advogado": (name) => `${name} Advocacia`,
 };
 
 const professionalSuffixes = [
