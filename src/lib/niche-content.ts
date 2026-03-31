@@ -509,7 +509,6 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     galleryLabel: "Nosso escritório",
     galleryHeading: "Ambiente profissional",
   },
-},
   "manicure": {
     heroTitle: (city) => `Suas unhas merecem mais do que o básico`,
     heroSubtitle: (city, company) => `A ${company} faz unhas que duram e impressionam. Gel, alongamento e esmaltação profissional em ${city}. Agende pelo WhatsApp.`,
