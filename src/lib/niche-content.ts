@@ -39,6 +39,12 @@ export interface NicheContent {
   nameSuffix?: string;
   galleryLabel: string;
   galleryHeading: string;
+  // Sales pitch fields for conversion
+  salesHeadline: string;
+  salesSubheadline: string;
+  salesStat: string;
+  salesUrgency: string;
+  salesBenefit: string;
 }
 
 interface NicheTemplate {
