@@ -150,7 +150,7 @@ const LeadSite = () => {
             height={832}
           />
           {/* Dark overlay — strong for readability */}
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/50 to-black/20" />
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/90 via-black/60 to-black/30" />
           <div className="relative z-[2] px-4 sm:px-5 pb-10 md:pb-24 max-w-5xl mx-auto w-full">
             <div className="w-12 md:w-16 h-0.5 mb-4 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             <h2 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-3 md:mb-4 text-white">
