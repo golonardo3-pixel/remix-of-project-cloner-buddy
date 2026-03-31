@@ -68,12 +68,12 @@ interface NicheTemplate {
   nameSuffix?: string;
   galleryLabel: string;
   galleryHeading: string;
-  // Sales pitch
-  salesHeadline: string;
-  salesSubheadline: (city: string) => string;
-  salesStat: string;
-  salesUrgency: (city: string) => string;
-  salesBenefit: string;
+  // Sales pitch (optional — defaults provided)
+  salesHeadline?: string;
+  salesSubheadline?: (city: string) => string;
+  salesStat?: string;
+  salesUrgency?: (city: string) => string;
+  salesBenefit?: string;
 }
 
 const nicheTemplateMap: Record<string, NicheTemplate> = {
