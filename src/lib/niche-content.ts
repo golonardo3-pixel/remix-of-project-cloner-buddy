@@ -665,6 +665,7 @@ const professionalSuffixes = [
   "hair", "studio", "barber", "shop", "center", "auto", "pet",
   "clínica", "odonto", "estética", "fisio", "imóveis", "contabil",
   "baterias", "marmit", "burger", "grill", "fitness", "gym",
+  "nail", "designer", "advocacia", "advogado",
 ];
 
 export function professionalizeName(rawName: string, niche: string): string {
