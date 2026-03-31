@@ -653,6 +653,11 @@ export function getNicheContent(niche: string, city: string = "", companyName: s
     nameSuffix: template.nameSuffix,
     galleryLabel: template.galleryLabel,
     galleryHeading: template.galleryHeading,
+    salesHeadline: template.salesHeadline || "Mais clientes todos os dias pelo Google e WhatsApp",
+    salesSubheadline: template.salesSubheadline?.(cityName) || `Seu negócio aparecendo para quem realmente quer comprar em ${cityName}`,
+    salesStat: template.salesStat || `Mais de ${template.reviewCount || 50}+ clientes atendidos`,
+    salesUrgency: template.salesUrgency?.(cityName) || `Estamos criando alguns sites na região de ${cityName} esta semana`,
+    salesBenefit: template.salesBenefit || "Seu cliente encontra, clica e já fala direto com você",
   };
 }
 
