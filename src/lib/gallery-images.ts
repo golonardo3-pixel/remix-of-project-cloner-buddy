@@ -330,6 +330,8 @@ const nicheColorMap: Record<string, NicheColors> = {
   "academia": { primary: "0 0% 10%", primaryForeground: "0 0% 98%", accent: "0 75% 50%", secondary: "0 0% 94%" },
   "imobiliária": { primary: "215 30% 18%", primaryForeground: "215 20% 97%", accent: "38 55% 50%", secondary: "215 15% 95%" },
   "contabilidade": { primary: "210 20% 18%", primaryForeground: "210 15% 97%", accent: "210 50% 50%", secondary: "210 10% 95%" },
+  "manicure": { primary: "340 25% 20%", primaryForeground: "340 15% 97%", accent: "340 50% 60%", secondary: "340 12% 95%" },
+  "advogado": { primary: "220 25% 15%", primaryForeground: "220 15% 97%", accent: "38 50% 45%", secondary: "220 10% 94%" },
 };
 
 const defaultColors: NicheColors = {
