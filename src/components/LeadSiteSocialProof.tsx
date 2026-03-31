@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, Users, TrendingUp } from "lucide-react";
 import type { GeneratedReview } from "@/lib/review-generator";
 
 interface LeadSiteSocialProofProps {
@@ -7,11 +7,28 @@ interface LeadSiteSocialProofProps {
     accent: string;
     secondary: string;
   };
+  salesStat?: string;
 }
 
-const LeadSiteSocialProof = ({ reviews, colors }: LeadSiteSocialProofProps) => {
+const LeadSiteSocialProof = ({ reviews, colors, salesStat }: LeadSiteSocialProofProps) => {
   return (
     <section className="py-16 px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+      {/* Stats bar */}
+      {salesStat && (
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+          <div className="flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold shadow-sm"
+            style={{ backgroundColor: `hsl(${colors.secondary})`, color: `hsl(${colors.accent})` }}>
+            <Users className="w-4 h-4" />
+            {salesStat}
+          </div>
+          <div className="flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold shadow-sm"
+            style={{ backgroundColor: `hsl(${colors.secondary})`, color: `hsl(${colors.accent})` }}>
+            <TrendingUp className="w-4 h-4" />
+            Aumento de contatos pelo Google
+          </div>
+        </div>
+      )}
+
       <div className="text-center mb-10">
         <p
           className="uppercase text-xs tracking-[0.2em] font-medium mb-3"

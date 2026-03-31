@@ -39,6 +39,12 @@ export interface NicheContent {
   nameSuffix?: string;
   galleryLabel: string;
   galleryHeading: string;
+  // Sales pitch fields for conversion
+  salesHeadline: string;
+  salesSubheadline: string;
+  salesStat: string;
+  salesUrgency: string;
+  salesBenefit: string;
 }
 
 interface NicheTemplate {
@@ -62,6 +68,12 @@ interface NicheTemplate {
   nameSuffix?: string;
   galleryLabel: string;
   galleryHeading: string;
+  // Sales pitch (optional — defaults provided)
+  salesHeadline?: string;
+  salesSubheadline?: (city: string) => string;
+  salesStat?: string;
+  salesUrgency?: (city: string) => string;
+  salesBenefit?: string;
 }
 
 const nicheTemplateMap: Record<string, NicheTemplate> = {
@@ -641,6 +653,11 @@ export function getNicheContent(niche: string, city: string = "", companyName: s
     nameSuffix: template.nameSuffix,
     galleryLabel: template.galleryLabel,
     galleryHeading: template.galleryHeading,
+    salesHeadline: template.salesHeadline || "Mais clientes todos os dias pelo Google e WhatsApp",
+    salesSubheadline: template.salesSubheadline?.(cityName) || `Seu negócio aparecendo para quem realmente quer comprar em ${cityName}`,
+    salesStat: template.salesStat || `Mais de ${template.reviewCount || 50}+ clientes atendidos`,
+    salesUrgency: template.salesUrgency?.(cityName) || `Estamos criando alguns sites na região de ${cityName} esta semana`,
+    salesBenefit: template.salesBenefit || "Seu cliente encontra, clica e já fala direto com você",
   };
 }
 

@@ -106,7 +106,40 @@ const LeadSite = () => {
         Este site é uma demonstração para este negócio
       </div>
 
-      <main className="pt-[52px]">
+      {/* Sales Pitch Section */}
+      <section className="py-10 md:py-14 px-4 sm:px-5 text-center" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
+        <div className="max-w-3xl mx-auto">
+          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-foreground leading-tight">
+            {content.salesHeadline}
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6">
+            {content.salesSubheadline}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.15)`, color: `hsl(${colors.accent})` }}>
+              📈 {content.salesStat}
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.15)`, color: `hsl(${colors.accent})` }}>
+              📍 Aumento de contatos pelo Google
+            </div>
+          </div>
+          <p className="text-foreground font-medium text-sm mb-6">
+            ✅ {content.salesBenefit}
+          </p>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-4 text-base md:text-lg font-bold rounded-lg transition-all hover:brightness-110 shadow-xl uppercase tracking-wide"
+            style={{ backgroundColor: "#25D366", color: "#fff" }}
+          >
+            <MessageCircle className="w-5 h-5" />
+            CHAMAR NO WHATSAPP
+          </a>
+        </div>
+      </section>
+
+      <main className="pt-0">
         {/* Hero */}
         <section className="relative min-h-[75vh] md:min-h-[80vh] flex items-end overflow-hidden">
           <img
@@ -117,7 +150,7 @@ const LeadSite = () => {
             height={832}
           />
           {/* Dark overlay — strong for readability */}
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/50 to-black/20" />
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/90 via-black/60 to-black/30" />
           <div className="relative z-[2] px-4 sm:px-5 pb-10 md:pb-24 max-w-5xl mx-auto w-full">
             <div className="w-12 md:w-16 h-0.5 mb-4 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             <h2 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-3 md:mb-4 text-white">
@@ -150,7 +183,7 @@ const LeadSite = () => {
         </section>
 
         {/* Social Proof - right after hero for max conversion */}
-        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
+        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} salesStat={content.salesStat} />
 
         {/* Benefits Strip */}
         <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
@@ -214,6 +247,14 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Urgency Strip */}
+        <section className="py-8 md:py-10 text-center" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+          <div className="px-4 sm:px-5 max-w-3xl mx-auto">
+            <p className="text-sm md:text-base font-semibold animate-pulse" style={{ color: `hsl(${colors.primaryForeground})` }}>
+              🔥 {content.salesUrgency}
+            </p>
+          </div>
+        </section>
 
 
         {/* Contact Form */}
