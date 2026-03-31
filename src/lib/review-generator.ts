@@ -167,6 +167,30 @@ const NICHE_REVIEWS: Record<string, string[]> = {
     "Técnicas modernas que resolvem de verdade, não aquela fisioterapia de ficar só fazendo bolsa quente.",
     "Melhor investimento que fiz na minha saúde. Cada sessão vale muito a pena.",
   ],
+  "manicure": [
+    "Minhas unhas nunca ficaram tão bonitas! Gel que dura semanas sem descascar.",
+    "Agendei pelo WhatsApp e fui atendida no horário certinho. Super prática!",
+    "Nail art incrível! Todo mundo elogia minhas unhas agora. Virei cliente fiel!",
+    "Ambiente limpo e aconchegante. Dá pra ver que usam material de qualidade.",
+    "Alongamento perfeito, formato natural. Parece unha de verdade!",
+    "Atendimento carinhoso e resultado impecável. Não troco por nada!",
+    "Fiz francesinha e ficou perfeita. Melhor nail designer da região!",
+    "Unhas que duram 3 semanas fácil. Material de primeira mesmo.",
+    "Pontualidade nota 10. Agenda cheia mas sempre encontra horário pra mim.",
+    "Já passei por várias manicures e aqui é outro nível. Recomendo demais!",
+  ],
+  "advogado": [
+    "Ganhei minha causa trabalhista graças a essa equipe. Competência total!",
+    "Explicaram tudo de forma simples, sem juridiquês. Finalmente entendi meus direitos!",
+    "Processo que arrastava há 2 anos, eles resolveram em meses. Eficiência!",
+    "Me atenderam pelo WhatsApp rapidamente e já orientaram o próximo passo.",
+    "Divórcio foi mais tranquilo do que eu imaginava. Equipe sensível e profissional.",
+    "Consegui a guarda dos meus filhos. Advogado competente e humano.",
+    "Empresa me devia e em 3 meses já tinha recebido. Resultado rápido!",
+    "Consultoria preventiva que me economizou uma dor de cabeça enorme.",
+    "Confiança total nessa equipe. Sempre disponíveis e transparentes.",
+    "Melhor escritório da região. Atendimento personalizado e resultados reais.",
+  ],
 };
 
 const DEFAULT_REVIEWS = [
