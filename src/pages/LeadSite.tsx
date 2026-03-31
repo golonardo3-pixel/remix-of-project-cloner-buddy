@@ -183,7 +183,7 @@ const LeadSite = () => {
         </section>
 
         {/* Social Proof - right after hero for max conversion */}
-        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
+        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} salesStat={content.salesStat} />
 
         {/* Benefits Strip */}
         <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
