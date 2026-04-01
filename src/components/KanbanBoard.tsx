@@ -7,13 +7,9 @@ import LeadCard from "./LeadCard";
 
 export const KANBAN_COLUMNS = [
   { id: "novo", label: "Novo Lead", color: "bg-blue-500" },
-  { id: "chamado", label: "Chamado", color: "bg-sky-500" },
   { id: "respondeu", label: "Respondeu", color: "bg-yellow-500" },
   { id: "interessado", label: "Interessado", color: "bg-orange-500" },
-  { id: "em_negociacao", label: "Em Negociação", color: "bg-purple-500" },
   { id: "fechado", label: "Fechado", color: "bg-green-500" },
-  { id: "site_entregue", label: "Site Entregue", color: "bg-emerald-600" },
-  { id: "perdido", label: "Perdido", color: "bg-red-500" },
 ] as const;
 
 export type LeadStatus = (typeof KANBAN_COLUMNS)[number]["id"];
