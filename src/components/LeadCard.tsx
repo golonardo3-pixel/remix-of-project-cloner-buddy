@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   ExternalLink,
   Phone,
@@ -13,21 +14,10 @@ import {
   Send,
   Clock,
   Loader2,
+  Rocket,
 } from "lucide-react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
-
-const PAYMENT_LABELS: Record<string, string> = {
-  pendente: "Pendente",
-  pago: "Pago",
-};
-
-const SITE_STATUS_LABELS: Record<string, string> = {
-  nao_criado: "Não criado",
-  criado: "Criado",
-  enviado: "Enviado",
-  aprovado: "Aprovado",
-};
 
 const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: string }> = {
   quente: { emoji: "🔥", label: "Quente", className: "bg-red-100 text-red-700 border-red-200" },
@@ -37,17 +27,20 @@ const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: str
 
 interface Props {
   lead: Lead;
+  selected: boolean;
+  onToggleSelect: () => void;
   onSelect: () => void;
   onMove: (dir: "prev" | "next") => void;
   onWhatsApp: () => void;
 }
 
-export default function LeadCard({ lead, onSelect, onMove, onWhatsApp }: Props) {
+export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onMove, onWhatsApp }: Props) {
   const queryClient = useQueryClient();
   const [generatingSite, setGeneratingSite] = useState(false);
   const currentIdx = KANBAN_COLUMNS.findIndex((c) => c.id === lead.lead_status);
   const temp = TEMP_CONFIG[lead.lead_temperature] || TEMP_CONFIG.morno;
   const siteExists = lead.site_status !== "nao_criado";
+  const isPublished = lead.site_status === "publicado";
 
   const handleGenerateSite = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -76,6 +69,29 @@ export default function LeadCard({ lead, onSelect, onMove, onWhatsApp }: Props) 
     }
   };
 
+  const handlePublishSite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const { error } = await supabase
+        .from("leads")
+        .update({
+          site_status: "publicado",
+          last_interaction: new Date().toISOString(),
+        } as any)
+        .eq("id", lead.id);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      const url = getPublicLeadSiteUrl(lead.slug);
+      await navigator.clipboard.writeText(url);
+      toast({
+        title: "Site publicado!",
+        description: "Link final copiado para a área de transferência.",
+      });
+    } catch {
+      toast({ title: "Erro ao publicar site", variant: "destructive" });
+    }
+  };
+
   const handleSendProposal = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = getPublicLeadSiteUrl(lead.slug);
@@ -95,54 +111,67 @@ export default function LeadCard({ lead, onSelect, onMove, onWhatsApp }: Props) 
 
   return (
     <div
-      className="bg-card rounded-md border border-border p-3 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
+      className={`bg-card rounded-lg border p-3 cursor-pointer hover:shadow-md transition-all active:scale-[0.98] ${
+        selected ? "border-accent ring-2 ring-accent/30" : "border-border"
+      }`}
       onClick={onSelect}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2">
-        <h4 className="text-sm font-semibold text-foreground truncate flex-1">
-          {lead.company_name}
-        </h4>
-        <span
-          className={`text-[10px] px-1.5 py-0.5 rounded-full border shrink-0 ${temp.className}`}
-        >
-          {temp.emoji} {temp.label}
-        </span>
+      {/* Header with checkbox */}
+      <div className="flex items-start gap-2">
+        <Checkbox
+          checked={selected}
+          onCheckedChange={() => onToggleSelect()}
+          onClick={(e) => e.stopPropagation()}
+          className="mt-0.5 shrink-0"
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <h4 className="text-sm font-semibold text-foreground truncate flex-1">
+              {lead.company_name}
+            </h4>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-full border shrink-0 ${temp.className}`}
+            >
+              {temp.emoji} {temp.label}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5 truncate">
+            {lead.niche} · {lead.city}
+          </p>
+        </div>
       </div>
-      <p className="text-xs text-muted-foreground mt-0.5 truncate">
-        {lead.niche} · {lead.city}
-      </p>
 
-      {/* Badges */}
+      {/* Status badges */}
       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
         {lead.service_value != null && (
           <Badge variant="outline" className="text-[10px] px-1.5 py-0">
             R$ {Number(lead.service_value).toLocaleString("pt-BR")}
           </Badge>
         )}
-        <Badge
-          variant={lead.payment_status === "pago" ? "default" : "secondary"}
-          className="text-[10px] px-1.5 py-0"
-        >
-          {PAYMENT_LABELS[lead.payment_status] || lead.payment_status}
-        </Badge>
-        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-          {SITE_STATUS_LABELS[lead.site_status] || lead.site_status}
-        </Badge>
+        {isPublished && (
+          <Badge className="text-[10px] px-1.5 py-0 bg-green-600 text-white">
+            ✓ Publicado
+          </Badge>
+        )}
+        {siteExists && !isPublished && (
+          <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+            Site criado
+          </Badge>
+        )}
       </div>
 
-      {/* Action buttons */}
-      <div className="grid grid-cols-2 gap-1.5 mt-2 pt-2 border-t border-border">
+      {/* Action buttons — bigger for mobile */}
+      <div className="grid grid-cols-2 gap-1.5 mt-3 pt-2 border-t border-border">
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 px-2 gap-1 text-green-600 hover:text-green-700 hover:bg-green-50 text-[10px]"
+          className="h-9 px-2 gap-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 text-xs font-medium"
           onClick={(e) => {
             e.stopPropagation();
             onWhatsApp();
           }}
         >
-          <Phone className="w-3 h-3" />
+          <Phone className="w-4 h-4" />
           WhatsApp
         </Button>
 
@@ -150,16 +179,26 @@ export default function LeadCard({ lead, onSelect, onMove, onWhatsApp }: Props) 
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 px-2 gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-[10px]"
+            className="h-9 px-2 gap-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-xs font-medium"
             disabled={generatingSite}
             onClick={handleGenerateSite}
           >
             {generatingSite ? (
-              <Loader2 className="w-3 h-3 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Globe className="w-3 h-3" />
+              <Globe className="w-4 h-4" />
             )}
             Gerar Site
+          </Button>
+        ) : !isPublished ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-medium"
+            onClick={handlePublishSite}
+          >
+            <Rocket className="w-4 h-4" />
+            Publicar
           </Button>
         ) : (
           <a
@@ -171,9 +210,9 @@ export default function LeadCard({ lead, onSelect, onMove, onWhatsApp }: Props) 
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-[10px] w-full"
+              className="h-9 px-2 gap-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-xs font-medium w-full"
             >
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="w-4 h-4" />
               Ver Site
             </Button>
           </a>
@@ -182,52 +221,52 @@ export default function LeadCard({ lead, onSelect, onMove, onWhatsApp }: Props) 
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 px-2 gap-1 text-purple-600 hover:text-purple-700 hover:bg-purple-50 text-[10px]"
+          className="h-9 px-2 gap-1.5 text-purple-600 hover:text-purple-700 hover:bg-purple-50 text-xs font-medium"
           onClick={handleSendProposal}
         >
-          <Send className="w-3 h-3" />
+          <Send className="w-4 h-4" />
           Proposta
         </Button>
 
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 px-2 gap-1 text-orange-600 hover:text-orange-700 hover:bg-orange-50 text-[10px]"
+          className="h-9 px-2 gap-1.5 text-orange-600 hover:text-orange-700 hover:bg-orange-50 text-xs font-medium"
           onClick={handleFollowUp}
         >
-          <Clock className="w-3 h-3" />
+          <Clock className="w-4 h-4" />
           Follow-up
         </Button>
       </div>
 
       {/* Navigation arrows */}
-      <div className="flex items-center justify-between mt-1.5">
+      <div className="flex items-center justify-between mt-2">
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 w-6 p-0"
+          className="h-8 w-8 p-0"
           disabled={currentIdx === 0}
           onClick={(e) => {
             e.stopPropagation();
             onMove("prev");
           }}
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
+          <ChevronLeft className="w-4 h-4" />
         </Button>
-        <span className="text-[9px] text-muted-foreground">
+        <span className="text-[10px] text-muted-foreground font-medium">
           {KANBAN_COLUMNS[currentIdx]?.label}
         </span>
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 w-6 p-0"
+          className="h-8 w-8 p-0"
           disabled={currentIdx === KANBAN_COLUMNS.length - 1}
           onClick={(e) => {
             e.stopPropagation();
             onMove("next");
           }}
         >
-          <ChevronRight className="w-3.5 h-3.5" />
+          <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
     </div>

@@ -7,17 +7,12 @@ import LeadCard from "./LeadCard";
 
 export const KANBAN_COLUMNS = [
   { id: "novo", label: "Novo Lead", color: "bg-blue-500" },
-  { id: "chamado", label: "Chamado", color: "bg-sky-500" },
   { id: "respondeu", label: "Respondeu", color: "bg-yellow-500" },
   { id: "interessado", label: "Interessado", color: "bg-orange-500" },
-  { id: "em_negociacao", label: "Em Negociação", color: "bg-purple-500" },
   { id: "fechado", label: "Fechado", color: "bg-green-500" },
-  { id: "site_entregue", label: "Site Entregue", color: "bg-emerald-600" },
-  { id: "perdido", label: "Perdido", color: "bg-red-500" },
 ] as const;
 
 export type LeadStatus = (typeof KANBAN_COLUMNS)[number]["id"];
-
 
 export interface Lead {
   id: string;
@@ -43,9 +38,11 @@ export interface Lead {
 
 interface Props {
   leads: Lead[];
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
 }
 
-const KanbanBoard = ({ leads }: Props) => {
+const KanbanBoard = ({ leads, selectedIds, onToggleSelect }: Props) => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const queryClient = useQueryClient();
 
@@ -67,7 +64,7 @@ const KanbanBoard = ({ leads }: Props) => {
       if (lead.lead_status === "novo") {
         const { error } = await supabase
           .from("leads")
-          .update({ lead_status: "chamado", last_interaction: new Date().toISOString() } as any)
+          .update({ lead_status: "respondeu", last_interaction: new Date().toISOString() } as any)
           .eq("id", lead.id);
         if (error) throw error;
       }
@@ -94,13 +91,13 @@ const KanbanBoard = ({ leads }: Props) => {
 
   return (
     <>
-      {/* Desktop: horizontal scroll kanban */}
+      {/* Desktop: horizontal kanban */}
       <div className="hidden md:block overflow-x-auto pb-4">
-        <div className="flex gap-3 min-w-max">
+        <div className="grid grid-cols-4 gap-3">
           {KANBAN_COLUMNS.map((col) => {
             const colLeads = getColumnLeads(col.id);
             return (
-              <div key={col.id} className="w-[270px] shrink-0 bg-muted/50 rounded-lg border border-border">
+              <div key={col.id} className="bg-muted/50 rounded-lg border border-border">
                 <div className="p-3 border-b border-border flex items-center gap-2">
                   <div className={`w-2.5 h-2.5 rounded-full ${col.color}`} />
                   <h3 className="text-sm font-semibold text-foreground">{col.label}</h3>
@@ -111,6 +108,8 @@ const KanbanBoard = ({ leads }: Props) => {
                     <LeadCard
                       key={lead.id}
                       lead={lead}
+                      selected={selectedIds.has(lead.id)}
+                      onToggleSelect={() => onToggleSelect(lead.id)}
                       onSelect={() => setSelectedLead(lead)}
                       onMove={(dir) => moveLeadToColumn(lead, dir)}
                       onWhatsApp={() => handleWhatsApp(lead)}
@@ -140,6 +139,8 @@ const KanbanBoard = ({ leads }: Props) => {
                   <LeadCard
                     key={lead.id}
                     lead={lead}
+                    selected={selectedIds.has(lead.id)}
+                    onToggleSelect={() => onToggleSelect(lead.id)}
                     onSelect={() => setSelectedLead(lead)}
                     onMove={(dir) => moveLeadToColumn(lead, dir)}
                     onWhatsApp={() => handleWhatsApp(lead)}
