@@ -79,41 +79,41 @@ const LeadSiteConversion = () => {
 
       <main className="pt-[48px]">
         {/* Hero — Full impact, single CTA */}
-        <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[60vh] sm:min-h-[75vh] md:min-h-[90vh] flex items-center overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} em ${lead.city}`}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/75" />
-          <div className="relative z-10 px-4 sm:px-5 py-10 md:py-16 max-w-2xl mx-auto w-full text-center">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/45" />
+          <div className="relative z-10 px-4 sm:px-5 py-8 sm:py-10 md:py-16 max-w-2xl mx-auto w-full text-center">
             {/* Urgency pill */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-sm font-bold animate-pulse"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-4 sm:mb-6 text-xs sm:text-sm font-bold animate-pulse backdrop-blur-sm"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <Zap className="w-4 h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
+              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
             </div>
 
-            <h1 className="text-white font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4">
+            <h1 className="text-white font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-snug sm:leading-tight mb-3 sm:mb-4 drop-shadow-lg">
               {displayName}
             </h1>
 
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <MapPin className="w-4 h-4 text-green-400" />
-              <span className="text-white/90 font-medium">{lead.city}</span>
+            <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400" />
+              <span className="text-white/90 text-xs sm:text-sm font-medium drop-shadow">{lead.city}</span>
             </div>
 
-            <p className="text-white/80 text-base sm:text-lg md:text-xl mb-6 max-w-lg mx-auto leading-relaxed">
+            <p className="text-white/85 text-xs sm:text-base md:text-lg mb-4 sm:mb-6 max-w-lg mx-auto leading-relaxed drop-shadow">
               {content.heroSubtitle}
             </p>
 
             {/* Star rating */}
-            <div className="flex items-center justify-center gap-1 mb-8">
+            <div className="flex items-center justify-center gap-1 mb-5 sm:mb-8">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
               ))}
-              <span className="text-white/70 text-sm ml-2">{content.reviewCount || 50}+ avaliações</span>
+              <span className="text-white/70 text-[11px] sm:text-sm ml-2">{content.reviewCount || 50}+ avaliações</span>
             </div>
 
             {/* Primary CTA */}
@@ -121,13 +121,13 @@ const LeadSiteConversion = () => {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-xl font-bold rounded-xl shadow-2xl transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-8 md:px-10 py-3.5 sm:py-4 md:py-5 text-sm sm:text-base md:text-xl font-bold rounded-xl shadow-2xl transition-transform hover:scale-105"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <MessageCircle className="w-6 sm:w-7 h-6 sm:h-7" />
+              <MessageCircle className="w-5 sm:w-6 h-5 sm:h-6" />
               {content.ctaText.toUpperCase()}
             </a>
-            <p className="text-white/50 text-xs mt-4">⚡ Resposta em menos de 2 minutos</p>
+            <p className="text-white/50 text-[10px] sm:text-xs mt-3 sm:mt-4">⚡ Resposta em menos de 2 minutos</p>
           </div>
         </section>
 
