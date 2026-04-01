@@ -16,6 +16,7 @@ interface Props {
 const CrmDashboard = ({ leads }: Props) => {
   const today = new Date().toDateString();
   const leadsToday = leads.filter((l) => new Date(l.created_at).toDateString() === today).length;
+  const novo = leads.filter((l) => l.lead_status === "novo").length;
   const responded = leads.filter((l) => l.lead_status === "respondeu").length;
   const interested = leads.filter((l) => l.lead_status === "interessado").length;
   const closed = leads.filter((l) => l.lead_status === "fechado").length;
