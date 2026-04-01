@@ -25,7 +25,7 @@ const CrmDashboard = ({ leads }: Props) => {
     .reduce((sum, l) => sum + (l.service_value || 0), 0);
 
   const metrics = [
-    { label: "Leads hoje", value: leadsToday, icon: Users, color: "text-blue-500" },
+    { label: "Novos", value: novo, icon: Users, color: "text-blue-500" },
     { label: "Respondidos", value: responded, icon: MessageSquare, color: "text-yellow-500" },
     { label: "Interessados", value: interested, icon: Star, color: "text-orange-500" },
     { label: "Fechados", value: closed, icon: CheckCircle, color: "text-green-500" },
