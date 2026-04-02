@@ -411,17 +411,17 @@ const LeadSite = () => {
         </div>
       </footer>
 
-      {/* WhatsApp Float */}
+      {/* WhatsApp Float — safe mobile positioning */}
       <a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chamar no WhatsApp agora"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full shadow-lg transition-transform hover:scale-105 text-white font-semibold text-sm"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center w-14 h-14 sm:w-auto sm:h-auto sm:px-5 sm:py-3 rounded-full shadow-lg transition-transform hover:scale-105 text-white font-semibold text-sm"
         style={{ backgroundColor: "#25D366" }}
       >
-        <MessageCircle className="w-5 h-5" />
-        <span className="hidden sm:inline">Chamar no WhatsApp</span>
+        <MessageCircle className="w-6 h-6 sm:w-5 sm:h-5" />
+        <span className="hidden sm:inline ml-2">Chamar no WhatsApp</span>
       </a>
     </div>
   );
