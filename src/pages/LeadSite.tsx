@@ -114,10 +114,10 @@ const LeadSite = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.15)`, color: `hsl(${colors.accent})` }}>
-              📈 {content.salesStat}
+              ⭐ {content.salesStat}
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.15)`, color: `hsl(${colors.accent})` }}>
-              📍 Aumento de contatos pelo Google
+              📍 Atendimento em {lead.city}
             </div>
           </div>
           <p className="text-foreground font-medium text-sm mb-6">
