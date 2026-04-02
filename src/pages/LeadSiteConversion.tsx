@@ -80,7 +80,7 @@ const LeadSiteConversion = () => {
 
       <main>
         {/* Hero — Full impact, single CTA */}
-        <section className="relative min-h-[60vh] sm:min-h-[75vh] md:min-h-[90vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[55vh] sm:min-h-[70vh] md:min-h-[90vh] flex items-center overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} em ${lead.city}`}
