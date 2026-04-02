@@ -96,7 +96,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     e.stopPropagation();
     const url = getPublicLeadSiteUrl(lead.slug);
     const msg = encodeURIComponent(
-      `Olá! Sou da equipe Clientes no Google. Preparei uma demonstração do site da ${lead.company_name} para você conferir:\n\n${url}\n\nPosso te explicar como funciona?`
+      `Olá! Sou da equipe Clientes no Google. Preparei o site da ${lead.company_name} para você conferir:\n\n${url}\n\nPosso te explicar como funciona?`
     );
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
