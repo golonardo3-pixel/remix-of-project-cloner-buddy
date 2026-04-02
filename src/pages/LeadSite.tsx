@@ -82,29 +82,30 @@ const LeadSite = () => {
       style={nicheStyle}
       className="[--primary:var(--niche-primary)] [--primary-foreground:var(--niche-primary-fg)] [--accent:var(--niche-accent)] [--gold:var(--niche-accent)] [--secondary:var(--niche-secondary)]"
     >
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center justify-between px-4 sm:px-5 py-3 max-w-5xl mx-auto">
-          <h1 className="font-display text-base sm:text-xl font-semibold tracking-tight text-foreground truncate mr-2">
+      {/* Demo Banner — static, not fixed */}
+      <div className="bg-amber-500 text-white text-center py-2 px-4 text-xs sm:text-sm font-medium">
+        Este site é uma demonstração para este negócio
+      </div>
+
+      {/* Header — fixed below nothing, clean z-index */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-2.5 sm:py-3 max-w-5xl mx-auto">
+          <h1 className="font-display text-sm sm:text-xl font-semibold tracking-tight text-foreground truncate mr-2">
             {displayName}
           </h1>
           <a
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded transition-colors shrink-0"
             style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}
           >
             <MessageCircle className="w-4 h-4" />
-            {content.ctaText}
+            <span className="hidden sm:inline">{content.ctaText}</span>
+            <span className="sm:hidden">WhatsApp</span>
           </a>
         </div>
       </header>
-
-      {/* Demo Banner */}
-      <div className="bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium">
-        Este site é uma demonstração para este negócio
-      </div>
 
       {/* Sales Pitch Section */}
       <section className="py-10 md:py-14 px-4 sm:px-5 text-center" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
@@ -139,9 +140,9 @@ const LeadSite = () => {
         </div>
       </section>
 
-      <main className="pt-0">
+      <main>
         {/* Hero */}
-        <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex items-end overflow-hidden">
+        <section className="relative min-h-[50vh] sm:min-h-[65vh] md:min-h-[80vh] flex items-end overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
@@ -410,17 +411,17 @@ const LeadSite = () => {
         </div>
       </footer>
 
-      {/* WhatsApp Float */}
+      {/* WhatsApp Float — safe mobile positioning */}
       <a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chamar no WhatsApp agora"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full shadow-lg transition-transform hover:scale-105 text-white font-semibold text-sm"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center w-14 h-14 sm:w-auto sm:h-auto sm:px-5 sm:py-3 rounded-full shadow-lg transition-transform hover:scale-105 text-white font-semibold text-sm"
         style={{ backgroundColor: "#25D366" }}
       >
-        <MessageCircle className="w-5 h-5" />
-        <span className="hidden sm:inline">Chamar no WhatsApp</span>
+        <MessageCircle className="w-6 h-6 sm:w-5 sm:h-5" />
+        <span className="hidden sm:inline ml-2">Chamar no WhatsApp</span>
       </a>
     </div>
   );

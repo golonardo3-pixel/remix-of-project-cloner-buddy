@@ -61,25 +61,26 @@ const LeadSiteConversion = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Demo Banner */}
-      <div className="bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium">
+      <div className="bg-amber-500 text-white text-center py-2 px-4 text-xs sm:text-sm font-medium">
         Este site é uma demonstração para este negócio
       </div>
       {/* Sticky WhatsApp Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 shadow-md" style={{ backgroundColor: "#25D366" }}>
+      <header className="sticky top-0 z-50 shadow-md" style={{ backgroundColor: "#25D366" }}>
         <a
           href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 px-4 py-3 text-white font-bold text-sm md:text-base"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-white font-bold text-xs sm:text-sm md:text-base"
         >
-          <MessageCircle className="w-5 h-5" />
-          📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar
+          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar</span>
+          <span className="sm:hidden">📲 FALAR AGORA</span>
         </a>
       </header>
 
-      <main className="pt-[48px]">
+      <main>
         {/* Hero — Full impact, single CTA */}
-        <section className="relative min-h-[60vh] sm:min-h-[75vh] md:min-h-[90vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[55vh] sm:min-h-[70vh] md:min-h-[90vh] flex items-center overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} em ${lead.city}`}
@@ -278,17 +279,17 @@ const LeadSiteConversion = () => {
         </p>
       </footer>
 
-      {/* Floating WhatsApp FAB */}
+      {/* Floating WhatsApp FAB — compact on mobile, no bounce to avoid distraction */}
       <a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chamar no WhatsApp agora"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full shadow-2xl transition-transform hover:scale-110 text-white font-bold text-sm animate-bounce"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center w-14 h-14 sm:w-auto sm:h-auto sm:px-5 sm:py-3 rounded-full shadow-2xl transition-transform hover:scale-110 text-white font-bold text-sm"
         style={{ backgroundColor: "#25D366" }}
       >
-        <MessageCircle className="w-5 h-5" />
-        <span className="hidden sm:inline">WhatsApp</span>
+        <MessageCircle className="w-6 h-6 sm:w-5 sm:h-5" />
+        <span className="hidden sm:inline ml-2">WhatsApp</span>
       </a>
     </div>
   );
