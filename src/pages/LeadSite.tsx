@@ -82,29 +82,30 @@ const LeadSite = () => {
       style={nicheStyle}
       className="[--primary:var(--niche-primary)] [--primary-foreground:var(--niche-primary-fg)] [--accent:var(--niche-accent)] [--gold:var(--niche-accent)] [--secondary:var(--niche-secondary)]"
     >
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center justify-between px-4 sm:px-5 py-3 max-w-5xl mx-auto">
-          <h1 className="font-display text-base sm:text-xl font-semibold tracking-tight text-foreground truncate mr-2">
+      {/* Demo Banner — static, not fixed */}
+      <div className="bg-amber-500 text-white text-center py-2 px-4 text-xs sm:text-sm font-medium">
+        Este site é uma demonstração para este negócio
+      </div>
+
+      {/* Header — fixed below nothing, clean z-index */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-2.5 sm:py-3 max-w-5xl mx-auto">
+          <h1 className="font-display text-sm sm:text-xl font-semibold tracking-tight text-foreground truncate mr-2">
             {displayName}
           </h1>
           <a
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded transition-colors shrink-0"
             style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}
           >
             <MessageCircle className="w-4 h-4" />
-            {content.ctaText}
+            <span className="hidden sm:inline">{content.ctaText}</span>
+            <span className="sm:hidden">WhatsApp</span>
           </a>
         </div>
       </header>
-
-      {/* Demo Banner */}
-      <div className="bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium">
-        Este site é uma demonstração para este negócio
-      </div>
 
       {/* Sales Pitch Section */}
       <section className="py-10 md:py-14 px-4 sm:px-5 text-center" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
