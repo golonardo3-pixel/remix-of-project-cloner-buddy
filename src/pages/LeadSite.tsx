@@ -140,9 +140,9 @@ const LeadSite = () => {
         </div>
       </section>
 
-      <main className="pt-0">
+      <main>
         {/* Hero */}
-        <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex items-end overflow-hidden">
+        <section className="relative min-h-[50vh] sm:min-h-[65vh] md:min-h-[80vh] flex items-end overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
