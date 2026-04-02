@@ -271,7 +271,7 @@ const LeadSiteConversion = () => {
       {/* Mini footer */}
       <footer className="py-8 px-5 text-center" style={{ backgroundColor: `hsl(${colors.primary})` }}>
         <p className="text-xs" style={{ color: `hsl(${colors.primaryForeground} / 0.5)` }}>
-          © {new Date().getFullYear()} {displayName} · {lead.city} · Versão Conversão WhatsApp
+          © {new Date().getFullYear()} {displayName} · {lead.city}
         </p>
       </footer>
 

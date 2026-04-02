@@ -82,10 +82,6 @@ const LeadSite = () => {
       style={nicheStyle}
       className="[--primary:var(--niche-primary)] [--primary-foreground:var(--niche-primary-fg)] [--accent:var(--niche-accent)] [--gold:var(--niche-accent)] [--secondary:var(--niche-secondary)]"
     >
-      {/* Demo Banner — static, not fixed */}
-      <div className="bg-amber-500 text-white text-center py-2 px-4 text-xs sm:text-sm font-medium">
-        Este site é uma demonstração para este negócio
-      </div>
 
       {/* Header — fixed below nothing, clean z-index */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">

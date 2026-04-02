@@ -104,7 +104,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
   const handleFollowUp = (e: React.MouseEvent) => {
     e.stopPropagation();
     const msg = encodeURIComponent(
-      `Olá! Tudo bem? Estou passando para saber se conseguiu ver a demonstração do site da ${lead.company_name}. Posso te ajudar com algo?`
+      `Olá! Tudo bem? Estou passando para saber se conseguiu ver o site da ${lead.company_name}. Posso te ajudar com algo?`
     );
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
