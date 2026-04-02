@@ -61,23 +61,24 @@ const LeadSiteConversion = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Demo Banner */}
-      <div className="bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium">
+      <div className="bg-amber-500 text-white text-center py-2 px-4 text-xs sm:text-sm font-medium">
         Este site é uma demonstração para este negócio
       </div>
       {/* Sticky WhatsApp Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 shadow-md" style={{ backgroundColor: "#25D366" }}>
+      <header className="sticky top-0 z-50 shadow-md" style={{ backgroundColor: "#25D366" }}>
         <a
           href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 px-4 py-3 text-white font-bold text-sm md:text-base"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-white font-bold text-xs sm:text-sm md:text-base"
         >
-          <MessageCircle className="w-5 h-5" />
-          📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar
+          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar</span>
+          <span className="sm:hidden">📲 FALAR AGORA</span>
         </a>
       </header>
 
-      <main className="pt-[48px]">
+      <main>
         {/* Hero — Full impact, single CTA */}
         <section className="relative min-h-[60vh] sm:min-h-[75vh] md:min-h-[90vh] flex items-center overflow-hidden">
           <img
