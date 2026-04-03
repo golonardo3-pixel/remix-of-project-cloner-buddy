@@ -92,20 +92,33 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     }
   };
 
+  const proposalMessages = [
+    `Oi, tudo bem? 😊\n\nSou o Hugo aqui de Campinas.\n\nVi seu negócio no Google e notei que vocês já atendem bem, mas pode dar pra receber mais chamados direto no WhatsApp.\n\nMontei um modelo simples pra você ver como ficaria, quer que eu te mostre?`,
+    `Oi! Tudo certo? 😊\n\nMe chamo Hugo, sou aqui de Campinas.\n\nEstava pesquisando no Google e encontrei a ${lead.company_name}. Vi que vocês têm ótimas avaliações!\n\nFiz uma página rápida que pode ajudar a trazer mais clientes pelo WhatsApp. Posso te mandar o link pra dar uma olhada?`,
+    `Olá! Tudo bem? 😊\n\nAqui é o Hugo, de Campinas.\n\nEncontrei a ${lead.company_name} no Google e achei o trabalho de vocês muito bom.\n\nTenho uma ideia simples que pode ajudar a receber mais contatos. Posso te mostrar rapidinho?`,
+    `Oi! 😊\n\nSou o Hugo, aqui de Campinas.\n\nVi a ${lead.company_name} no Google e percebi que vocês são bem avaliados na região.\n\nCriei um modelo de página que pode facilitar o contato dos clientes com vocês. Quer dar uma olhada?`,
+    `E aí, tudo bem? 😊\n\nHugo aqui, de Campinas.\n\nVi a ${lead.company_name} no Google e curti bastante. Vocês têm uma boa reputação!\n\nFiz algo simples que pode ajudar a trazer mais movimento. Te mando pra você ver?`,
+    `Oi, tudo certo? 😊\n\nMe chamo Hugo, sou de Campinas.\n\nPesquisando aqui na região encontrei a ${lead.company_name} e vi que o pessoal fala muito bem de vocês.\n\nMontei uma coisa rápida que acho que pode te interessar. Posso compartilhar?`,
+  ];
+
+  const followUpMessages = [
+    `Oi! Tudo bem? 😊\n\nHugo aqui. Te mandei uma mensagem uns dias atrás sobre a ${lead.company_name}.\n\nConseguiu dar uma olhada? Se quiser posso te explicar rapidinho como funciona.`,
+    `E aí, tudo certo? 😊\n\nSou o Hugo, te mandei uma mensagem recentemente.\n\nSó passando pra saber se viu aquele modelo que fiz pra ${lead.company_name}. Quer que eu te mostre?`,
+    `Oi! Hugo aqui 😊\n\nTe escrevi uns dias atrás sobre algo que montei pra ${lead.company_name}.\n\nAinda tem interesse em dar uma olhada? É rapidinho!`,
+  ];
+
   const handleSendProposal = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = getPublicLeadSiteUrl(lead.slug);
-    const msg = encodeURIComponent(
-      `Olá! Sou da equipe Clientes no Google. Preparei o site da ${lead.company_name} para você conferir:\n\n${url}\n\nPosso te explicar como funciona?`
-    );
+    const template = proposalMessages[Math.floor(Math.random() * proposalMessages.length)];
+    const msg = encodeURIComponent(template);
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
 
   const handleFollowUp = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const msg = encodeURIComponent(
-      `Olá! Tudo bem? Estou passando para saber se conseguiu ver o site da ${lead.company_name}. Posso te ajudar com algo?`
-    );
+    const template = followUpMessages[Math.floor(Math.random() * followUpMessages.length)];
+    const msg = encodeURIComponent(template);
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
 
