@@ -49,13 +49,11 @@ const LeadSite = () => {
   const content = getNicheContent(lead.niche, lead.city, displayName);
   const colors = getNicheColors(lead.niche);
 
-  // Get gallery: uploaded photos first, then niche stock (shuffled by slug)
   const gallery = getGalleryImages(lead.niche, lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
   const generatedReviews = generateReviews(lead.niche, lead.slug);
   
-  // Use Google Maps URL from lead if available, otherwise generate
   const hasGoogleMapsUrl = lead.google_maps_url;
   const mapsQuery = encodeURIComponent(`${displayName} ${lead.city}`);
   const mapsEmbedUrl = hasGoogleMapsUrl
@@ -64,12 +62,10 @@ const LeadSite = () => {
   const mapsLink = hasGoogleMapsUrl || `https://www.google.com/maps/search/${mapsQuery}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(mapsLink)}`;
 
-  // Use custom services if provided
   const displayServices = lead.services_list && lead.services_list.length > 0
     ? lead.services_list.map((s: string) => ({ title: s, desc: `Serviço profissional de qualidade em ${lead.city}. Chame no WhatsApp para saber mais.` }))
     : content.services;
 
-  // Dynamic niche color CSS variables
   const nicheStyle = {
     "--niche-primary": colors.primary,
     "--niche-primary-fg": colors.primaryForeground,
@@ -83,62 +79,36 @@ const LeadSite = () => {
       className="[--primary:var(--niche-primary)] [--primary-foreground:var(--niche-primary-fg)] [--accent:var(--niche-accent)] [--gold:var(--niche-accent)] [--secondary:var(--niche-secondary)]"
     >
 
-      {/* Header — fixed below nothing, clean z-index */}
+      {/* Header — clean, name only */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center justify-between px-4 sm:px-5 py-2.5 sm:py-3 max-w-5xl mx-auto">
-          <h1 className="font-display text-sm sm:text-xl font-semibold tracking-tight text-foreground truncate mr-2">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 max-w-5xl mx-auto">
+          <h1 className="font-display text-base sm:text-xl font-semibold tracking-tight text-foreground">
             {displayName}
           </h1>
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded transition-colors shrink-0"
-            style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">{content.ctaText}</span>
-            <span className="sm:hidden">WhatsApp</span>
-          </a>
+          <div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
+              {lead.city}
+            </span>
+            {lead.instagram && (
+              <a
+                href={`https://instagram.com/${lead.instagram.replace("@", "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                style={{ color: `hsl(${colors.accent})` }}
+              >
+                <Instagram className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{lead.instagram}</span>
+              </a>
+            )}
+          </div>
         </div>
       </header>
 
-      {/* Sales Pitch Section */}
-      <section className="py-10 md:py-14 px-4 sm:px-5 text-center" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
-        <div className="max-w-3xl mx-auto">
-          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-foreground leading-tight">
-            {content.salesHeadline}
-          </h2>
-          <p className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6">
-            {content.salesSubheadline}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.15)`, color: `hsl(${colors.accent})` }}>
-              ⭐ {content.salesStat}
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: `hsl(${colors.accent} / 0.15)`, color: `hsl(${colors.accent})` }}>
-              📍 Atendimento em {lead.city}
-            </div>
-          </div>
-          <p className="text-foreground font-medium text-sm mb-6">
-            ✅ {content.salesBenefit}
-          </p>
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 text-base md:text-lg font-bold rounded-lg transition-all hover:brightness-110 shadow-xl uppercase tracking-wide"
-            style={{ backgroundColor: "#25D366", color: "#fff" }}
-          >
-            <MessageCircle className="w-5 h-5" />
-            CHAMAR NO WHATSAPP
-          </a>
-        </div>
-      </section>
-
       <main>
-        {/* Hero */}
-        <section className="relative min-h-[50vh] sm:min-h-[65vh] md:min-h-[80vh] flex items-end overflow-hidden">
+        {/* Hero — single primary CTA */}
+        <section className="relative min-h-[55vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden">
           <img
             src={content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
@@ -146,48 +116,44 @@ const LeadSite = () => {
             width={1280}
             height={832}
           />
-          {/* Dark overlay — strong gradient for mobile readability */}
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/95 via-black/70 to-black/40" />
-          <div className="relative z-[2] px-4 sm:px-5 pb-8 pt-16 sm:pb-10 md:pb-24 max-w-5xl mx-auto w-full">
-            <div className="w-10 sm:w-12 md:w-16 h-0.5 mb-3 sm:mb-4 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
-            <h2 className="font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl font-semibold leading-snug sm:leading-tight mb-2 sm:mb-3 md:mb-4 text-white drop-shadow-lg">
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+          <div className="relative z-[2] px-4 sm:px-5 pb-10 pt-20 sm:pb-14 md:pb-24 max-w-5xl mx-auto w-full">
+            <div className="w-10 sm:w-12 md:w-16 h-0.5 mb-4 sm:mb-5 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-snug sm:leading-tight mb-3 sm:mb-4 text-white drop-shadow-lg">
               {content.heroTitle}
             </h2>
-            <div className="flex items-center gap-2 mb-2 sm:mb-3 md:mb-5">
-              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: `hsl(${colors.accent})` }} />
-              <span className="text-white/85 text-xs sm:text-sm font-medium drop-shadow">{lead.city}</span>
-            </div>
-            <p className="text-white/85 text-xs sm:text-sm md:text-base max-w-md mb-3 sm:mb-4 md:mb-6 font-body leading-relaxed drop-shadow">
+            <p className="text-white/80 text-sm sm:text-base md:text-lg max-w-lg mb-3 sm:mb-4 font-body leading-relaxed drop-shadow">
               {content.heroSubtitle}
             </p>
-            {/* Urgency badge */}
-            <div className="inline-block px-3 py-1.5 md:px-4 md:py-2 rounded-full mb-4 sm:mb-6 md:mb-8 text-[11px] sm:text-xs md:text-sm font-semibold animate-pulse backdrop-blur-sm" style={{ backgroundColor: `hsl(${colors.accent} / 0.25)`, color: `hsl(${colors.accent})` }}>
-              {content.urgencyBadge}
+            <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
+                <Star className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
+                {content.salesStat}
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
+                <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
+                {lead.city}
+              </span>
             </div>
-            <div>
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 sm:px-6 md:px-8 py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold rounded transition-all hover:brightness-110 shadow-lg"
-                style={{ backgroundColor: "#25D366", color: "#fff" }}
-              >
-                <MessageCircle className="w-5 h-5" />
-                {content.ctaText}
-              </a>
-            </div>
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-semibold rounded-lg transition-all hover:brightness-110 shadow-lg"
+              style={{ backgroundColor: "#25D366", color: "#fff" }}
+            >
+              <MessageCircle className="w-5 h-5" />
+              {content.ctaText}
+            </a>
           </div>
         </section>
 
-        {/* Social Proof - right after hero for max conversion */}
-        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} salesStat={content.salesStat} />
-
         {/* Benefits Strip */}
-        <section className="py-8 md:py-10" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+        <section className="py-6 md:py-8" style={{ backgroundColor: `hsl(${colors.primary})` }}>
           <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {content.benefits.map((benefit, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm font-medium" style={{ color: `hsl(${colors.primaryForeground})` }}>
+                <div key={i} className="flex items-center gap-2 text-xs sm:text-sm font-medium" style={{ color: `hsl(${colors.primaryForeground})` }}>
                   <span style={{ color: `hsl(${colors.accent})` }}>✓</span>
                   {benefit}
                 </div>
@@ -196,25 +162,18 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Social Proof */}
+        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} salesStat={content.salesStat} />
+
         {/* About */}
         <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.aboutLabel}</p>
             <h2 className="salon-heading mb-5 whitespace-pre-line">{content.aboutHeading}</h2>
             <div className="w-16 h-0.5 mx-auto mb-8" style={{ backgroundColor: `hsl(${colors.accent})` }} />
-            <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-8">
+            <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
               {lead.description || content.aboutText}
             </p>
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded transition-all hover:brightness-110 shadow-lg"
-              style={{ backgroundColor: "#25D366", color: "#fff" }}
-            >
-              <MessageCircle className="w-5 h-5" />
-              {content.ctaText}
-            </a>
           </div>
         </section>
 
@@ -243,16 +202,6 @@ const LeadSite = () => {
             </div>
           </div>
         </section>
-
-        {/* Urgency Strip */}
-        <section className="py-8 md:py-10 text-center" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-          <div className="px-4 sm:px-5 max-w-3xl mx-auto">
-            <p className="text-sm md:text-base font-semibold animate-pulse" style={{ color: `hsl(${colors.primaryForeground})` }}>
-              🔥 {content.salesUrgency}
-            </p>
-          </div>
-        </section>
-
 
         {/* Contact Form */}
         <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
@@ -336,23 +285,22 @@ const LeadSite = () => {
         </section>
 
         {/* Final CTA */}
-        <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
+        <section className="py-14 md:py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
           <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto text-center">
-            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold mb-5" style={{ color: `hsl(${colors.primaryForeground})` }}>
-              Fale com {displayName}
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold mb-4" style={{ color: `hsl(${colors.primaryForeground})` }}>
+              Entre em contato
             </h2>
-            <p className="text-base md:text-lg max-w-md mx-auto mb-10 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
-              Não espere mais. Chame agora e seja atendido em {lead.city} e região.
-              {lead.niche === "baterias" ? " Bateria na sua porta com instalação no local e garantia." : ` Cada minuto que você espera é um minuto perdido.`}
+            <p className="text-sm md:text-base max-w-md mx-auto mb-8 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
+              Atendimento profissional em {lead.city} e região. Fale conosco pelo WhatsApp.
             </p>
             <a
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-10 py-5 text-lg font-semibold rounded-lg transition-all hover:brightness-110 shadow-xl"
+              className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-lg transition-all hover:brightness-110 shadow-lg"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <MessageCircle className="w-6 h-6" />
+              <MessageCircle className="w-5 h-5" />
               {content.ctaText}
             </a>
           </div>
@@ -407,17 +355,16 @@ const LeadSite = () => {
         </div>
       </footer>
 
-      {/* WhatsApp Float — safe mobile positioning */}
+      {/* WhatsApp Float — only floating button */}
       <a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chamar no WhatsApp agora"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center w-14 h-14 sm:w-auto sm:h-auto sm:px-5 sm:py-3 rounded-full shadow-lg transition-transform hover:scale-105 text-white font-semibold text-sm"
+        className="fixed bottom-5 right-5 z-40 flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-transform hover:scale-105 text-white"
         style={{ backgroundColor: "#25D366" }}
       >
-        <MessageCircle className="w-6 h-6 sm:w-5 sm:h-5" />
-        <span className="hidden sm:inline ml-2">Chamar no WhatsApp</span>
+        <MessageCircle className="w-6 h-6" />
       </a>
     </div>
   );
