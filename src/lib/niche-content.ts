@@ -594,7 +594,7 @@ const defaultTemplate: NicheTemplate = {
   urgencyBadge: (city) => `⚡ Atendimento disponível agora em ${city}`,
   aboutLabel: "Por que agir agora?",
   aboutHeading: "Quanto mais você espera,\nmais difícil fica",
-  aboutText: (city, company) => `A ${company} é referência em ${city}. Atendimento rápido, profissionais preparados e resultado comprovado. Dezenas de clientes satisfeitos confiam na gente em ${city} e região. Chame agora no WhatsApp e resolva hoje.`,
+  aboutText: (city, company) => `A ${company} é referência em ${city}. Atendimento rápido, profissionais preparados e resultado comprovado. Chame agora no WhatsApp e resolva hoje.`,
   benefits: [
     "Atendimento imediato sem espera",
     "Equipe preparada e experiente",
