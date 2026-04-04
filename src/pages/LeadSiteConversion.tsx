@@ -55,7 +55,7 @@ const LeadSiteConversion = () => {
     { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
     { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
     { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
-    { icon: CheckCircle, title: "Resultado Comprovado", desc: `+${content.reviewCount || 50} clientes resolveram aqui` },
+    { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
   ];
 
   return (
