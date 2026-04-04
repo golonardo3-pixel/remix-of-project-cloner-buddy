@@ -332,6 +332,17 @@ const nicheColorMap: Record<string, NicheColors> = {
   "contabilidade": { primary: "210 20% 18%", primaryForeground: "210 15% 97%", accent: "210 50% 50%", secondary: "210 10% 95%" },
   "manicure": { primary: "340 25% 20%", primaryForeground: "340 15% 97%", accent: "340 50% 60%", secondary: "340 12% 95%" },
   "advogado": { primary: "220 25% 15%", primaryForeground: "220 15% 97%", accent: "38 50% 45%", secondary: "220 10% 94%" },
+  "chaveiro": { primary: "40 20% 18%", primaryForeground: "40 15% 97%", accent: "40 60% 50%", secondary: "40 10% 94%" },
+  "marido de aluguel": { primary: "25 20% 18%", primaryForeground: "25 15% 97%", accent: "25 55% 50%", secondary: "25 10% 94%" },
+  "nutricionista": { primary: "145 20% 20%", primaryForeground: "145 15% 97%", accent: "145 45% 45%", secondary: "145 12% 95%" },
+  "pintor": { primary: "200 20% 18%", primaryForeground: "200 15% 97%", accent: "35 60% 50%", secondary: "200 10% 94%" },
+  "eletricista": { primary: "45 25% 18%", primaryForeground: "45 15% 97%", accent: "45 70% 50%", secondary: "45 10% 94%" },
+  "encanador": { primary: "210 25% 18%", primaryForeground: "210 15% 97%", accent: "210 55% 50%", secondary: "210 10% 94%" },
+  "auto elétrica": { primary: "0 50% 22%", primaryForeground: "0 15% 97%", accent: "45 80% 50%", secondary: "0 10% 93%" },
+  "massagista": { primary: "280 15% 20%", primaryForeground: "280 12% 97%", accent: "280 40% 55%", secondary: "280 10% 95%" },
+  "desentupidora": { primary: "210 20% 16%", primaryForeground: "210 15% 97%", accent: "30 60% 50%", secondary: "210 10% 93%" },
+  "guincho": { primary: "220 18% 16%", primaryForeground: "220 15% 97%", accent: "40 70% 50%", secondary: "220 10% 93%" },
+  "funilaria": { primary: "0 15% 16%", primaryForeground: "0 10% 97%", accent: "0 50% 50%", secondary: "0 8% 94%" },
 };
 
 const defaultColors: NicheColors = {

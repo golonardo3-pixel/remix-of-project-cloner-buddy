@@ -60,18 +60,17 @@ const LeadSiteConversion = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Sticky WhatsApp Bar */}
-      <header className="sticky top-0 z-50 shadow-md" style={{ backgroundColor: "#25D366" }}>
-        <a
-          href={whatsappLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 text-white font-bold text-xs sm:text-sm md:text-base"
-        >
-          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span className="hidden sm:inline">📲 FALAR COM ATENDIMENTO AGORA – Não espere piorar</span>
-          <span className="sm:hidden">📲 FALAR AGORA</span>
-        </a>
+      {/* Header — clean, name only */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 max-w-5xl mx-auto">
+          <h1 className="font-display text-base sm:text-xl font-semibold tracking-tight text-foreground">
+            {displayName}
+          </h1>
+          <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5 text-green-500" />
+            {lead.city}
+          </span>
+        </div>
       </header>
 
       <main>
