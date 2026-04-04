@@ -341,7 +341,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     urgencyBadge: (city) => `⚡ Entrega rápida disponível em ${city}`,
     aboutLabel: "Por que pedir aqui?",
     aboutHeading: "Comida de verdade,\nnão comida de delivery",
-    aboutText: (city, company) => `Cansado de comida sem gosto e porção miserável? O ${company} faz comida fresca, com tempero de verdade e porção que alimenta. Mais de 150 clientes satisfeitos por mês em ${city}. Peça agora pelo WhatsApp.`,
+    aboutText: (city, company) => `Cansado de comida sem gosto e porção miserável? O ${company} faz comida fresca, com tempero de verdade e porção que alimenta. Peça agora pelo WhatsApp em ${city}.`,
     benefits: [
       "Comida fresca feita na hora",
       "Porções generosas de verdade",
@@ -594,7 +594,7 @@ const defaultTemplate: NicheTemplate = {
   urgencyBadge: (city) => `⚡ Atendimento disponível agora em ${city}`,
   aboutLabel: "Por que agir agora?",
   aboutHeading: "Quanto mais você espera,\nmais difícil fica",
-  aboutText: (city, company) => `A ${company} é referência em ${city}. Atendimento rápido, profissionais preparados e resultado comprovado. Dezenas de clientes satisfeitos confiam na gente em ${city} e região. Chame agora no WhatsApp e resolva hoje.`,
+  aboutText: (city, company) => `A ${company} é referência em ${city}. Atendimento rápido, profissionais preparados e resultado comprovado. Chame agora no WhatsApp e resolva hoje.`,
   benefits: [
     "Atendimento imediato sem espera",
     "Equipe preparada e experiente",
@@ -655,9 +655,9 @@ export function getNicheContent(niche: string, city: string = "", companyName: s
     galleryHeading: template.galleryHeading,
     salesHeadline: template.salesHeadline || `${company} – Qualidade e confiança em ${cityName}`,
     salesSubheadline: template.salesSubheadline?.(cityName) || `Atendimento profissional em ${cityName} com qualidade e atenção em cada detalhe`,
-    salesStat: template.salesStat || `Mais de ${template.reviewCount || 50}+ clientes satisfeitos`,
-    salesUrgency: template.salesUrgency?.(cityName) || `Referência em atendimento na região de ${cityName}`,
-    salesBenefit: template.salesBenefit || "Atendimento personalizado com foco no seu resultado",
+    salesStat: template.salesStat || `Atendimento profissional em ${cityName}`,
+    salesUrgency: template.salesUrgency?.(cityName) || `Serviço de confiança em ${cityName}`,
+    salesBenefit: template.salesBenefit || "Atendimento no local com garantia de serviço",
   };
 }
 

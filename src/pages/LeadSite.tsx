@@ -127,10 +127,6 @@ const LeadSite = () => {
             </p>
             <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
-                <Star className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
-                {content.salesStat}
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
                 <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
                 {lead.city}
               </span>
@@ -163,7 +159,7 @@ const LeadSite = () => {
         </section>
 
         {/* Social Proof */}
-        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} salesStat={content.salesStat} />
+        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
 
         {/* About */}
         <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">

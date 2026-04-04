@@ -55,7 +55,7 @@ const LeadSiteConversion = () => {
     { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
     { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
     { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
-    { icon: CheckCircle, title: "Resultado Comprovado", desc: `+${content.reviewCount || 50} clientes resolveram aqui` },
+    { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
   ];
 
   return (
@@ -110,7 +110,6 @@ const LeadSiteConversion = () => {
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
               ))}
-              <span className="text-white/70 text-[11px] sm:text-sm ml-2">{content.reviewCount || 50}+ avaliações</span>
             </div>
 
             {/* Primary CTA */}
