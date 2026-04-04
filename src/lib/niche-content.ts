@@ -655,9 +655,9 @@ export function getNicheContent(niche: string, city: string = "", companyName: s
     galleryHeading: template.galleryHeading,
     salesHeadline: template.salesHeadline || `${company} – Qualidade e confiança em ${cityName}`,
     salesSubheadline: template.salesSubheadline?.(cityName) || `Atendimento profissional em ${cityName} com qualidade e atenção em cada detalhe`,
-    salesStat: template.salesStat || `Mais de ${template.reviewCount || 50}+ clientes satisfeitos`,
-    salesUrgency: template.salesUrgency?.(cityName) || `Referência em atendimento na região de ${cityName}`,
-    salesBenefit: template.salesBenefit || "Atendimento personalizado com foco no seu resultado",
+    salesStat: template.salesStat || `Atendimento profissional em ${cityName}`,
+    salesUrgency: template.salesUrgency?.(cityName) || `Serviço de confiança em ${cityName}`,
+    salesBenefit: template.salesBenefit || "Atendimento no local com garantia de serviço",
   };
 }
 

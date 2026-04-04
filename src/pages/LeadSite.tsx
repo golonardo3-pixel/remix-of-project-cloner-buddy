@@ -159,7 +159,7 @@ const LeadSite = () => {
         </section>
 
         {/* Social Proof */}
-        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} salesStat={content.salesStat} />
+        <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
 
         {/* About */}
         <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
