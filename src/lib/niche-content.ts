@@ -341,7 +341,7 @@ const nicheTemplateMap: Record<string, NicheTemplate> = {
     urgencyBadge: (city) => `⚡ Entrega rápida disponível em ${city}`,
     aboutLabel: "Por que pedir aqui?",
     aboutHeading: "Comida de verdade,\nnão comida de delivery",
-    aboutText: (city, company) => `Cansado de comida sem gosto e porção miserável? O ${company} faz comida fresca, com tempero de verdade e porção que alimenta. Mais de 150 clientes satisfeitos por mês em ${city}. Peça agora pelo WhatsApp.`,
+    aboutText: (city, company) => `Cansado de comida sem gosto e porção miserável? O ${company} faz comida fresca, com tempero de verdade e porção que alimenta. Peça agora pelo WhatsApp em ${city}.`,
     benefits: [
       "Comida fresca feita na hora",
       "Porções generosas de verdade",
