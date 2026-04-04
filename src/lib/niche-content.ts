@@ -1016,6 +1016,17 @@ const nicheNamePatterns: Record<string, (name: string) => string> = {
   "contabilidade": (name) => `${name} Contabilidade`,
   "manicure": (name) => `${name} Nail Designer`,
   "advogado": (name) => `${name} Advocacia`,
+  "chaveiro": (name) => `${name} Chaveiro`,
+  "marido de aluguel": (name) => `${name} Reparos`,
+  "nutricionista": (name) => `${name} Nutrição`,
+  "pintor": (name) => `${name} Pinturas`,
+  "eletricista": (name) => `${name} Elétrica`,
+  "encanador": (name) => `${name} Hidráulica`,
+  "auto elétrica": (name) => `${name} Auto Elétrica`,
+  "massagista": (name) => `${name} Massoterapia`,
+  "desentupidora": (name) => `${name} Desentupidora`,
+  "guincho": (name) => `${name} Guincho`,
+  "funilaria": (name) => `${name} Funilaria`,
 };
 
 const professionalSuffixes = [
