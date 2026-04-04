@@ -33,9 +33,6 @@ const LeadSiteSocialProof = ({ reviews, colors }: LeadSiteSocialProofProps) => {
               style={{ fill: `hsl(${colors.accent})`, color: `hsl(${colors.accent})` }}
             />
           ))}
-          <span className="text-muted-foreground text-sm font-medium ml-2">
-            5.0 no Google
-          </span>
         </div>
       </div>
 
