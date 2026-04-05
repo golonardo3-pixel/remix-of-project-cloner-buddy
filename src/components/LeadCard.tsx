@@ -288,7 +288,29 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
         </Button>
       </div>
 
-      {/* Navigation arrows */}
+      {/* Edit / Duplicate — only when site exists */}
+      {siteExists && (
+        <div className="grid grid-cols-2 gap-1.5 mt-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 text-xs font-medium"
+            onClick={handleEditSite}
+          >
+            <Pencil className="w-4 h-4" />
+            Editar Site
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-slate-600 hover:text-slate-700 hover:bg-slate-50 text-xs font-medium"
+            onClick={handleDuplicate}
+          >
+            <Copy className="w-4 h-4" />
+            Duplicar
+          </Button>
+        </div>
+      )}
       <div className="flex items-center justify-between mt-2">
         <Button
           variant="ghost"
