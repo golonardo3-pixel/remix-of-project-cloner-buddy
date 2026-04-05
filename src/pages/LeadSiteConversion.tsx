@@ -110,7 +110,7 @@ const LeadSiteConversion = () => {
               className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-4 sm:mb-6 text-xs sm:text-sm font-bold animate-pulse backdrop-blur-sm"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
+              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {urgencyBadge}
             </div>
 
             <h1 className="text-white font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-snug sm:leading-tight mb-3 sm:mb-4 drop-shadow-lg">
