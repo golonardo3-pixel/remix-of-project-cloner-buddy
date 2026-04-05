@@ -142,7 +142,7 @@ const LeadSiteConversion = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-5 sm:w-6 h-5 sm:h-6" />
-              {content.ctaText.toUpperCase()}
+              {ctaText.toUpperCase()}
             </a>
             <p className="text-white/50 text-[10px] sm:text-xs mt-3 sm:mt-4">⚡ Resposta em menos de 2 minutos</p>
           </div>
