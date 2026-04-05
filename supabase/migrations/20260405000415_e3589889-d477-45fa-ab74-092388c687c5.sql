@@ -1,0 +1,1 @@
+ALTER TABLE public.leads ADD COLUMN site_content jsonb DEFAULT null;

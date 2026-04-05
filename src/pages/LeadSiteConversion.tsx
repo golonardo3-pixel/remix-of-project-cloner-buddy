@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getNicheColors } from "@/lib/gallery-images";
+import type { SiteContentOverrides } from "@/lib/site-content-types";
 import { MessageCircle, Star, MapPin, Phone, CheckCircle, Zap, Shield, Clock } from "lucide-react";
 
 const LeadSiteConversion = () => {
@@ -44,19 +45,40 @@ const LeadSiteConversion = () => {
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const content = getNicheContent(lead.niche, lead.city, displayName);
   const colors = getNicheColors(lead.niche);
+  const sc: SiteContentOverrides | null = lead.site_content;
 
-  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
+  const heroTitle = sc?.heroTitle || displayName;
+  const heroSubtitle = sc?.heroSubtitle || content.heroSubtitle;
+  const urgencyBadge = (sc?.urgencyBadge || content.urgencyBadge).replace("⚡ ", "");
+  const ctaText = sc?.ctaText || content.ctaText;
+  const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;
+  const servicesTitle = sc?.servicesTitle || "O que oferecemos";
+  const servicesSubtitle = sc?.servicesSubtitle || "Toque no botão e pergunte sobre qualquer serviço";
+  const reviewsTitle = sc?.reviewsTitle || "O que dizem nossos clientes";
+  const contactTitle = sc?.contactTitle || `Fale diretamente com ${displayName}`;
+  const contactSubtitle = sc?.contactSubtitle || "Sem formulário, sem espera. Atendimento direto e pessoal.";
+  const finalCtaTitle = sc?.finalCtaTitle || "Não perca tempo!";
+  const finalCtaSubtitle = sc?.finalCtaSubtitle || `Clique no botão abaixo e fale agora com ${displayName} em ${lead.city}. Atendimento imediato via WhatsApp.`;
+  const workingHours = sc?.workingHours || "Seg a Sex: 9h às 20h · Sáb: 9h às 18h";
 
-  const displayServices = lead.services_list && lead.services_list.length > 0
-    ? lead.services_list
-    : content.services.map((s: { title: string }) => s.title);
+  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
 
-  const benefits = [
-    { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
-    { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
-    { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
-    { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
-  ];
+  const displayServices = sc?.services && sc.services.length > 0
+    ? sc.services
+    : lead.services_list && lead.services_list.length > 0
+      ? lead.services_list
+      : content.services.map((s: { title: string }) => s.title);
+
+  const displayReviews = sc?.reviews && sc.reviews.length > 0 ? sc.reviews : content.reviews;
+
+  const benefits = sc?.benefits && sc.benefits.length > 0
+    ? sc.benefits.map((b) => ({ ...b, icon: Zap }))
+    : [
+        { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
+        { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
+        { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
+        { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
+      ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,11 +110,11 @@ const LeadSiteConversion = () => {
               className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-4 sm:mb-6 text-xs sm:text-sm font-bold animate-pulse backdrop-blur-sm"
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
-              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {content.urgencyBadge.replace('⚡ ', '')}
+              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {urgencyBadge}
             </div>
 
             <h1 className="text-white font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-snug sm:leading-tight mb-3 sm:mb-4 drop-shadow-lg">
-              {displayName}
+              {heroTitle}
             </h1>
 
             <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
@@ -101,7 +123,7 @@ const LeadSiteConversion = () => {
             </div>
 
             <p className="text-white/85 text-xs sm:text-base md:text-lg mb-4 sm:mb-6 max-w-lg mx-auto leading-relaxed drop-shadow">
-              {content.heroSubtitle}
+              {heroSubtitle}
             </p>
 
             {/* Star rating */}
@@ -120,7 +142,7 @@ const LeadSiteConversion = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-5 sm:w-6 h-5 sm:h-6" />
-              {content.ctaText.toUpperCase()}
+              {ctaText.toUpperCase()}
             </a>
             <p className="text-white/50 text-[10px] sm:text-xs mt-3 sm:mt-4">⚡ Resposta em menos de 2 minutos</p>
           </div>
@@ -131,7 +153,7 @@ const LeadSiteConversion = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 px-4 sm:px-5 max-w-4xl mx-auto">
             {benefits.map((b) => (
               <div key={b.title} className="text-center py-4">
-                <b.icon className="w-8 h-8 mx-auto mb-2" style={{ color: `hsl(${colors.accent})` }} />
+                {b.icon && <b.icon className="w-8 h-8 mx-auto mb-2" style={{ color: `hsl(${colors.accent})` }} />}
                 <h3 className="font-bold text-sm mb-1" style={{ color: `hsl(${colors.primaryForeground})` }}>{b.title}</h3>
                 <p className="text-xs" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>{b.desc}</p>
               </div>
@@ -143,9 +165,9 @@ const LeadSiteConversion = () => {
         <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-foreground">
-              O que oferecemos
+              {servicesTitle}
             </h2>
-            <p className="text-muted-foreground mb-8 text-sm">Toque no botão e pergunte sobre qualquer serviço</p>
+            <p className="text-muted-foreground mb-8 text-sm">{servicesSubtitle}</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10 text-left">
               {displayServices.slice(0, 8).map((service: string | { title: string }) => {
@@ -173,14 +195,14 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Social proof — compact reviews */}
-        {content.reviews.length > 0 && (
+        {displayReviews.length > 0 && (
           <section className="py-10 md:py-16 px-4 sm:px-5" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
             <div className="max-w-3xl mx-auto">
               <h2 className="font-display text-xl sm:text-2xl font-bold text-center mb-6 md:mb-8 text-foreground">
-                O que dizem nossos clientes
+                {reviewsTitle}
               </h2>
               <div className="space-y-4">
-                {content.reviews.map((r) => (
+                {displayReviews.map((r) => (
                   <div key={r.name} className="bg-background rounded-xl p-5 shadow-sm flex gap-4 items-start">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
                       style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}>
@@ -208,10 +230,10 @@ const LeadSiteConversion = () => {
         <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-md mx-auto text-center">
             <h2 className="font-display text-xl sm:text-2xl font-bold mb-3 text-foreground">
-              Fale diretamente com {displayName}
+              {contactTitle}
             </h2>
             <p className="text-muted-foreground text-sm mb-6">
-              Sem formulário, sem espera. Atendimento direto e pessoal.
+              {contactSubtitle}
             </p>
 
             <div className="space-y-3 mb-8 text-left">
@@ -225,7 +247,7 @@ const LeadSiteConversion = () => {
               </div>
               <div className="flex items-center gap-3 p-4 rounded-lg border border-border">
                 <Clock className="w-5 h-5 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
-                <span className="text-foreground text-sm">Seg a Sex: 9h às 20h · Sáb: 9h às 18h</span>
+                <span className="text-foreground text-sm">{workingHours}</span>
               </div>
             </div>
 
@@ -247,11 +269,10 @@ const LeadSiteConversion = () => {
         <section className="py-10 md:py-16" style={{ backgroundColor: "#25D366" }}>
           <div className="px-4 sm:px-5 max-w-2xl mx-auto text-center">
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Não perca tempo!
+              {finalCtaTitle}
             </h2>
             <p className="text-white/80 text-lg mb-8">
-              Clique no botão abaixo e fale agora com {displayName} em {lead.city}.
-              Atendimento imediato via WhatsApp.
+              {finalCtaSubtitle}
             </p>
             <a
               href={whatsappLink}

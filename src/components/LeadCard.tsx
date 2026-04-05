@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -15,6 +16,8 @@ import {
   Clock,
   Loader2,
   Rocket,
+  Pencil,
+  Copy,
 } from "lucide-react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
@@ -35,6 +38,7 @@ interface Props {
 }
 
 export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onMove, onWhatsApp }: Props) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [generatingSite, setGeneratingSite] = useState(false);
   const currentIdx = KANBAN_COLUMNS.findIndex((c) => c.id === lead.lead_status);
@@ -120,6 +124,38 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     const template = followUpMessages[Math.floor(Math.random() * followUpMessages.length)];
     const msg = encodeURIComponent(template);
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
+  };
+
+  const handleEditSite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/crm/editor/${lead.id}`);
+  };
+
+  const handleDuplicate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const newSlug = `${lead.slug}-v${Date.now().toString(36)}`;
+      const { error } = await supabase.from("leads").insert({
+        company_name: `${lead.company_name} (cópia)`,
+        niche: lead.niche,
+        city: lead.city,
+        phone: lead.phone,
+        slug: newSlug,
+        site_status: lead.site_status,
+        lead_status: lead.lead_status,
+        lead_temperature: lead.lead_temperature,
+        services_list: lead.services_list,
+        description: lead.description,
+        google_maps_url: lead.google_maps_url,
+        instagram: lead.instagram,
+        site_content: lead.site_content,
+      } as any);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast({ title: "Lead duplicado com sucesso!" });
+    } catch {
+      toast({ title: "Erro ao duplicar", variant: "destructive" });
+    }
   };
 
   return (
@@ -252,7 +288,29 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
         </Button>
       </div>
 
-      {/* Navigation arrows */}
+      {/* Edit / Duplicate — only when site exists */}
+      {siteExists && (
+        <div className="grid grid-cols-2 gap-1.5 mt-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 text-xs font-medium"
+            onClick={handleEditSite}
+          >
+            <Pencil className="w-4 h-4" />
+            Editar Site
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-slate-600 hover:text-slate-700 hover:bg-slate-50 text-xs font-medium"
+            onClick={handleDuplicate}
+          >
+            <Copy className="w-4 h-4" />
+            Duplicar
+          </Button>
+        </div>
+      )}
       <div className="flex items-center justify-between mt-2">
         <Button
           variant="ghost"

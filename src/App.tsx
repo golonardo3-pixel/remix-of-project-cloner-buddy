@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import CrmLeads from "./pages/CrmLeads.tsx";
 import LeadSite from "./pages/LeadSite.tsx";
 import LeadSiteConversion from "./pages/LeadSiteConversion.tsx";
+import SiteEditor from "./pages/SiteEditor.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/crm" element={<CrmLeads />} />
           <Route path="/site/:slug" element={<LeadSite />} />
           <Route path="/site/:slug/conversao" element={<LeadSiteConversion />} />
+          <Route path="/crm/editor/:id" element={<SiteEditor />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -33,6 +33,7 @@ export type Database = {
           photos: string[] | null
           service_value: number | null
           services_list: string[] | null
+          site_content: Json | null
           site_status: string
           slug: string
           updated_at: string
@@ -55,6 +56,7 @@ export type Database = {
           photos?: string[] | null
           service_value?: number | null
           services_list?: string[] | null
+          site_content?: Json | null
           site_status?: string
           slug: string
           updated_at?: string
@@ -77,6 +79,7 @@ export type Database = {
           photos?: string[] | null
           service_value?: number | null
           services_list?: string[] | null
+          site_content?: Json | null
           site_status?: string
           slug?: string
           updated_at?: string
