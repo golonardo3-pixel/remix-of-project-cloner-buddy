@@ -153,7 +153,7 @@ const LeadSiteConversion = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 px-4 sm:px-5 max-w-4xl mx-auto">
             {benefits.map((b) => (
               <div key={b.title} className="text-center py-4">
-                <b.icon className="w-8 h-8 mx-auto mb-2" style={{ color: `hsl(${colors.accent})` }} />
+                {b.icon && <b.icon className="w-8 h-8 mx-auto mb-2" style={{ color: `hsl(${colors.accent})` }} />}
                 <h3 className="font-bold text-sm mb-1" style={{ color: `hsl(${colors.primaryForeground})` }}>{b.title}</h3>
                 <p className="text-xs" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>{b.desc}</p>
               </div>
