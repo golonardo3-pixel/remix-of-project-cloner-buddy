@@ -247,7 +247,7 @@ const LeadSiteConversion = () => {
               </div>
               <div className="flex items-center gap-3 p-4 rounded-lg border border-border">
                 <Clock className="w-5 h-5 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
-                <span className="text-foreground text-sm">Seg a Sex: 9h às 20h · Sáb: 9h às 18h</span>
+                <span className="text-foreground text-sm">{workingHours}</span>
               </div>
             </div>
 
