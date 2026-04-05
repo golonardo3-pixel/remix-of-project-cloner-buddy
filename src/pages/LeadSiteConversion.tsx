@@ -165,9 +165,9 @@ const LeadSiteConversion = () => {
         <section className="py-10 md:py-16 px-4 sm:px-5">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-foreground">
-              O que oferecemos
+              {servicesTitle}
             </h2>
-            <p className="text-muted-foreground mb-8 text-sm">Toque no botão e pergunte sobre qualquer serviço</p>
+            <p className="text-muted-foreground mb-8 text-sm">{servicesSubtitle}</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10 text-left">
               {displayServices.slice(0, 8).map((service: string | { title: string }) => {
