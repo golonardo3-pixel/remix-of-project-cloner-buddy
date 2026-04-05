@@ -114,7 +114,7 @@ const LeadSiteConversion = () => {
             </div>
 
             <h1 className="text-white font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-snug sm:leading-tight mb-3 sm:mb-4 drop-shadow-lg">
-              {displayName}
+              {heroTitle}
             </h1>
 
             <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
