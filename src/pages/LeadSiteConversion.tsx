@@ -269,11 +269,10 @@ const LeadSiteConversion = () => {
         <section className="py-10 md:py-16" style={{ backgroundColor: "#25D366" }}>
           <div className="px-4 sm:px-5 max-w-2xl mx-auto text-center">
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Não perca tempo!
+              {finalCtaTitle}
             </h2>
             <p className="text-white/80 text-lg mb-8">
-              Clique no botão abaixo e fale agora com {displayName} em {lead.city}.
-              Atendimento imediato via WhatsApp.
+              {finalCtaSubtitle}
             </p>
             <a
               href={whatsappLink}
