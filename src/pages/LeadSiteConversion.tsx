@@ -45,19 +45,40 @@ const LeadSiteConversion = () => {
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const content = getNicheContent(lead.niche, lead.city, displayName);
   const colors = getNicheColors(lead.niche);
+  const sc: SiteContentOverrides | null = lead.site_content;
 
-  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
+  const heroTitle = sc?.heroTitle || displayName;
+  const heroSubtitle = sc?.heroSubtitle || content.heroSubtitle;
+  const urgencyBadge = (sc?.urgencyBadge || content.urgencyBadge).replace("⚡ ", "");
+  const ctaText = sc?.ctaText || content.ctaText;
+  const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;
+  const servicesTitle = sc?.servicesTitle || "O que oferecemos";
+  const servicesSubtitle = sc?.servicesSubtitle || "Toque no botão e pergunte sobre qualquer serviço";
+  const reviewsTitle = sc?.reviewsTitle || "O que dizem nossos clientes";
+  const contactTitle = sc?.contactTitle || `Fale diretamente com ${displayName}`;
+  const contactSubtitle = sc?.contactSubtitle || "Sem formulário, sem espera. Atendimento direto e pessoal.";
+  const finalCtaTitle = sc?.finalCtaTitle || "Não perca tempo!";
+  const finalCtaSubtitle = sc?.finalCtaSubtitle || `Clique no botão abaixo e fale agora com ${displayName} em ${lead.city}. Atendimento imediato via WhatsApp.`;
+  const workingHours = sc?.workingHours || "Seg a Sex: 9h às 20h · Sáb: 9h às 18h";
 
-  const displayServices = lead.services_list && lead.services_list.length > 0
-    ? lead.services_list
-    : content.services.map((s: { title: string }) => s.title);
+  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
 
-  const benefits = [
-    { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
-    { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
-    { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
-    { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
-  ];
+  const displayServices = sc?.services && sc.services.length > 0
+    ? sc.services
+    : lead.services_list && lead.services_list.length > 0
+      ? lead.services_list
+      : content.services.map((s: { title: string }) => s.title);
+
+  const displayReviews = sc?.reviews && sc.reviews.length > 0 ? sc.reviews : content.reviews;
+
+  const benefits = sc?.benefits && sc.benefits.length > 0
+    ? sc.benefits.map((b) => ({ ...b, icon: Zap }))
+    : [
+        { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
+        { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
+        { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
+        { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
+      ];
 
   return (
     <div className="min-h-screen bg-background">
