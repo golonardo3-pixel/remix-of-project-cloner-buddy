@@ -38,6 +38,7 @@ interface Props {
 }
 
 export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onMove, onWhatsApp }: Props) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [generatingSite, setGeneratingSite] = useState(false);
   const currentIdx = KANBAN_COLUMNS.findIndex((c) => c.id === lead.lead_status);
