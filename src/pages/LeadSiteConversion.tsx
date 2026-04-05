@@ -195,14 +195,14 @@ const LeadSiteConversion = () => {
         </section>
 
         {/* Social proof — compact reviews */}
-        {content.reviews.length > 0 && (
+        {displayReviews.length > 0 && (
           <section className="py-10 md:py-16 px-4 sm:px-5" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
             <div className="max-w-3xl mx-auto">
               <h2 className="font-display text-xl sm:text-2xl font-bold text-center mb-6 md:mb-8 text-foreground">
-                O que dizem nossos clientes
+                {reviewsTitle}
               </h2>
               <div className="space-y-4">
-                {content.reviews.map((r) => (
+                {displayReviews.map((r) => (
                   <div key={r.name} className="bg-background rounded-xl p-5 shadow-sm flex gap-4 items-start">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
                       style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}>
