@@ -34,6 +34,7 @@ export interface Lead {
   instagram: string | null;
   services_list: string[] | null;
   photos: string[] | null;
+  site_content: any;
 }
 
 interface Props {
