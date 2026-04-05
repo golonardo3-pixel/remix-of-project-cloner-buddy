@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import CrmLeads from "./pages/CrmLeads.tsx";
 import LeadSite from "./pages/LeadSite.tsx";
 import LeadSiteConversion from "./pages/LeadSiteConversion.tsx";
+import SiteEditor from "./pages/SiteEditor.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
