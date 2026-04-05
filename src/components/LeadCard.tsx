@@ -126,6 +126,38 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
 
+  const handleEditSite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/crm/editor/${lead.id}`);
+  };
+
+  const handleDuplicate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const newSlug = `${lead.slug}-v${Date.now().toString(36)}`;
+      const { error } = await supabase.from("leads").insert({
+        company_name: `${lead.company_name} (cópia)`,
+        niche: lead.niche,
+        city: lead.city,
+        phone: lead.phone,
+        slug: newSlug,
+        site_status: lead.site_status,
+        lead_status: lead.lead_status,
+        lead_temperature: lead.lead_temperature,
+        services_list: lead.services_list,
+        description: lead.description,
+        google_maps_url: lead.google_maps_url,
+        instagram: lead.instagram,
+        site_content: lead.site_content,
+      } as any);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast({ title: "Lead duplicado com sucesso!" });
+    } catch {
+      toast({ title: "Erro ao duplicar", variant: "destructive" });
+    }
+  };
+
   return (
     <div
       className={`bg-card rounded-lg border p-3 cursor-pointer hover:shadow-md transition-all active:scale-[0.98] ${
