@@ -123,7 +123,7 @@ const LeadSiteConversion = () => {
             </div>
 
             <p className="text-white/85 text-xs sm:text-base md:text-lg mb-4 sm:mb-6 max-w-lg mx-auto leading-relaxed drop-shadow">
-              {content.heroSubtitle}
+              {heroSubtitle}
             </p>
 
             {/* Star rating */}
