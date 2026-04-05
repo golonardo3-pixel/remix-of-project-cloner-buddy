@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getNicheColors } from "@/lib/gallery-images";
+import type { SiteContentOverrides } from "@/lib/site-content-types";
 import { MessageCircle, Star, MapPin, Phone, CheckCircle, Zap, Shield, Clock } from "lucide-react";
 
 const LeadSiteConversion = () => {
