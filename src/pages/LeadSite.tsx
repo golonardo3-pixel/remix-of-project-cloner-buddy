@@ -8,6 +8,7 @@ import LeadSiteGallery from "@/components/LeadSiteGallery";
 import LeadSiteContactForm from "@/components/LeadSiteContactForm";
 import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
 import { generateReviews } from "@/lib/review-generator";
+import type { SiteContentOverrides } from "@/lib/site-content-types";
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
