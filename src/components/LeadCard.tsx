@@ -347,7 +347,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
         </div>
       )}
       <div className="flex items-center justify-between mt-2">
-          variant="ghost"
+        <Button
           size="sm"
           className="h-8 w-8 p-0"
           disabled={currentIdx === 0}
