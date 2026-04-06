@@ -181,6 +181,19 @@ const SiteEditor = () => {
           </Field>
         </Section>
 
+        {/* Images */}
+        <Section title="🖼️ Imagens">
+          <ImageUploadSection
+            leadId={lead.id}
+            heroImage={form.heroImage}
+            galleryImages={form.galleryImages || []}
+            onHeroChange={(url) => updateField("heroImage", url)}
+            onGalleryChange={(urls) => updateField("galleryImages", urls)}
+            hasInstagram={!!lead.instagram}
+            hasGoogleMaps={!!lead.google_maps_url}
+          />
+        </Section>
+
         {/* CTA */}
         <Section title="📱 Botão WhatsApp">
           <Field label="Texto do botão">
