@@ -314,7 +314,38 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           </Button>
         </div>
       )}
-      <div className="flex items-center justify-between mt-2">
+
+      {/* Export buttons */}
+      {siteExists && (
+        <div className="grid grid-cols-2 gap-1.5 mt-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-teal-600 hover:text-teal-700 hover:bg-teal-50 text-xs font-medium"
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadStaticHTML(lead);
+              toast({ title: "Download do HTML iniciado!" });
+            }}
+          >
+            <Download className="w-4 h-4" />
+            Baixar HTML
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-violet-600 hover:text-violet-700 hover:bg-violet-50 text-xs font-medium"
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadReactProject(lead);
+              toast({ title: "Download do projeto React iniciado!" });
+            }}
+          >
+            <FileCode className="w-4 h-4" />
+            Baixar React
+          </Button>
+        </div>
+      )}
         <Button
           variant="ghost"
           size="sm"
