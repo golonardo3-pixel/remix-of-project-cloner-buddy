@@ -48,8 +48,10 @@ const LeadSite = () => {
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const content = getNicheContent(lead.niche, lead.city, displayName);
   const colors = getNicheColors(lead.niche);
+  const sc: SiteContentOverrides | null = lead.site_content;
 
-  const gallery = getGalleryImages(lead.niche, lead.photos || undefined, lead.slug);
+  const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
+  const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
   const generatedReviews = generateReviews(lead.niche, lead.slug);
