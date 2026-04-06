@@ -15,6 +15,8 @@ export interface SiteContentOverrides {
   finalCtaSubtitle?: string;
   workingHours?: string;
   benefits?: { title: string; desc: string }[];
+  heroImage?: string;
+  galleryImages?: string[];
 }
 
 export function applySiteOverrides(
