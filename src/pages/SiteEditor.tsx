@@ -10,6 +10,7 @@ import { ArrowLeft, Save, Plus, Trash2, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
+import ImageUploadSection from "@/components/editor/ImageUploadSection";
 
 const SiteEditor = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,6 +70,8 @@ const SiteEditor = () => {
         { title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
         { title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
       ],
+      heroImage: saved.heroImage || defaults.heroImage || "",
+      galleryImages: saved.galleryImages || lead.photos || [],
     });
     setInitialized(true);
   }, [lead, initialized]);
