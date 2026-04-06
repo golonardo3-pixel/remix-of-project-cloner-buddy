@@ -8,6 +8,7 @@ import LeadSiteGallery from "@/components/LeadSiteGallery";
 import LeadSiteContactForm from "@/components/LeadSiteContactForm";
 import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
 import { generateReviews } from "@/lib/review-generator";
+import type { SiteContentOverrides } from "@/lib/site-content-types";
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -48,8 +49,10 @@ const LeadSite = () => {
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const content = getNicheContent(lead.niche, lead.city, displayName);
   const colors = getNicheColors(lead.niche);
+  const sc: SiteContentOverrides | null = lead.site_content;
 
-  const gallery = getGalleryImages(lead.niche, lead.photos || undefined, lead.slug);
+  const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
+  const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
   const generatedReviews = generateReviews(lead.niche, lead.slug);
@@ -110,7 +113,7 @@ const LeadSite = () => {
         {/* Hero — single primary CTA */}
         <section className="relative min-h-[55vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden">
           <img
-            src={content.heroImage}
+            src={sc?.heroImage || content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
             className="absolute inset-0 w-full h-full object-cover z-0"
             width={1280}
