@@ -346,7 +346,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           </Button>
         </div>
       )}
-        <Button
+      <div className="flex items-center justify-between mt-2">
           variant="ghost"
           size="sm"
           className="h-8 w-8 p-0"
