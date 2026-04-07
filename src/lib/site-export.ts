@@ -3,7 +3,18 @@ import { saveAs } from "file-saver";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getGalleryImages, getNicheColors } from "@/lib/gallery-images";
 import { generateReviews } from "@/lib/review-generator";
+import { getPublishedBaseUrl } from "@/lib/public-site-url";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
+
+/** Convert local/relative asset paths to absolute URLs so exported HTML works standalone */
+function toAbsoluteUrl(src: string): string {
+  if (!src) return src;
+  // Already absolute (http/https or data URI) — keep as-is
+  if (/^https?:\/\//i.test(src) || src.startsWith("data:")) return src;
+  // Local asset resolved by Vite (e.g. /assets/hero-salon-abc.jpg)
+  const base = getPublishedBaseUrl();
+  return `${base}${src.startsWith("/") ? "" : "/"}${src}`;
+}
 
 interface LeadData {
   company_name: string;
