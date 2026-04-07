@@ -3,7 +3,18 @@ import { saveAs } from "file-saver";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getGalleryImages, getNicheColors } from "@/lib/gallery-images";
 import { generateReviews } from "@/lib/review-generator";
+import { getPublishedBaseUrl } from "@/lib/public-site-url";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
+
+/** Convert local/relative asset paths to absolute URLs so exported HTML works standalone */
+function toAbsoluteUrl(src: string): string {
+  if (!src) return src;
+  // Already absolute (http/https or data URI) — keep as-is
+  if (/^https?:\/\//i.test(src) || src.startsWith("data:")) return src;
+  // Local asset resolved by Vite (e.g. /assets/hero-salon-abc.jpg)
+  const base = getPublishedBaseUrl();
+  return `${base}${src.startsWith("/") ? "" : "/"}${src}`;
+}
 
 interface LeadData {
   company_name: string;
@@ -29,7 +40,7 @@ function buildSiteHTML(lead: LeadData): string {
   const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
   const reviews = generateReviews(lead.niche, lead.slug);
 
-  const heroImage = sc?.heroImage || content.heroImage;
+  const heroImage = toAbsoluteUrl(sc?.heroImage || content.heroImage);
   const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
 
@@ -65,7 +76,7 @@ function buildSiteHTML(lead: LeadData): string {
 
   const galleryHTML = gallery.slice(0, 10).map((img, i) =>
     `<div style="${i === 0 ? 'grid-column:span 2;grid-row:span 2;' : ''}overflow:hidden;border-radius:6px">
-      <img src="${img.src}" alt="${img.alt}" loading="lazy" style="width:100%;height:100%;object-fit:cover;aspect-ratio:1/1;transition:transform 0.5s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+      <img src="${toAbsoluteUrl(img.src)}" alt="${img.alt}" loading="lazy" style="width:100%;height:100%;object-fit:cover;aspect-ratio:1/1;transition:transform 0.5s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
     </div>`
   ).join("\n");
 
