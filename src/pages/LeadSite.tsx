@@ -113,7 +113,7 @@ const LeadSite = () => {
         {/* Hero — single primary CTA */}
         <section className="relative min-h-[55vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end overflow-hidden">
           <img
-            src={sc?.heroImage || content.heroImage}
+            src={sc?.heroImage && !sc.heroImage.startsWith("/src/") ? sc.heroImage : content.heroImage}
             alt={`${displayName} - ${lead.niche} em ${lead.city}`}
             className="absolute inset-0 w-full h-full object-cover z-0"
             width={1280}
