@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
+import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
+import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 
 type DispatchStatus = "idle" | "running" | "paused" | "done";
 
@@ -26,9 +27,33 @@ interface LogEntry {
 const DEFAULT_MESSAGE =
   "Oi {nome}, tudo bem? Vi seu negócio e criei uma página profissional gratuita pra você. Dá uma olhada: {link}";
 
+const FALLBACKS: Record<string, string> = {};
+DISPATCH_VARIABLES.forEach((v) => {
+  FALLBACKS[v.key] = v.fallback;
+});
+
+function buildMessageForLead(template: string, lead: Lead): string {
+  const siteUrl = `${window.location.origin}/site/${lead.slug}`;
+  const values: Record<string, string> = {
+    "{nome}": lead.company_name || FALLBACKS["{nome}"],
+    "{empresa}": lead.company_name || FALLBACKS["{empresa}"],
+    "{telefone}": lead.phone || FALLBACKS["{telefone}"],
+    "{link}": siteUrl,
+    "{cidade}": lead.city || FALLBACKS["{cidade}"],
+    "{nicho}": lead.niche || FALLBACKS["{nicho}"],
+  };
+
+  let result = template;
+  for (const [key, val] of Object.entries(values)) {
+    result = result.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
+  }
+  return result;
+}
+
 const MessageDispatch = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [message, setMessage] = useState(DEFAULT_MESSAGE);
   const [interval, setIntervalSec] = useState(10);
@@ -51,29 +76,49 @@ const MessageDispatch = () => {
     },
   });
 
-  // Only leads that haven't been messaged yet
   const eligibleLeads = leads?.filter((l) => l.lead_status !== "fechado") ?? [];
 
-  const buildMessage = (lead: Lead) => {
-    const siteUrl = `${window.location.origin}/site/${lead.slug}`;
-    return message
-      .replace(/\{nome\}/gi, lead.company_name)
-      .replace(/\{link\}/gi, siteUrl)
-      .replace(/\{cidade\}/gi, lead.city)
-      .replace(/\{nicho\}/gi, lead.niche);
+  const templateWarnings = validateTemplate(message);
+
+  const insertVariable = (variable: string) => {
+    const ta = textareaRef.current;
+    if (!ta) {
+      setMessage((prev) => prev + variable);
+      return;
+    }
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const before = message.slice(0, start);
+    const after = message.slice(end);
+    const newMsg = before + variable + after;
+    setMessage(newMsg);
+    requestAnimationFrame(() => {
+      ta.focus();
+      const pos = start + variable.length;
+      ta.setSelectionRange(pos, pos);
+    });
   };
 
   const openWhatsApp = (phone: string, text: string) => {
     const clean = phone.replace(/\D/g, "");
     const num = clean.startsWith("55") ? clean : `55${clean}`;
-    const url = `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
+    window.open(`https://wa.me/${num}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const startDispatch = useCallback(async () => {
     if (runningRef.current) return;
+
+    if (templateWarnings.length > 0) {
+      toast({
+        title: "Corrija as variáveis antes de disparar",
+        description: templateWarnings.join(", "),
+        variant: "destructive",
+      });
+      return;
+    }
+
     runningRef.current = true;
     abortRef.current = false;
     setStatus("running");
@@ -85,12 +130,10 @@ const MessageDispatch = () => {
       setCurrentIndex(i);
 
       const lead = eligibleLeads[i];
-      const text = buildMessage(lead);
+      const text = buildMessageForLead(message, lead);
 
       try {
         openWhatsApp(lead.phone, text);
-
-        // Update last_interaction
         await supabase
           .from("leads")
           .update({ last_interaction: new Date().toISOString() })
@@ -98,28 +141,15 @@ const MessageDispatch = () => {
 
         setLog((prev) => [
           ...prev,
-          {
-            leadId: lead.id,
-            name: lead.company_name,
-            phone: lead.phone,
-            status: "sent",
-            time: new Date().toLocaleTimeString(),
-          },
+          { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString() },
         ]);
       } catch {
         setLog((prev) => [
           ...prev,
-          {
-            leadId: lead.id,
-            name: lead.company_name,
-            phone: lead.phone,
-            status: "error",
-            time: new Date().toLocaleTimeString(),
-          },
+          { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "error", time: new Date().toLocaleTimeString() },
         ]);
       }
 
-      // Wait interval before next
       if (i < eligibleLeads.length - 1 && !abortRef.current) {
         await sleep(interval * 1000);
       }
@@ -129,7 +159,7 @@ const MessageDispatch = () => {
     setStatus("done");
     queryClient.invalidateQueries({ queryKey: ["leads"] });
     toast({ title: "Disparo finalizado!" });
-  }, [eligibleLeads, message, interval, queryClient]);
+  }, [eligibleLeads, message, interval, queryClient, templateWarnings]);
 
   const stopDispatch = () => {
     abortRef.current = true;
@@ -162,31 +192,36 @@ const MessageDispatch = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-5">
-        {/* Config */}
+        {/* Message config */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" /> Configuração
+              <MessageSquare className="w-4 h-4" /> Mensagem
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Mensagem</Label>
               <Textarea
+                ref={textareaRef}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 disabled={status === "running"}
-                placeholder="Use {nome}, {link}, {cidade}, {nicho}"
+                placeholder="Digite sua mensagem..."
               />
-              <p className="text-xs text-muted-foreground">
-                Variáveis: {"{nome}"} {"{link}"} {"{cidade}"} {"{nicho}"}
-              </p>
+              {templateWarnings.length > 0 && (
+                <div className="flex items-start gap-2 text-xs text-destructive">
+                  <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                  <span>{templateWarnings.join(", ")}</span>
+                </div>
+              )}
             </div>
 
+            <VariableChips onInsert={insertVariable} disabled={status === "running"} />
+
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Clock className="w-4 h-4" /> Intervalo entre mensagens (segundos)
+              <Label className="flex items-center gap-2 text-sm">
+                <Clock className="w-4 h-4" /> Intervalo (segundos)
               </Label>
               <Input
                 type="number"
@@ -200,6 +235,9 @@ const MessageDispatch = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Google Sheets import */}
+        <GoogleSheetsImport />
 
         {/* Actions */}
         <div className="flex gap-3">
@@ -275,7 +313,6 @@ const MessageDispatch = () => {
           </Card>
         )}
 
-        {/* Empty state */}
         {eligibleLeads.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             Nenhum lead disponível para disparo.
