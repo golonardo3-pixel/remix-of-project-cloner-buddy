@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import AddLeadDialog from "@/components/AddLeadDialog";
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const CrmLeads = () => {
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filters, setFilters] = useState<CrmFilterValues>({ ...EMPTY_FILTERS });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -179,6 +181,16 @@ const CrmLeads = () => {
                 </AlertDialogContent>
               </AlertDialog>
             )}
+
+            <Button
+              onClick={() => navigate("/crm/disparo")}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Send className="w-4 h-4" />
+              <span className="hidden sm:inline">Disparo</span>
+            </Button>
 
             <Button
               onClick={() => setDialogOpen(true)}
