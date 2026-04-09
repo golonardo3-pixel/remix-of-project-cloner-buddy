@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const CrmLeads = () => {
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filters, setFilters] = useState<CrmFilterValues>({ ...EMPTY_FILTERS });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -180,6 +181,16 @@ const CrmLeads = () => {
                 </AlertDialogContent>
               </AlertDialog>
             )}
+
+            <Button
+              onClick={() => navigate("/crm/disparo")}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Send className="w-4 h-4" />
+              <span className="hidden sm:inline">Disparo</span>
+            </Button>
 
             <Button
               onClick={() => setDialogOpen(true)}
