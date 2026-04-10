@@ -20,6 +20,7 @@ import {
   Copy,
   Download,
   FileCode,
+  MessageCircle,
 } from "lucide-react";
 import { downloadStaticHTML, downloadReactProject } from "@/lib/site-export";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
