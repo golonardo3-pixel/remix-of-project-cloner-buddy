@@ -20,6 +20,7 @@ import {
   Copy,
   Download,
   FileCode,
+  MessageCircle,
 } from "lucide-react";
 import { downloadStaticHTML, downloadReactProject } from "@/lib/site-export";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
@@ -225,6 +226,22 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
         >
           <Phone className="w-4 h-4" />
           WhatsApp
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 px-2 gap-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-medium"
+          onClick={(e) => {
+            e.stopPropagation();
+            const msg = encodeURIComponent(
+              "Oi, tudo bem?\n\nVi seu negócio e achei que você pode estar perdendo clientes no Google.\n\nPosso te mostrar uma ideia rápida?"
+            );
+            window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
+          }}
+        >
+          <MessageCircle className="w-4 h-4" />
+          Iniciar Conversa
         </Button>
 
         {!siteExists ? (
