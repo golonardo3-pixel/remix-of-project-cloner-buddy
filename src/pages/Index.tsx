@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Send, Globe, Briefcase, MessageSquare, Star, CheckCircle } from "lucide-react";
+import { Users, Send, Globe, Briefcase, MessageSquare, Star, CheckCircle, Search } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -32,6 +32,7 @@ const Index = () => {
 
   const menu = [
     { label: "Leads", icon: Users, path: "/crm", desc: "Gerenciar leads" },
+    { label: "Mineração", icon: Search, path: "/crm/mineracao", desc: "Encontrar leads" },
     { label: "Disparo", icon: Send, path: "/crm/disparo", desc: "Enviar mensagens" },
     { label: "Sites", icon: Globe, path: "/crm", desc: "Sites dos leads" },
     { label: "Produção", icon: Briefcase, path: "/crm", desc: "Acompanhar entregas" },
