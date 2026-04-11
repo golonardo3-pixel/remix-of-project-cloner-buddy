@@ -1,35 +1,111 @@
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Send, Globe, Search, MessageSquare, Star, CheckCircle, ArrowRight, TrendingUp } from "lucide-react";
+import { Users, Send, Globe, Search, MessageSquare, Star, CheckCircle, ArrowRight, TrendingUp, RotateCcw, DollarSign } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import heroImg from "@/assets/hero-saas.jpg";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+const RESET_KEYS = {
+  all: "metrics_reset_at",
+  revenue: "metrics_reset_revenue_at",
+} as const;
+
+function getResetDate(key: string): string | null {
+  return localStorage.getItem(key);
+}
 
 const Index = () => {
   const navigate = useNavigate();
+  const [resetDialog, setResetDialog] = useState<"all" | "revenue" | "counters" | null>(null);
+  const [resetTs, setResetTs] = useState(() => ({
+    all: getResetDate(RESET_KEYS.all),
+    revenue: getResetDate(RESET_KEYS.revenue),
+  }));
 
   const { data: leads } = useQuery({
     queryKey: ["leads"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("leads")
-        .select("id, lead_status, site_status")
+        .select("id, lead_status, site_status, service_value, payment_status, created_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
   });
 
-  const total = leads?.length ?? 0;
-  const contacted = leads?.filter((l) => l.lead_status === "respondeu").length ?? 0;
-  const interested = leads?.filter((l) => l.lead_status === "interessado").length ?? 0;
-  const closed = leads?.filter((l) => l.lead_status === "fechado").length ?? 0;
+  const effectiveResetAll = resetTs.all;
+  const effectiveResetRevenue = resetTs.revenue;
+
+  const filteredForCounters = useMemo(() => {
+    if (!leads) return [];
+    const cutoff = effectiveResetAll;
+    if (!cutoff) return leads;
+    return leads.filter((l) => new Date(l.created_at) >= new Date(cutoff));
+  }, [leads, effectiveResetAll]);
+
+  const filteredForRevenue = useMemo(() => {
+    if (!leads) return [];
+    const cutoff = effectiveResetRevenue || effectiveResetAll;
+    if (!cutoff) return leads;
+    return leads.filter((l) => new Date(l.created_at) >= new Date(cutoff));
+  }, [leads, effectiveResetAll, effectiveResetRevenue]);
+
+  const total = filteredForCounters.length;
+  const contacted = filteredForCounters.filter((l) => l.lead_status === "respondeu").length;
+  const interested = filteredForCounters.filter((l) => l.lead_status === "interessado").length;
+  const closed = filteredForCounters.filter((l) => l.lead_status === "fechado").length;
+  const revenue = filteredForRevenue
+    .filter((l) => l.payment_status === "pago")
+    .reduce((sum, l) => sum + (Number(l.service_value) || 0), 0);
+
+  const handleReset = (type: "all" | "revenue" | "counters") => {
+    const now = new Date().toISOString();
+    if (type === "all" || type === "counters") {
+      localStorage.setItem(RESET_KEYS.all, now);
+    }
+    if (type === "all" || type === "revenue") {
+      localStorage.setItem(RESET_KEYS.revenue, now);
+    }
+    setResetTs({
+      all: getResetDate(RESET_KEYS.all),
+      revenue: getResetDate(RESET_KEYS.revenue),
+    });
+    setResetDialog(null);
+    toast.success(
+      type === "all"
+        ? "Todas as métricas foram zeradas"
+        : type === "revenue"
+        ? "Faturamento zerado"
+        : "Contadores zerados"
+    );
+  };
 
   const stats = [
     { label: "Total Leads", value: total, icon: Users, color: "text-primary" },
     { label: "Contatados", value: contacted, icon: MessageSquare, color: "text-amber-500" },
     { label: "Interessados", value: interested, icon: Star, color: "text-purple-500" },
     { label: "Fechados", value: closed, icon: CheckCircle, color: "text-emerald-500" },
+    { label: "Faturamento", value: `R$ ${revenue.toLocaleString("pt-BR")}`, icon: DollarSign, color: "text-emerald-600" },
   ];
 
   const actions = [
@@ -38,6 +114,12 @@ const Index = () => {
     { label: "Disparo", icon: Send, path: "/crm/disparo", desc: "Enviar mensagens em massa" },
     { label: "Sites", icon: Globe, path: "/crm", desc: "Sites dos leads" },
   ];
+
+  const dialogMessages: Record<string, { title: string; desc: string }> = {
+    all: { title: "Zerar todas as métricas?", desc: "Os contadores e o faturamento serão zerados. Nenhum lead será apagado." },
+    revenue: { title: "Zerar apenas o faturamento?", desc: "Apenas o valor de faturamento será zerado. Contadores e leads não serão afetados." },
+    counters: { title: "Zerar apenas os contadores?", desc: "Apenas os contadores (total, contatados, interessados, fechados) serão zerados. Faturamento e leads não serão afetados." },
+  };
 
   return (
     <AppLayout title="Dashboard" subtitle="Visão geral do sistema">
@@ -63,20 +145,37 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-xl border border-border bg-card p-5 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <s.icon className={`w-5 h-5 ${s.color}`} />
-                <TrendingUp className="w-3.5 h-3.5 text-muted-foreground/40" />
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">Métricas</h3>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs text-muted-foreground">
+                  <RotateCcw className="w-3.5 h-3.5" /> Zerar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setResetDialog("all")}>Zerar tudo</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setResetDialog("counters")}>Zerar contadores</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setResetDialog("revenue")}>Zerar faturamento</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {stats.map((s) => (
+              <div
+                key={s.label}
+                className="rounded-xl border border-border bg-card p-5 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <s.icon className={`w-5 h-5 ${s.color}`} />
+                  <TrendingUp className="w-3.5 h-3.5 text-muted-foreground/40" />
+                </div>
+                <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
               </div>
-              <p className="text-2xl font-bold text-foreground">{s.value}</p>
-              <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
 
         {/* Actions */}
@@ -108,6 +207,22 @@ const Index = () => {
           © {new Date().getFullYear()} • Clientes no Google
         </p>
       </div>
+
+      {/* Reset confirmation dialog */}
+      <AlertDialog open={!!resetDialog} onOpenChange={(open) => !open && setResetDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{resetDialog && dialogMessages[resetDialog]?.title}</AlertDialogTitle>
+            <AlertDialogDescription>{resetDialog && dialogMessages[resetDialog]?.desc}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => resetDialog && handleReset(resetDialog)}>
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppLayout>
   );
 };
