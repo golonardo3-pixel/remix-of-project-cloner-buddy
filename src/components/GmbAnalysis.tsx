@@ -17,7 +17,7 @@ interface GmbScore {
 }
 
 function estimateCompetition(lead: Lead): "alta" | "media" | "baixa" {
-  const niche = lead.niche.toLowerCase();
+  const niche = (lead.niche ?? "").toLowerCase();
   const highComp = ["restaurante", "pizzaria", "hamburgueria", "lanchonete", "barbearia", "salão", "dentista", "advogado", "academia", "pet shop", "clínica", "consultório", "padaria", "farmácia", "imobiliária"];
   const medComp = ["mecânica", "oficina", "borracharia", "elétrica", "chaveiro", "vidraçaria", "marmoraria", "lava jato", "desentupidora", "serralheria"];
   if (highComp.some(n => niche.includes(n))) return "alta";
