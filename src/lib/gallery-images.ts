@@ -296,6 +296,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: marmitaria3, alt: "Marmita completa com divisórias" },
     { src: marmitaria4, alt: "Cozinha industrial com marmitas" },
     { src: marmitaria5, alt: "Entrega de marmitas por motoboy" },
+    { src: marmitaria6, alt: "Chef montando marmitas na cozinha" },
+    { src: marmitaria7, alt: "Marmitas coloridas com divisórias" },
+    { src: marmitaria8, alt: "Balcão da marmitaria" },
   ],
   "academia": [
     { src: heroGym, alt: "Academia moderna equipada" },
