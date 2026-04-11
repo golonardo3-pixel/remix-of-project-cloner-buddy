@@ -14,8 +14,10 @@ interface Props {
 
 interface AnalysisResult {
   score: number;
+  motivo: string;
   problems: { title: string; severity: "alta" | "media" | "baixa" }[];
   opportunity: string;
+  urgencia: "baixa" | "media" | "alta";
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
