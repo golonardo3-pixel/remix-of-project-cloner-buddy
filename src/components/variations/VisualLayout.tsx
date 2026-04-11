@@ -92,9 +92,9 @@ const VisualLayout = (p: VariationLayoutProps) => {
       <section className="grid grid-cols-1 md:grid-cols-2 min-h-[50vh]">
         <div className="relative min-h-[250px]">
           {p.gallery.length > 2 ? (
-            <img src={p.gallery[2].url} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <img src={p.gallery[2].src} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
           ) : p.gallery.length > 1 ? (
-            <img src={p.gallery[1].url} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <img src={p.gallery[1].src} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
           ) : (
             <img src={p.heroImage} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
           )}
