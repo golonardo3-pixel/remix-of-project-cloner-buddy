@@ -9,6 +9,7 @@ import LeadSiteContactForm from "@/components/LeadSiteContactForm";
 import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
 import { generateReviews } from "@/lib/review-generator";
 import type { SiteContentOverrides, SiteServiceOverride } from "@/lib/site-content-types";
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
 
 import ModernoLayout from "@/components/variations/ModernoLayout";
 import PremiumLayout from "@/components/variations/PremiumLayout";
@@ -80,8 +81,9 @@ const LeadSite = () => {
 
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const city = safe(lead.city);
-  const content = getNicheContent(lead.niche, city || "", displayName);
-  let colors = getNicheColors(lead.niche);
+  const normalizedNiche = canonicalizeBusinessNiche(lead.niche);
+  const content = getNicheContent(normalizedNiche, city || "", displayName);
+  let colors = getNicheColors(normalizedNiche);
   const sc: SiteContentOverrides | null = lead.site_content;
 
   let variation: any = null;
@@ -100,7 +102,7 @@ const LeadSite = () => {
   const ctaText = safe(variationOverrides.ctaText) || safe(sc?.ctaText) || safe(content.ctaText) || "Fale no WhatsApp";
   const whatsappMessage = safe(variationOverrides.whatsappMessage) || safe(sc?.whatsappMessage) || safe(content.whatsappMessage) || `Olá! Quero saber mais sobre ${displayName}.`;
   const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
-  const generatedReviews = generateReviews(lead.niche, lead.slug);
+  const generatedReviews = generateReviews(normalizedNiche, lead.slug);
 
   const mapsQuery = encodeURIComponent(`${displayName} ${city || ""}`);
   const mapsLink = lead.google_maps_url || `https://www.google.com/maps/search/${mapsQuery}`;
@@ -127,7 +129,7 @@ const LeadSite = () => {
   const instagram = safe(lead.instagram);
   const description = safe(lead.description);
 
-  const safeNiche = safe(lead.niche);
+  const safeNiche = safe(normalizedNiche);
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMessage)}`;
 
   const layoutProps = {
