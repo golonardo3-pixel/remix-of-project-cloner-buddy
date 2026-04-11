@@ -217,7 +217,42 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
         )}
       </div>
 
-      {/* 3. Reply to client */}
+      {/* 4. Follow-ups */}
+      <div className="space-y-2">
+        <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+          <CalendarClock className="w-3.5 h-3.5" /> Follow-ups automáticos
+        </span>
+        <div className="grid grid-cols-3 gap-2">
+          {FOLLOWUP_OPTIONS.map((opt) => (
+            <Button
+              key={opt.action}
+              size="sm"
+              variant="outline"
+              className="h-auto py-2 px-2 flex flex-col items-center gap-0.5 text-[10px]"
+              disabled={followupLoading !== null}
+              onClick={() => handleFollowup(opt.action)}
+            >
+              {followupLoading === opt.action ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <CalendarClock className="w-3.5 h-3.5" />
+              )}
+              <span className="font-medium">{opt.label}</span>
+              <span className="text-muted-foreground">{opt.desc}</span>
+            </Button>
+          ))}
+        </div>
+        {followupMsg && (
+          <div className="bg-amber-50 rounded-md p-3 text-sm text-amber-900 space-y-2">
+            <p className="whitespace-pre-wrap">{followupMsg}</p>
+            <Button size="sm" variant="outline" className="gap-1.5" onClick={() => handleCopy(followupMsg)}>
+              <Copy className="w-3.5 h-3.5" /> Copiar follow-up
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* 5. Reply to client */}
       <div className="space-y-2">
         <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
           <MessageSquareReply className="w-3.5 h-3.5" /> Responder cliente com IA
