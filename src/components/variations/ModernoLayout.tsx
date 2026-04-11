@@ -1,5 +1,5 @@
 import { VariationLayoutProps } from "./VariationShared";
-import { MessageCircle, MapPin, Phone, Star, ChevronRight, Instagram } from "lucide-react";
+import { MessageCircle, Phone, Star } from "lucide-react";
 
 /**
  * MODERNO — Clean landing page style
@@ -10,6 +10,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
   const accent = `hsl(${p.colors.accent})`;
   const primary = `hsl(${p.colors.primary})`;
   const primaryFg = `hsl(${p.colors.primaryForeground})`;
+  const meta = [p.lead.niche, p.lead.city].filter(Boolean).join(" • ");
 
   return (
     <div className="min-h-screen bg-white text-gray-900" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -34,13 +35,15 @@ const ModernoLayout = (p: VariationLayoutProps) => {
         <img src={p.heroImage} alt={p.displayName} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="relative z-10 max-w-6xl mx-auto w-full px-6 pb-12 md:pb-16">
-          <p className="text-sm font-medium tracking-widest uppercase mb-3" style={{ color: accent }}>
-            {p.lead.niche}{p.lead.city ? ` • ${p.lead.city}` : ""}
-          </p>
+          {meta && (
+            <p className="text-sm font-medium tracking-widest uppercase mb-3" style={{ color: accent }}>
+              {meta}
+            </p>
+          )}
           <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight max-w-2xl mb-4">
             {p.heroTitle}
           </h1>
-          <p className="text-white/80 text-base md:text-lg max-w-lg mb-6">{p.heroSubtitle}</p>
+          {p.heroSubtitle && <p className="text-white/80 text-base md:text-lg max-w-lg mb-6">{p.heroSubtitle}</p>}
           <a
             href={p.whatsappLink}
             target="_blank"
@@ -72,8 +75,8 @@ const ModernoLayout = (p: VariationLayoutProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {p.services.map((s, i) => (
               <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                {p.gallery[i + 1] && (
-                  <img src={p.gallery[i + 1].src} alt={s.title} className="w-full h-40 object-cover" loading="lazy" />
+                {p.serviceImages[i] && (
+                  <img src={p.serviceImages[i].src} alt={p.serviceImages[i].alt || s.title} className="w-full h-40 object-cover" loading="lazy" />
                 )}
                 <div className="p-6">
                   <h3 className="text-lg font-bold mb-2">{s.title}</h3>
@@ -109,7 +112,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
       {p.gallery.length > 0 && (
         <section className="py-16 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Galeria</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Galeria do negócio</h2>
             <div className="columns-2 md:columns-3 gap-4 space-y-4">
               {p.gallery.slice(0, 9).map((img, i) => (
                 <img key={i} src={img.src} alt={img.alt} className="w-full rounded-lg" loading="lazy" />

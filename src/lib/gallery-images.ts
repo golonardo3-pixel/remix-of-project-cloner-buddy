@@ -120,6 +120,25 @@ export interface GalleryImage {
   alt: string;
 }
 
+function normalizeNicheKey(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function uniqueImages(images: GalleryImage[]): GalleryImage[] {
+  const seen = new Set<string>();
+  return images.filter((image) => {
+    const src = image?.src?.trim();
+    if (!src || seen.has(src) || /placeholder|null|undefined/i.test(src)) return false;
+    seen.add(src);
+    return true;
+  });
+}
+
 // RULE: Each niche uses ONLY its own images. NO cross-niche sharing. Min 8 per niche.
 const galleryMap: Record<string, GalleryImage[]> = {
   "salão de beleza": [
@@ -272,6 +291,10 @@ const nicheHeroOverrides: Record<string, string> = {
   "advogado": heroLawyer,
 };
 
+const normalizedGalleryEntries = Object.entries(galleryMap).map(([key, images]) => [normalizeNicheKey(key), images] as const);
+const normalizedAliasEntries = Object.entries(nicheAliasMap).map(([key, alias]) => [normalizeNicheKey(key), normalizeNicheKey(alias)] as const);
+const normalizedHeroOverrideEntries = Object.entries(nicheHeroOverrides).map(([key, hero]) => [normalizeNicheKey(key), hero] as const);
+
 const defaultGallery: GalleryImage[] = [
   { src: heroDefault, alt: "Nosso espaço profissional" },
   { src: salon1, alt: "Ambiente profissional" },
@@ -307,20 +330,21 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
 
 export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?: string): GalleryImage[] {
   // If there are uploaded photos, prioritize them
-  const uploaded: GalleryImage[] = (uploadedPhotos || []).map((url, i) => ({
+  const uploaded: GalleryImage[] = uniqueImages((uploadedPhotos || []).map((url, i) => ({
     src: url,
     alt: `Foto do estabelecimento ${i + 1}`,
-  }));
+  })));
 
-  const key = niche.toLowerCase().trim();
+  const key = normalizeNicheKey(niche);
   let nicheImages: GalleryImage[] = [];
 
   // Direct match
-  if (galleryMap[key]) {
-    nicheImages = [...galleryMap[key]];
+  const directMatch = normalizedGalleryEntries.find(([galleryKey]) => galleryKey === key);
+  if (directMatch) {
+    nicheImages = [...directMatch[1]];
   } else {
     // Fuzzy match
-    for (const [k, v] of Object.entries(galleryMap)) {
+    for (const [k, v] of normalizedGalleryEntries) {
       if (key.includes(k) || k.includes(key)) {
         nicheImages = [...v];
         break;
@@ -329,12 +353,13 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
   }
 
   // If no match found, try alias
-  if (nicheImages.length === 0 && nicheAliasMap[key]) {
-    const aliasKey = nicheAliasMap[key];
-    if (galleryMap[aliasKey]) {
-      nicheImages = [...galleryMap[aliasKey]];
+  if (nicheImages.length === 0) {
+    const aliasKey = normalizedAliasEntries.find(([alias]) => alias === key || key.includes(alias) || alias.includes(key))?.[1];
+    const aliasImages = aliasKey ? normalizedGalleryEntries.find(([galleryKey]) => galleryKey === aliasKey)?.[1] : undefined;
+    if (aliasImages) {
+      nicheImages = [...aliasImages];
       // Replace first image with niche-specific hero if available
-      const heroOverride = nicheHeroOverrides[key];
+      const heroOverride = normalizedHeroOverrideEntries.find(([heroKey]) => heroKey === key)?.[1];
       if (heroOverride && nicheImages.length > 0) {
         nicheImages[0] = { src: heroOverride, alt: `${niche} - imagem principal` };
       }
@@ -345,14 +370,14 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
   if (slug && nicheImages.length > 1) {
     nicheImages = seededShuffle(nicheImages, hashCode(slug));
   }
+  nicheImages = uniqueImages(nicheImages);
 
   if (uploaded.length > 0) {
     // Uploaded photos first, then fill with niche stock to reach 8+
-    const needed = Math.max(0, 8 - uploaded.length);
-    return [...uploaded, ...nicheImages.slice(0, needed)];
+    return uniqueImages([...uploaded, ...nicheImages]).slice(0, 8);
   }
 
-  return nicheImages.length > 0 ? nicheImages : defaultGallery;
+  return nicheImages.length > 0 ? nicheImages : uniqueImages(defaultGallery);
 }
 
 // Niche-specific color schemes (HSL values)

@@ -8,6 +8,9 @@ import { MessageCircle, Phone, MapPin, Star, Instagram } from "lucide-react";
  */
 const VisualLayout = (p: VariationLayoutProps) => {
   const accent = `hsl(${p.colors.accent})`;
+  const meta = [p.lead.niche, p.lead.city].filter(Boolean).join(" • ");
+  const mosaicImages = p.gallery.slice(0, 5);
+  const splitImage = p.gallery[5];
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -17,7 +20,7 @@ const VisualLayout = (p: VariationLayoutProps) => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-neutral-950" />
         <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-12 md:pb-16">
           <div className="max-w-5xl mx-auto">
-            <p className="text-sm tracking-widest uppercase mb-3 opacity-70">{p.lead.niche}{p.lead.city ? ` • ${p.lead.city}` : ""}</p>
+            {meta && <p className="text-sm tracking-widest uppercase mb-3 opacity-70">{meta}</p>}
             <h1 className="text-3xl md:text-5xl font-bold leading-tight max-w-xl">{p.displayName}</h1>
           </div>
         </div>
@@ -27,13 +30,14 @@ const VisualLayout = (p: VariationLayoutProps) => {
       {p.gallery.length > 0 && (
         <section className="py-10 md:py-16">
           <div className="max-w-6xl mx-auto px-4">
+            <h2 className="text-sm tracking-[0.2em] uppercase text-neutral-500 mb-6">Galeria do negócio</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-              {p.gallery.slice(0, 1).map((img, i) => (
+              {mosaicImages.slice(0, 1).map((img, i) => (
                 <div key={i} className="col-span-2 row-span-2">
                   <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
                 </div>
               ))}
-              {p.gallery.slice(1, 7).map((img, i) => (
+              {mosaicImages.slice(1).map((img, i) => (
                 <div key={i}>
                   <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
                 </div>
@@ -48,7 +52,7 @@ const VisualLayout = (p: VariationLayoutProps) => {
         <div className="max-w-2xl mx-auto text-center px-6">
           <h2 className="text-xl md:text-2xl font-light leading-relaxed text-neutral-300 mb-4">{p.heroSubtitle}</h2>
           <div className="w-10 h-[1px] mx-auto bg-neutral-700 mb-4" />
-          <p className="text-neutral-500 text-sm">{p.lead.description || p.content.aboutText}</p>
+          {(p.lead.description || p.content.aboutText) && <p className="text-neutral-500 text-sm">{p.lead.description || p.content.aboutText}</p>}
         </div>
       </section>
 
@@ -59,6 +63,9 @@ const VisualLayout = (p: VariationLayoutProps) => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {p.services.map((s, i) => (
               <div key={i} className="text-center p-6">
+                {p.serviceImages[i] && (
+                  <img src={p.serviceImages[i].src} alt={p.serviceImages[i].alt || s.title} className="w-full h-36 object-cover rounded-lg mb-4" loading="lazy" />
+                )}
                 <h3 className="font-medium text-sm mb-1">{s.title}</h3>
                 <p className="text-neutral-500 text-xs">{s.desc}</p>
               </div>
@@ -91,12 +98,10 @@ const VisualLayout = (p: VariationLayoutProps) => {
       {/* Split: Image + CTA */}
       <section className="grid grid-cols-1 md:grid-cols-2 min-h-[50vh]">
         <div className="relative min-h-[250px]">
-          {p.gallery.length > 2 ? (
-            <img src={p.gallery[2].src} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-          ) : p.gallery.length > 1 ? (
-            <img src={p.gallery[1].src} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          {splitImage ? (
+            <img src={splitImage.src} alt={splitImage.alt} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
           ) : (
-            <img src={p.heroImage} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <div className="absolute inset-0 bg-neutral-800" />
           )}
         </div>
         <div className="flex flex-col items-center justify-center py-16 px-8 bg-neutral-900">

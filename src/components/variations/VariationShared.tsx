@@ -12,6 +12,7 @@ export interface VariationLayoutProps {
   whatsappLink: string;
   heroImage: string;
   gallery: GalleryImage[];
+  serviceImages: GalleryImage[];
   reviews: GeneratedReview[];
   services: SiteServiceOverride[];
   benefits: (string | { title: string; desc: string })[];

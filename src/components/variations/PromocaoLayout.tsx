@@ -65,6 +65,9 @@ const PromocaoLayout = (p: VariationLayoutProps) => {
             {p.services.map((s, i) => (
               <div key={i} className="border-2 border-amber-500/30 bg-gray-900 rounded-xl p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">OFERTA</div>
+                {p.serviceImages[i] && (
+                  <img src={p.serviceImages[i].src} alt={p.serviceImages[i].alt || s.title} className="w-full h-40 object-cover rounded-lg mb-4" loading="lazy" />
+                )}
                 <h3 className="text-lg font-bold mb-2 text-amber-400">{s.title}</h3>
                 <p className="text-gray-400 text-sm">{s.desc}</p>
               </div>
@@ -77,7 +80,7 @@ const PromocaoLayout = (p: VariationLayoutProps) => {
       {p.gallery.length > 0 && (
         <section className="py-14 bg-gray-900">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-2xl font-black text-center mb-2">Conheça Nosso Espaço</h2>
+            <h2 className="text-2xl font-black text-center mb-2">Galeria do negócio</h2>
             <p className="text-center text-gray-500 text-sm mb-8">Veja a estrutura que preparamos para você</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {p.gallery.slice(0, 6).map((img, i) => (
