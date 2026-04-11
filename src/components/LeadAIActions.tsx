@@ -41,6 +41,12 @@ async function callAI(action: string, lead: Lead, clientMessage?: string) {
   return data.result as string;
 }
 
+const FOLLOWUP_OPTIONS = [
+  { action: "followup_day1", label: "Follow-up Dia 1", desc: "24h sem resposta" },
+  { action: "followup_day3", label: "Follow-up Dia 3", desc: "3 dias sem resposta" },
+  { action: "followup_day7", label: "Follow-up Dia 7", desc: "Última tentativa" },
+] as const;
+
 export default function LeadAIActions({ lead, compact = false }: Props) {
   const [outreachMsg, setOutreachMsg] = useState("");
   const [outreachLoading, setOutreachLoading] = useState(false);
@@ -51,6 +57,9 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
   const [clientMsg, setClientMsg] = useState("");
   const [replyMsg, setReplyMsg] = useState("");
   const [replyLoading, setReplyLoading] = useState(false);
+
+  const [followupMsg, setFollowupMsg] = useState("");
+  const [followupLoading, setFollowupLoading] = useState<string | null>(null);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
