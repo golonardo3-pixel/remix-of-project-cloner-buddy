@@ -76,6 +76,8 @@ interface NicheTemplate {
   salesBenefit?: string;
 }
 
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+
 const nicheTemplateMap: Record<string, NicheTemplate> = {
   "salão de beleza": {
     heroTitle: (city) => `Cabelo não saiu como você queria?`,
@@ -960,7 +962,7 @@ const defaultTemplate: NicheTemplate = {
 };
 
 function findTemplate(niche: string): NicheTemplate {
-  const key = niche.toLowerCase().trim();
+  const key = canonicalizeBusinessNiche(niche).toLowerCase().trim();
   if (nicheTemplateMap[key]) return nicheTemplateMap[key];
   for (const [k, v] of Object.entries(nicheTemplateMap)) {
     if (key.includes(k) || k.includes(key)) return v;
@@ -1047,7 +1049,7 @@ export function professionalizeName(rawName: string, niche: string): string {
     return name;
   }
 
-  const nicheKey = niche.toLowerCase().trim();
+  const nicheKey = canonicalizeBusinessNiche(niche).toLowerCase().trim();
 
   for (const [k, transform] of Object.entries(nicheNamePatterns)) {
     if (nicheKey.includes(k) || k.includes(nicheKey)) {

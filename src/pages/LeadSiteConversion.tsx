@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getNicheColors } from "@/lib/gallery-images";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
 import { MessageCircle, Star, MapPin, Phone, CheckCircle, Zap, Shield, Clock } from "lucide-react";
 
 const LeadSiteConversion = () => {
@@ -42,9 +43,10 @@ const LeadSiteConversion = () => {
     );
   }
 
-  const displayName = professionalizeName(lead.company_name, lead.niche);
-  const content = getNicheContent(lead.niche, lead.city, displayName);
-  const colors = getNicheColors(lead.niche);
+  const normalizedNiche = canonicalizeBusinessNiche(lead.niche);
+  const displayName = professionalizeName(lead.company_name, normalizedNiche);
+  const content = getNicheContent(normalizedNiche, lead.city, displayName);
+  const colors = getNicheColors(normalizedNiche);
   const sc: SiteContentOverrides | null = lead.site_content;
 
   const heroTitle = sc?.heroTitle || displayName;

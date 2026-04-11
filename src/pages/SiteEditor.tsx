@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import type { SiteContentOverrides, SiteServiceOverride, SiteBenefitOverride } from "@/lib/site-content-types";
 import ImageUploadSection from "@/components/editor/ImageUploadSection";
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
 
 const SiteEditor = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,8 +37,9 @@ const SiteEditor = () => {
 
   useEffect(() => {
     if (!lead || initialized) return;
-    const displayName = professionalizeName(lead.company_name, lead.niche);
-    const defaults = getNicheContent(lead.niche, lead.city, displayName);
+    const normalizedNiche = canonicalizeBusinessNiche(lead.niche);
+    const displayName = professionalizeName(lead.company_name, normalizedNiche);
+    const defaults = getNicheContent(normalizedNiche, lead.city, displayName);
     const saved: SiteContentOverrides = lead.site_content || {};
 
     setForm({

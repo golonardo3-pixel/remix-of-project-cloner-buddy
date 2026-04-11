@@ -5,6 +5,7 @@ import { getGalleryImages, getNicheColors } from "@/lib/gallery-images";
 import { generateReviews } from "@/lib/review-generator";
 import { getPublishedBaseUrl } from "@/lib/public-site-url";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
 
 /** Convert local/relative asset paths to absolute URLs so exported HTML works standalone */
 function toAbsoluteUrl(src: string): string {
@@ -31,14 +32,15 @@ interface LeadData {
 }
 
 function buildSiteHTML(lead: LeadData): string {
-  const displayName = professionalizeName(lead.company_name, lead.niche);
-  const content = getNicheContent(lead.niche, lead.city, displayName);
-  const colors = getNicheColors(lead.niche);
+  const normalizedNiche = canonicalizeBusinessNiche(lead.niche);
+  const displayName = professionalizeName(lead.company_name, normalizedNiche);
+  const content = getNicheContent(normalizedNiche, lead.city, displayName);
+  const colors = getNicheColors(normalizedNiche);
   const sc = lead.site_content;
 
   const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
-  const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
-  const reviews = generateReviews(lead.niche, lead.slug);
+  const gallery = getGalleryImages(normalizedNiche, galleryOverrides || lead.photos || undefined, lead.slug);
+  const reviews = generateReviews(normalizedNiche, lead.slug);
 
   const heroImage = toAbsoluteUrl(sc?.heroImage || content.heroImage);
   const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;

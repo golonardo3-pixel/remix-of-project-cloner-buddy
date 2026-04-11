@@ -1,3 +1,5 @@
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+
 // Gallery images per niche - each niche uses ONLY its own images
 import salon1 from "@/assets/gallery/salon-1.jpg";
 import salon2 from "@/assets/gallery/salon-2.jpg";
@@ -419,7 +421,7 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
     alt: `Foto do estabelecimento ${i + 1}`,
   })));
 
-  const key = normalizeNicheKey(niche);
+  const key = normalizeNicheKey(canonicalizeBusinessNiche(niche));
   let nicheImages: GalleryImage[] = [];
 
   // Direct match
@@ -510,7 +512,7 @@ const defaultColors: NicheColors = {
 };
 
 export function getNicheColors(niche: string): NicheColors {
-  const key = niche.toLowerCase().trim();
+  const key = canonicalizeBusinessNiche(niche).toLowerCase().trim();
   if (nicheColorMap[key]) return nicheColorMap[key];
   for (const [k, v] of Object.entries(nicheColorMap)) {
     if (key.includes(k) || k.includes(key)) return v;
