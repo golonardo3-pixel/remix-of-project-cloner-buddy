@@ -81,11 +81,11 @@ const PremiumLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, wh
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:row-span-2 rounded-none overflow-hidden">
-                <img src={gallery[0]} alt="" className="w-full h-full object-cover min-h-[400px]" />
+                <img src={gallery[0].src} alt={gallery[0].alt} className="w-full h-full object-cover min-h-[400px]" />
               </div>
               {gallery.slice(1, 3).map((img, i) => (
                 <div key={i} className="rounded-none overflow-hidden">
-                  <img src={img} alt="" className="w-full h-full object-cover min-h-[200px]" />
+                  <img src={img.src} alt={img.alt} className="w-full h-full object-cover min-h-[200px]" />
                 </div>
               ))}
             </div>

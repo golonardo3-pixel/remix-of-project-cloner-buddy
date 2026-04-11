@@ -33,7 +33,7 @@ const VisualLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, wha
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {gallery.slice(0, 6).map((img, i) => (
               <div key={i} className={`overflow-hidden ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
-                <img src={img} alt="" className="w-full h-full object-cover aspect-square hover:scale-105 transition-transform duration-500" />
+                <img src={img.src} alt={img.alt} className="w-full h-full object-cover aspect-square hover:scale-105 transition-transform duration-500" />
               </div>
             ))}
           </div>
@@ -53,9 +53,11 @@ const VisualLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, wha
       {/* Services: image-forward cards */}
       <section className="pb-2">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {services.slice(0, 4).map((s, i) => (
+          {services.slice(0, 4).map((s, i) => {
+            const bgImg = gallery[i % gallery.length]?.src || heroImage;
+            return (
             <div key={s.title} className="relative group overflow-hidden aspect-video">
-              <img src={gallery[i % gallery.length] || heroImage} alt={s.title}
+              <img src={bgImg} alt={s.title}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors" />
               <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
