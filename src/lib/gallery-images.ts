@@ -16,6 +16,9 @@ import barber3 from "@/assets/gallery/barber-3.jpg";
 import barber4 from "@/assets/gallery/barber-4.jpg";
 import barber5 from "@/assets/gallery/barber-5.jpg";
 import barber6 from "@/assets/gallery/barber-6.jpg";
+import barber7 from "@/assets/gallery/barber-7.jpg";
+import barber8 from "@/assets/gallery/barber-8.jpg";
+import barber9 from "@/assets/gallery/barber-9.jpg";
 
 import dental1 from "@/assets/gallery/dental-1.jpg";
 import dental2 from "@/assets/gallery/dental-2.jpg";
@@ -23,6 +26,7 @@ import dental3 from "@/assets/gallery/dental-3.jpg";
 import dental4 from "@/assets/gallery/dental-4.jpg";
 import dental5 from "@/assets/gallery/dental-5.jpg";
 import dental7 from "@/assets/gallery/dental-7.jpg";
+import dental9 from "@/assets/gallery/dental-9.jpg";
 
 import burger1 from "@/assets/gallery/burger-1.jpg";
 import burger2 from "@/assets/gallery/burger-2.jpg";
@@ -45,6 +49,8 @@ import mechanic3 from "@/assets/gallery/mechanic-3.jpg";
 import mechanic4 from "@/assets/gallery/mechanic-4.jpg";
 import mechanic5 from "@/assets/gallery/mechanic-5.jpg";
 import mechanic6 from "@/assets/gallery/mechanic-6.jpg";
+import mechanic7 from "@/assets/gallery/mechanic-7.jpg";
+import mechanic8 from "@/assets/gallery/mechanic-8.jpg";
 
 import petshop1 from "@/assets/gallery/petshop-1.jpg";
 import petshop2 from "@/assets/gallery/petshop-2.jpg";
@@ -52,6 +58,9 @@ import petshop3 from "@/assets/gallery/petshop-3.jpg";
 import petshop4 from "@/assets/gallery/petshop-4.jpg";
 import petshop5 from "@/assets/gallery/petshop-5.jpg";
 import petshop6 from "@/assets/gallery/petshop-6.jpg";
+import petshop7 from "@/assets/gallery/petshop-7.jpg";
+import petshop8 from "@/assets/gallery/petshop-8.jpg";
+import petshop9 from "@/assets/gallery/petshop-9.jpg";
 
 import aesthetics1 from "@/assets/gallery/aesthetics-1.jpg";
 import aesthetics2 from "@/assets/gallery/aesthetics-2.jpg";
