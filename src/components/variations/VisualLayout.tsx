@@ -8,7 +8,7 @@ import { MessageCircle, Phone, MapPin, Star, Instagram } from "lucide-react";
  */
 const VisualLayout = (p: VariationLayoutProps) => {
   const accent = `hsl(${p.colors.accent})`;
-  const meta = [p.lead.niche, p.lead.city].filter(Boolean).join(" • ");
+  const meta = [p.lead.niche, p.lead.city].filter(v => v && !/n[aã]o\s+informad/i.test(v)).join(" • ");
   const mosaicImages = p.gallery.slice(0, 5);
   const splitImage = p.gallery[5];
 

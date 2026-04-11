@@ -10,7 +10,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
   const accent = `hsl(${p.colors.accent})`;
   const primary = `hsl(${p.colors.primary})`;
   const primaryFg = `hsl(${p.colors.primaryForeground})`;
-  const meta = [p.lead.niche, p.lead.city].filter(Boolean).join(" • ");
+  const meta = [p.lead.niche, p.lead.city].filter(v => v && !/n[aã]o\s+informad/i.test(v)).join(" • ");
 
   return (
     <div className="min-h-screen bg-white text-gray-900" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>

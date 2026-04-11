@@ -15,9 +15,11 @@ const PremiumLayout = (p: VariationLayoutProps) => {
       <header className="bg-stone-900 text-stone-300 text-xs py-2.5 px-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <span className="tracking-[0.15em] uppercase font-medium">{p.displayName}</span>
-          <span className="flex items-center gap-2">
-            {p.lead.city && <><MapPin className="w-3 h-3" /> {p.lead.city}</>}
-          </span>
+          {p.lead.city && (
+            <span className="flex items-center gap-2">
+              <MapPin className="w-3 h-3" /> {p.lead.city}
+            </span>
+          )}
         </div>
       </header>
 
