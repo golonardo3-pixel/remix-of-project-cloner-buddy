@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getGalleryImages, getNicheColors } from "@/lib/gallery-images";
-import { MessageCircle, MapPin, Phone, Clock, ExternalLink, Instagram, Sparkles } from "lucide-react";
+import { MessageCircle, MapPin, Phone, Clock, ExternalLink, Instagram } from "lucide-react";
 import LeadSiteGallery from "@/components/LeadSiteGallery";
 import LeadSiteContactForm from "@/components/LeadSiteContactForm";
 import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
@@ -15,6 +15,10 @@ import PremiumLayout from "@/components/variations/PremiumLayout";
 import SimplesLayout from "@/components/variations/SimplesLayout";
 import PromocaoLayout from "@/components/variations/PromocaoLayout";
 import VisualLayout from "@/components/variations/VisualLayout";
+
+/** Helper: return value only if it's a non-empty string */
+const safe = (v: string | null | undefined): string | undefined =>
+  v && v.trim() && v.trim().toLowerCase() !== "não informado" ? v.trim() : undefined;
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -55,7 +59,8 @@ const LeadSite = () => {
   }
 
   const displayName = professionalizeName(lead.company_name, lead.niche);
-  const content = getNicheContent(lead.niche, lead.city, displayName);
+  const city = safe(lead.city);
+  const content = getNicheContent(lead.niche, city || "", displayName);
   let colors = getNicheColors(lead.niche);
   const sc: SiteContentOverrides | null = lead.site_content;
 
@@ -80,22 +85,25 @@ const LeadSite = () => {
   const generatedReviews = generateReviews(lead.niche, lead.slug);
   const heroImage = sc?.heroImage && !sc.heroImage.startsWith("/src/") ? sc.heroImage : content.heroImage;
 
-  const mapsQuery = encodeURIComponent(`${displayName} ${lead.city}`);
+  const mapsQuery = encodeURIComponent(`${displayName} ${city || ""}`);
   const mapsLink = lead.google_maps_url || `https://www.google.com/maps/search/${mapsQuery}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(mapsLink)}`;
 
   const displayServices: SiteServiceOverride[] = variationOverrides.services && variationOverrides.services.length > 0
     ? variationOverrides.services
     : lead.services_list && lead.services_list.length > 0
-      ? lead.services_list.map((s: string) => ({ title: s, desc: `Atendimento profissional em ${lead.city}. Chame no WhatsApp para saber mais.` }))
+      ? lead.services_list.map((s: string) => ({ title: s, desc: city ? `Atendimento profissional em ${city}. Chame no WhatsApp para saber mais.` : "Chame no WhatsApp para saber mais." }))
       : content.services;
 
   const benefits = variationOverrides.benefits && variationOverrides.benefits.length > 0
     ? variationOverrides.benefits
     : content.benefits;
 
+  const instagram = safe(lead.instagram);
+  const description = safe(lead.description);
+
   const layoutProps = {
-    lead,
+    lead: { ...lead, city: city || "", instagram, description },
     displayName,
     heroTitle,
     heroSubtitle,
@@ -121,7 +129,7 @@ const LeadSite = () => {
   if (variationId === "promocao") return <PromocaoLayout {...layoutProps} />;
   if (variationId === "visual") return <VisualLayout {...layoutProps} />;
 
-  // Default layout (no variation or unknown)
+  // Default layout
   const nicheStyle = {
     "--niche-primary": colors.primary,
     "--niche-primary-fg": colors.primaryForeground,
@@ -134,6 +142,7 @@ const LeadSite = () => {
       style={nicheStyle}
       className="[--primary:var(--niche-primary)] [--primary-foreground:var(--niche-primary-fg)] [--accent:var(--niche-accent)] [--gold:var(--niche-accent)] [--secondary:var(--niche-secondary)]"
     >
+      {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 max-w-5xl mx-auto">
           <div className="min-w-0">
@@ -142,20 +151,22 @@ const LeadSite = () => {
             </h1>
           </div>
           <div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
-              {lead.city}
-            </span>
-            {lead.instagram && (
+            {city && (
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
+                {city}
+              </span>
+            )}
+            {instagram && (
               <a
-                href={`https://instagram.com/${lead.instagram.replace("@", "")}`}
+                href={`https://instagram.com/${instagram.replace("@", "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                 style={{ color: `hsl(${colors.accent})` }}
               >
                 <Instagram className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{lead.instagram}</span>
+                <span className="hidden sm:inline">{instagram}</span>
               </a>
             )}
           </div>
@@ -163,10 +174,11 @@ const LeadSite = () => {
       </header>
 
       <main>
+        {/* Hero */}
         <section className="relative overflow-hidden min-h-[55vh] sm:min-h-[70vh] md:min-h-[85vh] flex items-end">
           <img
             src={heroImage}
-            alt={`${displayName} - ${lead.niche} em ${lead.city}`}
+            alt={displayName}
             className="absolute inset-0 w-full h-full object-cover z-0"
             width={1280}
             height={832}
@@ -180,12 +192,14 @@ const LeadSite = () => {
             <p className="text-white/85 font-body text-sm sm:text-base md:text-lg max-w-lg mb-3 sm:mb-4 leading-relaxed drop-shadow">
               {heroSubtitle}
             </p>
-            <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
-                <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
-                {lead.city}
-              </span>
-            </div>
+            {city && (
+              <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
+                  <MapPin className="w-3.5 h-3.5" style={{ color: `hsl(${colors.accent})` }} />
+                  {city}
+                </span>
+              </div>
+            )}
             <a
               href={whatsappLink}
               target="_blank"
@@ -199,6 +213,7 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Benefits strip */}
         <section className="py-6 md:py-8" style={{ backgroundColor: `hsl(${colors.primary})` }}>
           <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -212,14 +227,19 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Reviews */}
         <LeadSiteSocialProof reviews={generatedReviews} colors={colors} />
 
-        <LeadSiteGallery
-          images={gallery}
-          label={content.galleryLabel}
-          heading={content.galleryHeading}
-        />
+        {/* Gallery */}
+        {gallery.length > 0 && (
+          <LeadSiteGallery
+            images={gallery}
+            label={content.galleryLabel}
+            heading={content.galleryHeading}
+          />
+        )}
 
+        {/* Services */}
         <section className="py-12 md:py-20">
           <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="mb-14 text-center">
@@ -240,17 +260,19 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* About */}
         <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="max-w-2xl mx-auto text-center">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>{content.aboutLabel}</p>
             <h2 className="salon-heading mb-5 whitespace-pre-line">{content.aboutHeading}</h2>
             <div className="w-16 h-0.5 mb-8 mx-auto" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
-              {lead.description || content.aboutText}
+              {description || content.aboutText}
             </p>
           </div>
         </section>
 
+        {/* Contact form */}
         <section className="py-12 md:py-20" style={{ backgroundColor: `hsl(${colors.secondary})` }}>
           <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
             <div className="text-center mb-12">
@@ -268,47 +290,50 @@ const LeadSite = () => {
           </div>
         </section>
 
-        <section className="py-12 md:py-20">
-          <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Localização</p>
-              <h2 className="salon-heading mb-5">Onde estamos</h2>
-              <div className="w-16 h-0.5 mx-auto" style={{ backgroundColor: `hsl(${colors.accent})` }} />
+        {/* Map — only if city exists */}
+        {city && (
+          <section className="py-12 md:py-20">
+            <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Localização</p>
+                <h2 className="salon-heading mb-5">Onde estamos</h2>
+                <div className="w-16 h-0.5 mx-auto" style={{ backgroundColor: `hsl(${colors.accent})` }} />
+              </div>
+              <div className="rounded-lg overflow-hidden mb-8 shadow-md">
+                <iframe
+                  title={`Localização de ${displayName}`}
+                  src={`https://maps.google.com/maps?q=${mapsQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  width="100%"
+                  height="400"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <div className="text-center">
+                <a
+                  href={mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 font-medium rounded-lg transition-colors"
+                  style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Ver no Google Maps
+                </a>
+              </div>
             </div>
-            <div className="rounded-lg overflow-hidden mb-8 shadow-md">
-              <iframe
-                title={`Localização de ${displayName}`}
-                src={`https://maps.google.com/maps?q=${mapsQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                width="100%"
-                height="400"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-            <div className="text-center">
-              <a
-                href={mapsLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 font-medium rounded-lg transition-colors"
-                style={{ backgroundColor: `hsl(${colors.primary})`, color: `hsl(${colors.primaryForeground})` }}
-              >
-                <ExternalLink className="w-4 h-4" />
-                Ver no Google Maps
-              </a>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
+        {/* QR Code */}
         <section className="py-12 md:py-20 px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto">
           <div className="text-center max-w-md mx-auto">
             <p className="uppercase text-xs tracking-[0.2em] font-medium mb-3" style={{ color: `hsl(${colors.accent})` }}>Avalie-nos</p>
             <h2 className="salon-heading mb-5">Sua opinião importa</h2>
             <div className="w-16 h-0.5 mx-auto mb-8" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             <p className="text-muted-foreground text-sm mb-8">
-              Sua opinião é muito importante para nós.<br />
               Escaneie o QR Code e deixe sua avaliação no Google.
             </p>
             <div className="inline-block bg-white p-5 rounded-xl shadow-lg">
@@ -317,13 +342,14 @@ const LeadSite = () => {
           </div>
         </section>
 
+        {/* Final CTA */}
         <section className="py-14 md:py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
           <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto text-center">
             <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold mb-4" style={{ color: `hsl(${colors.primaryForeground})` }}>
               Entre em contato
             </h2>
             <p className="text-sm md:text-base max-w-md mx-auto mb-8 font-body" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
-              Atendimento profissional em {lead.city} e região. Fale conosco pelo WhatsApp.
+              {city ? `Atendimento profissional em ${city} e região.` : "Atendimento profissional."} Fale conosco pelo WhatsApp.
             </p>
             <a
               href={whatsappLink}
@@ -339,26 +365,29 @@ const LeadSite = () => {
         </section>
       </main>
 
+      {/* Footer */}
       <footer style={{ backgroundColor: `hsl(${colors.primary})` }}>
         <div className="px-4 sm:px-5 md:px-8 lg:px-16 max-w-5xl mx-auto py-10 md:py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
               <h3 className="font-display text-lg font-semibold mb-4" style={{ color: `hsl(${colors.primaryForeground})` }}>{displayName}</h3>
               <p className="text-sm leading-relaxed" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>{content.footerTagline}</p>
-              {lead.instagram && (
-                <a href={`https://instagram.com/${lead.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer"
+              {instagram && (
+                <a href={`https://instagram.com/${instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 mt-4 text-sm hover:opacity-80 transition-opacity"
                   style={{ color: `hsl(${colors.accent})` }}>
                   <Instagram className="w-4 h-4" />
-                  {lead.instagram}
+                  {instagram}
                 </a>
               )}
             </div>
             <div className="space-y-4">
-              <div className="flex items-start gap-3 text-sm" style={{ color: `hsl(${colors.primaryForeground} / 0.8)` }}>
-                <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
-                <span>{lead.city}</span>
-              </div>
+              {city && (
+                <div className="flex items-start gap-3 text-sm" style={{ color: `hsl(${colors.primaryForeground} / 0.8)` }}>
+                  <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
+                  <span>{city}</span>
+                </div>
+              )}
               <div className="flex items-center gap-3 text-sm" style={{ color: `hsl(${colors.primaryForeground} / 0.8)` }}>
                 <Phone className="w-4 h-4 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
                 <span>{lead.phone}</span>
@@ -382,6 +411,7 @@ const LeadSite = () => {
         </div>
       </footer>
 
+      {/* Floating WhatsApp */}
       <a
         href={whatsappLink}
         target="_blank"

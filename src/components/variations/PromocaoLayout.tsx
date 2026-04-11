@@ -110,13 +110,13 @@ const PromocaoLayout = (p: VariationLayoutProps) => {
           >
             <MessageCircle className="w-6 h-6" /> GARANTIR MINHA VAGA
           </a>
-          <p className="text-gray-500 text-xs mt-4">Atendimento em {p.lead.city} e região</p>
+          <p className="text-gray-500 text-xs mt-4">{p.lead.city ? `Atendimento em ${p.lead.city} e região` : "Atendimento disponível"}</p>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="bg-gray-950 border-t border-gray-800 py-6 text-center text-xs text-gray-500">
-        <p>{p.displayName} • {p.lead.city} • <Phone className="w-3 h-3 inline" /> {p.lead.phone}</p>
+        <p>{p.displayName}{p.lead.city ? ` • ${p.lead.city}` : ""} • <Phone className="w-3 h-3 inline" /> {p.lead.phone}</p>
       </footer>
     </div>
   );

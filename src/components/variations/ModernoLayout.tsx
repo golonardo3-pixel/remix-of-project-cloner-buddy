@@ -35,7 +35,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="relative z-10 max-w-6xl mx-auto w-full px-6 pb-12 md:pb-16">
           <p className="text-sm font-medium tracking-widest uppercase mb-3" style={{ color: accent }}>
-            {p.lead.niche} • {p.lead.city}
+            {p.lead.niche}{p.lead.city ? ` • ${p.lead.city}` : ""}
           </p>
           <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight max-w-2xl mb-4">
             {p.heroTitle}
@@ -121,7 +121,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
       <section className="py-20 text-center" style={{ backgroundColor: primary, color: primaryFg }}>
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-2xl md:text-4xl font-bold mb-4">Pronto para começar?</h2>
-          <p className="opacity-70 mb-8">Atendimento profissional em {p.lead.city}. Fale conosco agora.</p>
+          <p className="opacity-70 mb-8">{p.lead.city ? `Atendimento profissional em ${p.lead.city}.` : "Atendimento profissional."} Fale conosco agora.</p>
           <a
             href={p.whatsappLink}
             target="_blank"
@@ -139,7 +139,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between gap-6">
           <div>
             <p className="text-white font-bold text-lg mb-1">{p.displayName}</p>
-            <p className="text-sm">{p.lead.city}</p>
+            {p.lead.city && <p className="text-sm">{p.lead.city}</p>}
           </div>
           <div className="flex items-center gap-4 text-sm">
             <Phone className="w-4 h-4" /> {p.lead.phone}

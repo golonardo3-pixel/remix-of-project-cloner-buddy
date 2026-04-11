@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, Trash2, Plus, Image as ImageIcon, Link, Instagram, MapPin } from "lucide-react";
+import { Upload, Trash2, Plus, Image as ImageIcon, Link, Instagram, MapPin, Star, GripVertical, ArrowUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ImageUploadSectionProps {
@@ -91,17 +91,30 @@ const ImageUploadSection = ({
     onGalleryChange(galleryImages.filter((_, i) => i !== idx));
   };
 
+  const setAsHero = (idx: number) => {
+    onHeroChange(galleryImages[idx]);
+    toast({ title: "Foto definida como principal!" });
+  };
+
+  const moveImage = (idx: number, direction: -1 | 1) => {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= galleryImages.length) return;
+    const arr = [...galleryImages];
+    [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+    onGalleryChange(arr);
+  };
+
   return (
     <div className="space-y-6">
       {/* Hero Image */}
       <div className="space-y-3">
-        <label className="text-sm font-medium text-muted-foreground">Imagem do Hero</label>
+        <label className="text-sm font-medium text-muted-foreground">📸 Foto Principal (Hero)</label>
         {heroImage && (
           <div className="relative rounded-lg overflow-hidden border border-border">
             <img src={heroImage} alt="Hero" className="w-full h-40 object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <span className="absolute bottom-2 left-2 text-xs text-white/80 bg-black/40 px-2 py-0.5 rounded">
-              Preview com máscara escura
+              Foto principal do site
             </span>
           </div>
         )}
@@ -121,21 +134,7 @@ const ImageUploadSection = ({
             disabled={uploading}
           >
             <Upload className="w-3.5 h-3.5" />
-            {uploading ? "Enviando..." : "Upload de imagem"}
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 opacity-50" disabled title="Em breve: buscar fotos do Google Maps">
-            <MapPin className="w-3.5 h-3.5" />
-            Google Maps
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 opacity-50"
-            disabled
-            title={hasInstagram ? "Em breve: buscar fotos do Instagram" : "Instagram não configurado"}
-          >
-            <Instagram className="w-3.5 h-3.5" />
-            Instagram
+            {uploading ? "Enviando..." : "Trocar foto principal"}
           </Button>
         </div>
       </div>
@@ -143,20 +142,52 @@ const ImageUploadSection = ({
       {/* Gallery */}
       <div className="space-y-3">
         <label className="text-sm font-medium text-muted-foreground">
-          Galeria de Imagens ({galleryImages.length})
+          🖼️ Fotos do Negócio ({galleryImages.length})
         </label>
+        <p className="text-xs text-muted-foreground">
+          Adicione de 4 a 8 fotos para um site profissional. Você pode reordenar e definir a foto principal.
+        </p>
 
         {galleryImages.length > 0 && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {galleryImages.map((url, i) => (
-              <div key={i} className="relative group rounded overflow-hidden border border-border aspect-square">
-                <img src={url} alt={`Galeria ${i + 1}`} className="w-full h-full object-cover" />
-                <button
-                  onClick={() => removeGalleryImage(i)}
-                  className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
+              <div key={i} className="relative group rounded-lg overflow-hidden border border-border aspect-square bg-muted">
+                <img src={url} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+                {/* Overlay actions */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100">
+                  <button
+                    onClick={() => setAsHero(i)}
+                    className="p-1.5 rounded-full bg-white/90 text-amber-600 hover:bg-white transition-colors"
+                    title="Definir como foto principal"
+                  >
+                    <Star className="w-3.5 h-3.5" />
+                  </button>
+                  {i > 0 && (
+                    <button
+                      onClick={() => moveImage(i, -1)}
+                      className="p-1.5 rounded-full bg-white/90 text-foreground hover:bg-white transition-colors"
+                      title="Mover para cima"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => removeGalleryImage(i)}
+                    className="p-1.5 rounded-full bg-white/90 text-destructive hover:bg-white transition-colors"
+                    title="Remover foto"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                {/* Position badge */}
+                <span className="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                  {i + 1}
+                </span>
+                {heroImage === url && (
+                  <span className="absolute top-1.5 right-1.5 bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                    <Star className="w-2.5 h-2.5" /> Principal
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -179,7 +210,7 @@ const ImageUploadSection = ({
             disabled={uploading}
           >
             <Plus className="w-3.5 h-3.5" />
-            {uploading ? "Enviando..." : "Upload múltiplo"}
+            {uploading ? "Enviando..." : "Adicionar fotos"}
           </Button>
         </div>
 
