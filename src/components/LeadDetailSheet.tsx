@@ -13,6 +13,7 @@ import { KANBAN_COLUMNS } from "./KanbanBoard";
 import type { Lead } from "./KanbanBoard";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import GmbAnalysis from "@/components/GmbAnalysis";
+import LeadSuggestions from "@/components/LeadSuggestions";
 
 interface Props {
   lead: Lead | null;
@@ -117,6 +118,8 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
           </div>
 
           <GmbAnalysis lead={lead} />
+
+          <LeadSuggestions lead={lead} />
 
           <div>
             <Label>Status do Lead</Label>
