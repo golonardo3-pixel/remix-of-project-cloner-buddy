@@ -18,59 +18,72 @@ serve(async (req) => {
     let userPrompt = "";
 
     if (action === "generate_outreach") {
-      systemPrompt = `Você é um especialista em prospecção comercial para pequenos negócios no Brasil. 
-Gere UMA mensagem curta para WhatsApp (máximo 3 linhas) para abordar o lead.
-A mensagem deve ser natural, humana, consultiva — nunca parecer robô.
-Use no máximo 1 emoji. Não inclua links. Não pressione o cliente.
-Responda APENAS com a mensagem, sem explicações.`;
+      systemPrompt = `Você é um especialista em vendas consultivas.
+Com base nos dados deste lead (nome, segmento, cidade), gere UMA mensagem curta para WhatsApp oferecendo um site profissional por R$97.
+
+Regras:
+- Máximo 3 linhas
+- Tom natural, sem parecer robô
+- Mencione o segmento do negócio dele
+- Termine com uma pergunta simples
+- Sem emojis excessivos, no máximo 1
+- Responda APENAS com a mensagem, sem explicações.`;
 
       const cityPart = lead.city && !["não informada", "não informado", "n/a", "sem dados"].includes(lead.city.toLowerCase())
-        ? ` em ${lead.city}` : "";
+        ? lead.city : "";
 
-      userPrompt = `Empresa: ${lead.company_name}
-Nicho: ${lead.niche}
-Cidade: ${lead.city || "não informada"}${cityPart ? "" : " (NÃO mencione cidade na mensagem)"}
-Status: ${lead.lead_status}
-Avaliação Google: ${lead.google_rating ?? "sem dados"}
-Qtd avaliações: ${lead.google_reviews_count ?? "sem dados"}
-Tem site: ${lead.site_status !== "nao_criado" ? "sim" : "não"}
-Descrição: ${lead.description || "não disponível"}`;
+      userPrompt = `Dados do lead: ${lead.company_name}, ${lead.niche}${cityPart ? `, ${cityPart}` : ""}`;
 
     } else if (action === "analyze_lead") {
-      systemPrompt = `Você é um consultor de marketing digital especializado em pequenos negócios brasileiros.
-Analise o lead e retorne um JSON com esta estrutura exata:
+      systemPrompt = `Analise este lead e retorne um JSON com esta estrutura exata:
 {
   "score": número de 0 a 100,
+  "motivo": "frase curta explicando o score",
   "problems": [{"title": "título curto", "severity": "alta"|"media"|"baixa"}],
-  "opportunity": "texto curto de 1-2 linhas sobre oportunidade de venda"
+  "opportunity": "qual produto vender primeiro (site R$97 ou GMN R$350+)",
+  "urgencia": "baixa"|"media"|"alta"
 }
+
+Critérios de score:
+- Tem negócio local físico? +30 pontos
+- Está no Instagram mas sem site? +25 pontos
+- Segmento competitivo (clínica, salão, restaurante, loja)? +20 pontos
+- Cidade grande ou média? +15 pontos
+- Tem poucas avaliações no Google? +10 pontos
+
 Responda APENAS com o JSON, sem markdown, sem explicações.`;
 
-      userPrompt = `Empresa: ${lead.company_name}
-Nicho: ${lead.niche}
-Cidade: ${lead.city}
+      const cityVal = lead.city && !["não informada", "não informado", "n/a", "sem dados"].includes(lead.city.toLowerCase())
+        ? lead.city : "não especificada";
+
+      userPrompt = `Dados: ${lead.company_name}, ${lead.niche}, ${cityVal}
 Avaliação Google: ${lead.google_rating ?? "sem dados"}
 Qtd avaliações: ${lead.google_reviews_count ?? 0}
 Tem site: ${lead.site_status !== "nao_criado" ? "sim" : "não"}
 Tem fotos: ${(lead.photos?.length ?? 0) > 0 ? "sim" : "não"}
-Descrição: ${lead.description || "sem descrição"}
 Instagram: ${lead.instagram || "não tem"}`;
 
     } else if (action === "generate_reply") {
-      systemPrompt = `Você é um consultor de marketing digital que está respondendo a mensagem de um potencial cliente.
-Gere uma resposta natural, consultiva, sem pressão. Máximo 4 linhas.
-Sem emojis exagerados (máximo 1). Tom profissional mas humano.
-Responda APENAS com a mensagem, sem explicações.`;
+      systemPrompt = `Você é um consultor de presença digital.
+O cliente enviou uma mensagem. Gere uma resposta consultiva que:
+- Valide a dúvida ou objeção dele
+- Explique o valor (não o preço) do serviço
+- Se for objeção de preço: mostre ROI simples
+- Se for dúvida técnica: simplifique ao máximo
+- Termine conduzindo para o fechamento
+- Máximo 5 linhas, tom humano
+- Responda APENAS com a mensagem, sem explicações.
+
+Serviços disponíveis:
+- Site simples com WhatsApp e Google Maps: R$97
+- Gestão de mídias (GMN): a partir de R$350/mês`;
 
       userPrompt = `Contexto do lead:
 Empresa: ${lead.company_name}
 Nicho: ${lead.niche}
-Cidade: ${lead.city}
 
 Mensagem do cliente:
-"${clientMessage}"
-
-Gere uma resposta ideal para essa mensagem.`;
+"${clientMessage}"`;
 
     } else {
       return new Response(JSON.stringify({ error: "Ação inválida" }), {
