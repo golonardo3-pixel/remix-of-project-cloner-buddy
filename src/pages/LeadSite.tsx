@@ -141,10 +141,10 @@ const LeadSite = () => {
           <div className="relative z-[2] px-4 sm:px-5 pb-10 pt-20 sm:pb-14 md:pb-24 max-w-5xl mx-auto w-full">
             <div className="w-10 sm:w-12 md:w-16 h-0.5 mb-4 sm:mb-5 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-snug sm:leading-tight mb-3 sm:mb-4 text-white drop-shadow-lg">
-              {content.heroTitle}
+              {heroTitle}
             </h2>
             <p className="text-white/80 text-sm sm:text-base md:text-lg max-w-lg mb-3 sm:mb-4 font-body leading-relaxed drop-shadow">
-              {content.heroSubtitle}
+              {heroSubtitle}
             </p>
             <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
@@ -160,7 +160,7 @@ const LeadSite = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-5 h-5" />
-              {content.ctaText}
+              {ctaText}
             </a>
           </div>
         </section>
