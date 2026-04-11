@@ -17,8 +17,8 @@ export function calculateGmbScore(lead: Lead): GmbScore {
   let score = 100;
   const problems: string[] = [];
 
-  const rating = lead.google_rating as number | null;
-  const reviews = lead.google_reviews_count as number | null;
+  const rating = lead.google_rating;
+  const reviews = lead.google_reviews_count;
   const hasPhotos = lead.photos && lead.photos.length > 0;
   const hasSite = lead.site_status !== "nao_criado";
   const hasDescription = lead.description && lead.description.length > 20;
@@ -94,8 +94,8 @@ interface Props {
 
 export default function GmbAnalysis({ lead, compact = false }: Props) {
   const score = calculateGmbScore(lead);
-  const rating = lead.google_rating as number | null;
-  const reviews = lead.google_reviews_count as number | null;
+  const rating = lead.google_rating;
+  const reviews = lead.google_reviews_count;
   const hasPhotos = lead.photos && lead.photos.length > 0;
   const hasSite = lead.site_status !== "nao_criado";
   const hasDescription = lead.description && lead.description.length > 20;
