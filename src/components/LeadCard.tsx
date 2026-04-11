@@ -115,10 +115,6 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     `{E aí|Oi}, tudo {certo|bem}? 😊\n\n{Sou o|Aqui é o} Hugo, te mandei uma mensagem recentemente.\n\nSó passando pra saber se viu aquele modelo que fiz pra ${lead.company_name}. Quer que eu te mostre?`,
     `{Oi|Olá}! Hugo aqui 😊\n\nTe escrevi uns dias atrás sobre algo que montei pra ${lead.company_name}.\n\nAinda tem interesse em dar uma olhada? {É rapidinho|É rápido}!`,
   ];
-    `Oi! Tudo bem? 😊\n\nHugo aqui. Te mandei uma mensagem uns dias atrás sobre a ${lead.company_name}.\n\nConseguiu dar uma olhada? Se quiser posso te explicar rapidinho como funciona.`,
-    `E aí, tudo certo? 😊\n\nSou o Hugo, te mandei uma mensagem recentemente.\n\nSó passando pra saber se viu aquele modelo que fiz pra ${lead.company_name}. Quer que eu te mostre?`,
-    `Oi! Hugo aqui 😊\n\nTe escrevi uns dias atrás sobre algo que montei pra ${lead.company_name}.\n\nAinda tem interesse em dar uma olhada? É rapidinho!`,
-  ];
 
   const handleSendProposal = (e: React.MouseEvent) => {
     e.stopPropagation();
