@@ -16,6 +16,9 @@ import barber3 from "@/assets/gallery/barber-3.jpg";
 import barber4 from "@/assets/gallery/barber-4.jpg";
 import barber5 from "@/assets/gallery/barber-5.jpg";
 import barber6 from "@/assets/gallery/barber-6.jpg";
+import barber7 from "@/assets/gallery/barber-7.jpg";
+import barber8 from "@/assets/gallery/barber-8.jpg";
+import barber9 from "@/assets/gallery/barber-9.jpg";
 
 import dental1 from "@/assets/gallery/dental-1.jpg";
 import dental2 from "@/assets/gallery/dental-2.jpg";
@@ -23,6 +26,7 @@ import dental3 from "@/assets/gallery/dental-3.jpg";
 import dental4 from "@/assets/gallery/dental-4.jpg";
 import dental5 from "@/assets/gallery/dental-5.jpg";
 import dental7 from "@/assets/gallery/dental-7.jpg";
+import dental9 from "@/assets/gallery/dental-9.jpg";
 
 import burger1 from "@/assets/gallery/burger-1.jpg";
 import burger2 from "@/assets/gallery/burger-2.jpg";
@@ -45,6 +49,8 @@ import mechanic3 from "@/assets/gallery/mechanic-3.jpg";
 import mechanic4 from "@/assets/gallery/mechanic-4.jpg";
 import mechanic5 from "@/assets/gallery/mechanic-5.jpg";
 import mechanic6 from "@/assets/gallery/mechanic-6.jpg";
+import mechanic7 from "@/assets/gallery/mechanic-7.jpg";
+import mechanic8 from "@/assets/gallery/mechanic-8.jpg";
 
 import petshop1 from "@/assets/gallery/petshop-1.jpg";
 import petshop2 from "@/assets/gallery/petshop-2.jpg";
@@ -52,12 +58,18 @@ import petshop3 from "@/assets/gallery/petshop-3.jpg";
 import petshop4 from "@/assets/gallery/petshop-4.jpg";
 import petshop5 from "@/assets/gallery/petshop-5.jpg";
 import petshop6 from "@/assets/gallery/petshop-6.jpg";
+import petshop7 from "@/assets/gallery/petshop-7.jpg";
+import petshop8 from "@/assets/gallery/petshop-8.jpg";
+import petshop9 from "@/assets/gallery/petshop-9.jpg";
 
 import aesthetics1 from "@/assets/gallery/aesthetics-1.jpg";
 import aesthetics2 from "@/assets/gallery/aesthetics-2.jpg";
 import aesthetics3 from "@/assets/gallery/aesthetics-3.jpg";
 import aesthetics5 from "@/assets/gallery/aesthetics-5.jpg";
 import aesthetics6 from "@/assets/gallery/aesthetics-6.jpg";
+import aesthetics7 from "@/assets/gallery/aesthetics-7.jpg";
+import aesthetics8 from "@/assets/gallery/aesthetics-8.jpg";
+import aesthetics10 from "@/assets/gallery/aesthetics-10.jpg";
 
 import restaurant1 from "@/assets/gallery/restaurant-1.jpg";
 import restaurant2 from "@/assets/gallery/restaurant-2.jpg";
@@ -78,6 +90,9 @@ import marmitaria2 from "@/assets/gallery/marmitaria-2.jpg";
 import marmitaria3 from "@/assets/gallery/marmitaria-3.jpg";
 import marmitaria4 from "@/assets/gallery/marmitaria-4.jpg";
 import marmitaria5 from "@/assets/gallery/marmitaria-5.jpg";
+import marmitaria6 from "@/assets/gallery/marmitaria-6.jpg";
+import marmitaria7 from "@/assets/gallery/marmitaria-7.jpg";
+import marmitaria8 from "@/assets/gallery/marmitaria-8.jpg";
 
 import realestate1 from "@/assets/gallery/realestate-1.jpg";
 import realestate2 from "@/assets/gallery/realestate-2.jpg";
@@ -96,6 +111,9 @@ import physio1 from "@/assets/gallery/physio-1.jpg";
 import physio2 from "@/assets/gallery/physio-2.jpg";
 import physio3 from "@/assets/gallery/physio-3.jpg";
 import physio4 from "@/assets/gallery/physio-4.jpg";
+import physio5 from "@/assets/gallery/physio-5.jpg";
+import physio6 from "@/assets/gallery/physio-6.jpg";
+import physio7 from "@/assets/gallery/physio-7.jpg";
 
 import locksmith1 from "@/assets/gallery/locksmith-1.jpg";
 import locksmith2 from "@/assets/gallery/locksmith-2.jpg";
@@ -186,6 +204,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: barber4, alt: "Ferramentas profissionais de barbeiro" },
     { src: barber5, alt: "Cliente satisfeito com o corte" },
     { src: barber6, alt: "Corte fade perfeito" },
+    { src: barber7, alt: "Aparando barba com precisão" },
+    { src: barber8, alt: "Produtos de barbearia" },
+    { src: barber9, alt: "Área de espera da barbearia" },
   ],
   "estética": [
     { src: heroAesthetics, alt: "Clínica de estética moderna" },
@@ -194,6 +215,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: aesthetics3, alt: "Produtos dermatológicos premium" },
     { src: aesthetics5, alt: "Sala de procedimentos moderna" },
     { src: aesthetics6, alt: "Linha de produtos de skincare" },
+    { src: aesthetics7, alt: "Sala com vaporizador facial" },
+    { src: aesthetics8, alt: "Recepção da clínica de estética" },
+    { src: aesthetics10, alt: "Produtos de skincare premium" },
   ],
   "clínica odontológica": [
     { src: heroDental, alt: "Consultório odontológico moderno" },
@@ -203,6 +227,7 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: dental4, alt: "Procedimento de clareamento dental" },
     { src: dental5, alt: "Instrumentos odontológicos esterilizados" },
     { src: dental7, alt: "Radiografia panorâmica digital" },
+    { src: dental9, alt: "Recepção com atendente" },
   ],
   "fisioterapia": [
     { src: heroPhysiotherapy, alt: "Sessão de fisioterapia" },
@@ -210,6 +235,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: physio2, alt: "Sala de pilates clínico" },
     { src: physio3, alt: "Sessão de alongamento com fisioterapeuta" },
     { src: physio4, alt: "Sala de exercícios com bolas e faixas" },
+    { src: physio5, alt: "Área de alongamento com tapetes" },
+    { src: physio6, alt: "Equipamentos de fisioterapia" },
+    { src: physio7, alt: "Recepção da clínica de fisioterapia" },
   ],
   "pet shop": [
     { src: heroPetshop, alt: "Pet shop acolhedor" },
@@ -219,6 +247,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: petshop4, alt: "Filhotes no banho e tosa" },
     { src: petshop5, alt: "Prateleira de rações e produtos" },
     { src: petshop6, alt: "Veterinária examinando gato" },
+    { src: petshop7, alt: "Fachada do pet shop" },
+    { src: petshop8, alt: "Cachorrinho na tosa" },
+    { src: petshop9, alt: "Balcão e produtos da loja" },
   ],
   "oficina mecânica": [
     { src: heroMechanic, alt: "Oficina mecânica equipada" },
@@ -228,6 +259,8 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: mechanic4, alt: "Mecânico inspecionando motor" },
     { src: mechanic5, alt: "Troca de pneus profissional" },
     { src: mechanic6, alt: "Reparo de freio a disco" },
+    { src: mechanic7, alt: "Fachada da oficina" },
+    { src: mechanic8, alt: "Troca de óleo" },
   ],
   "baterias": [
     { src: heroBatteries, alt: "Loja de baterias automotivas" },
@@ -263,6 +296,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: marmitaria3, alt: "Marmita completa com divisórias" },
     { src: marmitaria4, alt: "Cozinha industrial com marmitas" },
     { src: marmitaria5, alt: "Entrega de marmitas por motoboy" },
+    { src: marmitaria6, alt: "Chef montando marmitas na cozinha" },
+    { src: marmitaria7, alt: "Marmitas coloridas com divisórias" },
+    { src: marmitaria8, alt: "Balcão da marmitaria" },
   ],
   "academia": [
     { src: heroGym, alt: "Academia moderna equipada" },
@@ -421,8 +457,8 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
   nicheImages = uniqueImages(nicheImages);
 
   if (uploaded.length > 0) {
-    // Uploaded photos first, then fill with niche stock to reach 8+
-    return uniqueImages([...uploaded, ...nicheImages]).slice(0, 8);
+    // Uploaded photos first, then fill with niche stock to reach 10+
+    return uniqueImages([...uploaded, ...nicheImages]).slice(0, 12);
   }
 
   return nicheImages.length > 0 ? nicheImages : uniqueImages(defaultGallery);

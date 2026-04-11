@@ -120,9 +120,9 @@ const LeadSite = () => {
   const customHeroImage = sc?.heroImage && !sc.heroImage.startsWith("/src/") ? safe(sc.heroImage) : undefined;
   const heroImage = customHeroImage || galleryPool[0]?.src || content.heroImage;
   const remainingImages = galleryPool.filter((image) => image.src !== heroImage);
-  const reservedForServices = Math.min(displayServices.length, Math.max(0, galleryPool.length - 5));
+  const reservedForServices = Math.min(displayServices.length, Math.max(0, galleryPool.length - 6));
   const serviceImages = remainingImages.slice(0, reservedForServices);
-  const gallery = remainingImages.slice(reservedForServices, reservedForServices + 8);
+  const gallery = remainingImages.slice(reservedForServices, reservedForServices + 10);
 
   const instagram = safe(lead.instagram);
   const description = safe(lead.description);
