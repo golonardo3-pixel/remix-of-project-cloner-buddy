@@ -1,5 +1,6 @@
 import { VariationLayoutProps } from "./VariationShared";
 import { MessageCircle, Phone, MapPin, Star } from "lucide-react";
+import DownloadSiteButton from "./DownloadSiteButton";
 
 /**
  * SIMPLES — Ultra minimal, text-focused, no frills
@@ -105,6 +106,11 @@ const SimplesLayout = (p: VariationLayoutProps) => {
           </a>
         </section>
       </main>
+
+      {/* Download */}
+      <section className="py-10 text-center">
+        <DownloadSiteButton lead={p.lead} />
+      </section>
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-4 text-center text-xs text-gray-400">

@@ -1,5 +1,6 @@
 import { VariationLayoutProps } from "./VariationShared";
 import { MessageCircle, MapPin, Phone, Star, ArrowRight } from "lucide-react";
+import DownloadSiteButton from "./DownloadSiteButton";
 
 /**
  * PREMIUM — Institutional / luxury style
@@ -127,6 +128,11 @@ const PremiumLayout = (p: VariationLayoutProps) => {
             <MessageCircle className="w-4 h-4" /> Falar pelo WhatsApp
           </a>
         </div>
+      </section>
+
+      {/* Download */}
+      <section className="py-10 text-center" style={{ backgroundColor: "#f5f0eb" }}>
+        <DownloadSiteButton lead={p.lead} accent={accent} />
       </section>
 
       {/* Footer */}
