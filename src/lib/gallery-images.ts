@@ -249,8 +249,38 @@ const galleryMap: Record<string, GalleryImage[]> = {
   ],
 };
 
+// Alias map: niches without dedicated photos use a related niche's gallery
+const nicheAliasMap: Record<string, string> = {
+  "manicure": "salão de beleza",
+  "massagista": "estética",
+  "nutricionista": "estética",
+  "advogado": "contabilidade",
+  "auto elétrica": "oficina mecânica",
+  "funilaria": "oficina mecânica",
+  "guincho": "oficina mecânica",
+  "chaveiro": "oficina mecânica",
+  "eletricista": "oficina mecânica",
+  "encanador": "oficina mecânica",
+  "pintor": "oficina mecânica",
+  "marido de aluguel": "oficina mecânica",
+  "desentupidora": "oficina mecânica",
+};
+
+// Hero image overrides for aliased niches that have their own hero
+const nicheHeroOverrides: Record<string, string> = {
+  "manicure": heroManicure,
+  "advogado": heroLawyer,
+};
+
 const defaultGallery: GalleryImage[] = [
   { src: heroDefault, alt: "Nosso espaço profissional" },
+  { src: salon1, alt: "Ambiente profissional" },
+  { src: salon5, alt: "Fachada do estabelecimento" },
+  { src: accounting1, alt: "Estação de trabalho" },
+  { src: accounting2, alt: "Atendimento ao cliente" },
+  { src: realestate2, alt: "Ambiente interno" },
+  { src: realestate5, alt: "Espaço moderno" },
+  { src: gym1, alt: "Infraestrutura" },
 ];
 
 // Simple hash from string to get a deterministic seed for shuffling
@@ -284,13 +314,29 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
 
   const key = niche.toLowerCase().trim();
   let nicheImages: GalleryImage[] = [];
+
+  // Direct match
   if (galleryMap[key]) {
     nicheImages = [...galleryMap[key]];
   } else {
+    // Fuzzy match
     for (const [k, v] of Object.entries(galleryMap)) {
       if (key.includes(k) || k.includes(key)) {
         nicheImages = [...v];
         break;
+      }
+    }
+  }
+
+  // If no match found, try alias
+  if (nicheImages.length === 0 && nicheAliasMap[key]) {
+    const aliasKey = nicheAliasMap[key];
+    if (galleryMap[aliasKey]) {
+      nicheImages = [...galleryMap[aliasKey]];
+      // Replace first image with niche-specific hero if available
+      const heroOverride = nicheHeroOverrides[key];
+      if (heroOverride && nicheImages.length > 0) {
+        nicheImages[0] = { src: heroOverride, alt: `${niche} - imagem principal` };
       }
     }
   }
