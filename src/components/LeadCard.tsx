@@ -23,6 +23,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { downloadStaticHTML, downloadReactProject } from "@/lib/site-export";
+import LeadAIActions from "@/components/LeadAIActions";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
 import { resolveSpintax } from "@/lib/spintax";
