@@ -15,6 +15,7 @@ import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import GmbAnalysis from "@/components/GmbAnalysis";
 import LeadSuggestions from "@/components/LeadSuggestions";
 import SiteVariationGenerator from "@/components/SiteVariationGenerator";
+import LeadAIActions from "@/components/LeadAIActions";
 
 interface Props {
   lead: Lead | null;
@@ -119,6 +120,8 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
           </div>
 
           <GmbAnalysis lead={lead} />
+
+          <LeadAIActions lead={lead} />
 
           <LeadSuggestions lead={lead} />
 

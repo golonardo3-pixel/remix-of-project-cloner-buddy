@@ -23,6 +23,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { downloadStaticHTML, downloadReactProject } from "@/lib/site-export";
+import LeadAIActions from "@/components/LeadAIActions";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
 import { resolveSpintax } from "@/lib/spintax";
@@ -312,6 +313,11 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           <Clock className="w-4 h-4" />
           Follow-up
         </Button>
+      </div>
+
+      {/* AI Outreach */}
+      <div className="mt-1.5">
+        <LeadAIActions lead={lead} compact />
       </div>
 
       {/* Edit / Duplicate — only when site exists */}
