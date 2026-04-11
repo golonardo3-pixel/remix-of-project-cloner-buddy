@@ -1,4 +1,4 @@
-import { Star, Image, Globe, MessageSquare, TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, FileText } from "lucide-react";
+import { Star, Image, Globe, MessageSquare, AlertTriangle, CheckCircle, FileText, Users, TrendingUp, BarChart3, Target, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Lead } from "@/components/KanbanBoard";
 
@@ -10,80 +10,111 @@ interface GmbScore {
   label: string;
   emoji: string;
   opportunity: string;
-  problems: string[];
+  impactPhrase: string;
+  problems: { text: string; impact: "alto" | "medio" }[];
+  competition: "alta" | "media" | "baixa";
+  growthPotential: number;
 }
+
+function estimateCompetition(lead: Lead): "alta" | "media" | "baixa" {
+  const niche = lead.niche.toLowerCase();
+  const highComp = ["restaurante", "pizzaria", "hamburgueria", "lanchonete", "barbearia", "salão", "dentista", "advogado", "academia", "pet shop", "clínica", "consultório", "padaria", "farmácia", "imobiliária"];
+  const medComp = ["mecânica", "oficina", "borracharia", "elétrica", "chaveiro", "vidraçaria", "marmoraria", "lava jato", "desentupidora", "serralheria"];
+  if (highComp.some(n => niche.includes(n))) return "alta";
+  if (medComp.some(n => niche.includes(n))) return "media";
+  return "baixa";
+}
+
+const IMPACT_PHRASES = [
+  "Você pode estar perdendo clientes todos os dias sem perceber.",
+  "Seu perfil não está aproveitando todo o potencial do Google.",
+  "Existe uma oportunidade clara de crescimento na sua região.",
+  "Clientes estão procurando por você — mas encontrando a concorrência.",
+  "Cada dia sem otimizar é um dia que a concorrência sai na frente.",
+];
 
 export function calculateGmbScore(lead: Lead): GmbScore {
   let score = 100;
-  const problems: string[] = [];
+  const problems: { text: string; impact: "alto" | "medio" }[] = [];
 
   const rating = lead.google_rating;
   const reviews = lead.google_reviews_count;
   const hasPhotos = lead.photos && lead.photos.length > 0;
+  const photoCount = lead.photos?.length ?? 0;
   const hasSite = lead.site_status !== "nao_criado";
   const hasDescription = lead.description && lead.description.length > 20;
+  const competition = estimateCompetition(lead);
 
-  // Sem site → -30
+  // Sem site → impacto alto (-30)
   if (!hasSite) {
     score -= 30;
-    problems.push("Não possui site profissional");
+    problems.push({ text: "Não possui site profissional — clientes não encontram informações online", impact: "alto" });
   }
 
-  // Menos de 10 avaliações → -20
-  if (reviews == null || reviews < 10) {
-    score -= 20;
-    problems.push(`Poucas avaliações (${reviews ?? 0})`);
-  }
-
-  // Nota abaixo de 4.0 → -15
-  if (rating == null || rating < 4.0) {
-    score -= 15;
-    problems.push(rating != null ? `Nota baixa (${rating.toFixed(1)})` : "Sem nota no Google");
-  }
-
-  // Sem fotos → -15
-  if (!hasPhotos) {
-    score -= 15;
-    problems.push("Sem fotos no perfil");
-  }
-
-  // Perfil incompleto → -20
+  // Perfil incompleto → impacto alto (-20)
   if (!hasDescription) {
     score -= 20;
-    problems.push("Perfil incompleto (sem descrição)");
+    problems.push({ text: "Perfil incompleto — passa menos confiança para novos clientes", impact: "alto" });
+  }
+
+  // Poucas avaliações → impacto médio (-20)
+  if (reviews == null || reviews < 10) {
+    score -= 20;
+    problems.push({ text: `Apenas ${reviews ?? 0} avaliações — dificulta a decisão de novos clientes`, impact: "medio" });
+  }
+
+  // Sem fotos → impacto médio (-15)
+  if (!hasPhotos) {
+    score -= 15;
+    problems.push({ text: "Sem fotos no perfil — reduz significativamente o engajamento", impact: "medio" });
+  } else if (photoCount < 5) {
+    score -= 5;
+    problems.push({ text: `Apenas ${photoCount} foto(s) — o ideal são pelo menos 5`, impact: "medio" });
+  }
+
+  // Nota baixa → (-15)
+  if (rating == null || rating < 4.0) {
+    score -= 15;
+    problems.push({
+      text: rating != null ? `Nota ${rating.toFixed(1)} — abaixo do recomendado (4.0+)` : "Sem nota no Google — perfil sem credibilidade visível",
+      impact: rating != null && rating < 3.0 ? "alto" : "medio",
+    });
   }
 
   if (score < 0) score = 0;
 
-  const opportunities = [
-    "Grande oportunidade de melhoria",
-    "Pode estar perdendo clientes",
-    "Perfil com potencial de crescimento",
-  ];
+  // Growth potential = inverse of score
+  const growthPotential = Math.min(100, Math.max(0, 100 - score + (competition === "alta" ? 15 : competition === "media" ? 5 : 0)));
+
+  // Pick impact phrase deterministically based on score
+  const phraseIdx = Math.floor((100 - score) / 20) % IMPACT_PHRASES.length;
 
   if (score <= 40) {
     return {
       total: score, level: "fraco",
       color: "text-red-600", bgColor: "bg-red-50 dark:bg-red-950/40",
       label: "Fraco", emoji: "🔴",
-      opportunity: "Grande oportunidade — presença digital muito fraca.",
-      problems,
+      opportunity: `Esse negócio está abaixo da média da região e pode estar perdendo clientes diariamente.`,
+      impactPhrase: IMPACT_PHRASES[phraseIdx],
+      problems, competition, growthPotential,
     };
   } else if (score <= 70) {
     return {
       total: score, level: "medio",
       color: "text-yellow-600", bgColor: "bg-yellow-50 dark:bg-yellow-950/40",
       label: "Médio", emoji: "🟡",
-      opportunity: "Pode estar perdendo clientes por falta de otimização.",
-      problems,
+      opportunity: `Perfil com pontos de melhoria — otimizações simples podem gerar resultados rápidos.`,
+      impactPhrase: IMPACT_PHRASES[phraseIdx],
+      problems, competition, growthPotential,
     };
   }
   return {
     total: score, level: "forte",
     color: "text-green-600", bgColor: "bg-green-50 dark:bg-green-950/40",
     label: "Forte", emoji: "🟢",
-    opportunity: "Perfil competitivo — foque em diferenciação.",
-    problems,
+    opportunity: `Perfil competitivo — foque em diferenciação e fidelização de clientes.`,
+    impactPhrase: IMPACT_PHRASES[phraseIdx],
+    problems, competition, growthPotential,
   };
 }
 
@@ -92,6 +123,12 @@ interface Props {
   compact?: boolean;
 }
 
+const COMP_CONFIG = {
+  alta: { emoji: "🔴", label: "Alta", color: "text-red-600" },
+  media: { emoji: "🟡", label: "Média", color: "text-yellow-600" },
+  baixa: { emoji: "🟢", label: "Baixa", color: "text-green-600" },
+};
+
 export default function GmbAnalysis({ lead, compact = false }: Props) {
   const score = calculateGmbScore(lead);
   const rating = lead.google_rating;
@@ -99,6 +136,7 @@ export default function GmbAnalysis({ lead, compact = false }: Props) {
   const hasPhotos = lead.photos && lead.photos.length > 0;
   const hasSite = lead.site_status !== "nao_criado";
   const hasDescription = lead.description && lead.description.length > 20;
+  const comp = COMP_CONFIG[score.competition];
 
   if (compact) {
     return (
@@ -109,103 +147,137 @@ export default function GmbAnalysis({ lead, compact = false }: Props) {
   }
 
   return (
-    <div className={`rounded-xl border p-4 space-y-4 ${score.bgColor}`}>
-      {/* Header with score */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-foreground">📊 Análise Google Meu Negócio</h3>
-        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${score.color} bg-background/80 border`}>
-          {score.emoji} {score.label} — {score.total}/100
+    <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+      {/* Report header */}
+      <div className={`px-4 py-3 border-b ${score.bgColor}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-foreground" />
+            <h3 className="text-sm font-bold text-foreground">Relatório de Presença Digital</h3>
+          </div>
+          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${score.color} bg-background/90 border`}>
+            {score.emoji} {score.total}/100
+          </div>
         </div>
+        <p className="text-[11px] text-muted-foreground mt-1">{lead.company_name} · {lead.niche} · {lead.city}</p>
       </div>
 
-      {/* Score bar */}
-      <div className="w-full bg-background/60 rounded-full h-3 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${
-            score.level === "fraco" ? "bg-red-500" :
-            score.level === "medio" ? "bg-yellow-500" : "bg-green-500"
-          }`}
-          style={{ width: `${score.total}%` }}
-        />
-      </div>
-
-      {/* Metrics grid */}
-      <div className="grid grid-cols-2 gap-2">
-        <MetricBox
-          icon={<Star className="w-4 h-4 text-yellow-500" />}
-          value={rating != null ? `${rating.toFixed(1)} ⭐` : "Sem nota"}
-          label="Nota média"
-          ok={rating != null && rating >= 4.0}
-        />
-        <MetricBox
-          icon={<MessageSquare className="w-4 h-4 text-blue-500" />}
-          value={reviews != null ? `${reviews}` : "0"}
-          label="Avaliações"
-          ok={reviews != null && reviews >= 10}
-        />
-        <MetricBox
-          icon={<Globe className="w-4 h-4" />}
-          value={hasSite ? "Sim ✓" : "Não ✗"}
-          label="Tem site"
-          ok={hasSite}
-        />
-        <MetricBox
-          icon={<Image className="w-4 h-4" />}
-          value={hasPhotos ? `Sim (${lead.photos!.length})` : "Não ✗"}
-          label="Tem fotos"
-          ok={hasPhotos}
-        />
-        <MetricBox
-          icon={<FileText className="w-4 h-4" />}
-          value={hasDescription ? "Sim ✓" : "Não ✗"}
-          label="Descrição"
-          ok={!!hasDescription}
-          className="col-span-2"
-        />
-      </div>
-
-      {/* Problems list */}
-      {score.problems.length > 0 && (
+      <div className="p-4 space-y-4">
+        {/* Score bar + classification */}
         <div className="space-y-1.5">
-          <p className="text-xs font-semibold text-foreground flex items-center gap-1">
-            <AlertTriangle className="w-3.5 h-3.5 text-orange-500" />
-            Problemas detectados:
-          </p>
-          {score.problems.map((p, i) => (
-            <p key={i} className="text-[11px] text-muted-foreground pl-5">• {p}</p>
-          ))}
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-muted-foreground font-medium">Score de presença</span>
+            <span className={`font-bold ${score.color}`}>{score.label}</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-700 ${
+                score.level === "fraco" ? "bg-red-500" :
+                score.level === "medio" ? "bg-yellow-500" : "bg-green-500"
+              }`}
+              style={{ width: `${score.total}%` }}
+            />
+          </div>
         </div>
-      )}
 
-      {/* Opportunity message */}
-      <div className={`rounded-lg p-3 border ${
-        score.level === "fraco" ? "bg-red-100/50 dark:bg-red-950/30 border-red-200 dark:border-red-900" :
-        score.level === "medio" ? "bg-yellow-100/50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-900" :
-        "bg-green-100/50 dark:bg-green-950/30 border-green-200 dark:border-green-900"
-      }`}>
-        <p className="text-xs font-medium text-foreground">
-          💡 {score.opportunity}
-        </p>
+        {/* Key indicators */}
+        <div className="grid grid-cols-3 gap-2">
+          <MiniStat
+            icon={<Target className="w-3.5 h-3.5" />}
+            label="Score"
+            value={`${score.total}`}
+            sub="/100"
+            ok={score.total > 70}
+          />
+          <MiniStat
+            icon={<Users className="w-3.5 h-3.5" />}
+            label="Concorrência"
+            value={comp.label}
+            emoji={comp.emoji}
+          />
+          <MiniStat
+            icon={<TrendingUp className="w-3.5 h-3.5" />}
+            label="Potencial"
+            value={`${score.growthPotential}%`}
+            ok={score.growthPotential > 50}
+          />
+        </div>
+
+        {/* Detailed metrics */}
+        <div className="space-y-1">
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Diagnóstico detalhado</p>
+          <div className="grid grid-cols-1 gap-1.5">
+            <MetricRow icon="⭐" label="Nota média" value={rating != null ? rating.toFixed(1) : "—"} ok={rating != null && rating >= 4.0} />
+            <MetricRow icon="💬" label="Avaliações" value={`${reviews ?? 0}`} ok={reviews != null && reviews >= 10} />
+            <MetricRow icon="🌐" label="Site profissional" value={hasSite ? "Sim" : "Não"} ok={hasSite} />
+            <MetricRow icon="📸" label="Fotos" value={hasPhotos ? `${lead.photos!.length} fotos` : "Nenhuma"} ok={hasPhotos} />
+            <MetricRow icon="📝" label="Descrição" value={hasDescription ? "Completa" : "Incompleta"} ok={!!hasDescription} />
+          </div>
+        </div>
+
+        {/* Diagnostic block */}
+        {score.problems.length > 0 && (
+          <div className="rounded-lg border border-orange-200 dark:border-orange-900 bg-orange-50/50 dark:bg-orange-950/20 p-3 space-y-2">
+            <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-orange-500" />
+              Oportunidades identificadas
+            </p>
+            {score.problems.map((p, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold shrink-0 mt-0.5 ${
+                  p.impact === "alto" ? "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400" : "bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-400"
+                }`}>
+                  {p.impact === "alto" ? "ALTO" : "MÉDIO"}
+                </span>
+                <p className="text-[11px] text-muted-foreground leading-snug">{p.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Impact phrase */}
+        <div className={`rounded-lg p-3 border-l-4 ${
+          score.level === "fraco" ? "border-l-red-500 bg-red-50/50 dark:bg-red-950/20" :
+          score.level === "medio" ? "border-l-yellow-500 bg-yellow-50/50 dark:bg-yellow-950/20" :
+          "border-l-green-500 bg-green-50/50 dark:bg-green-950/20"
+        }`}>
+          <p className="text-xs font-semibold text-foreground mb-1">💡 Resumo consultivo</p>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">{score.opportunity}</p>
+          <p className="text-[11px] font-medium text-foreground mt-1.5 italic">"{score.impactPhrase}"</p>
+        </div>
       </div>
     </div>
   );
 }
 
-function MetricBox({ icon, value, label, ok, className = "" }: {
-  icon: React.ReactNode; value: string; label: string; ok: boolean; className?: string;
+function MiniStat({ icon, label, value, sub, ok, emoji }: {
+  icon: React.ReactNode; label: string; value: string; sub?: string; ok?: boolean; emoji?: string;
 }) {
   return (
-    <div className={`flex items-center gap-2 bg-background/70 rounded-lg p-2.5 border ${ok ? "border-green-200 dark:border-green-900" : "border-red-200 dark:border-red-900"} ${className}`}>
-      <div className="shrink-0">{icon}</div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold text-foreground">{value}</p>
-        <p className="text-[10px] text-muted-foreground">{label}</p>
+    <div className="text-center bg-muted/50 rounded-lg p-2 border">
+      <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">{icon}<span className="text-[9px] font-medium">{label}</span></div>
+      <p className="text-sm font-bold text-foreground">
+        {emoji && <span className="mr-0.5">{emoji}</span>}
+        {value}
+        {sub && <span className="text-[10px] font-normal text-muted-foreground">{sub}</span>}
+      </p>
+    </div>
+  );
+}
+
+function MetricRow({ icon, label, value, ok }: {
+  icon: string; label: string; value: string; ok: boolean;
+}) {
+  return (
+    <div className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs ${ok ? "bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-900" : "bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900"}`}>
+      <div className="flex items-center gap-2">
+        <span>{icon}</span>
+        <span className="font-medium text-foreground">{label}</span>
       </div>
-      {ok ? (
-        <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
-      ) : (
-        <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
-      )}
+      <div className="flex items-center gap-1.5">
+        <span className="font-semibold text-foreground">{value}</span>
+        {ok ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <AlertTriangle className="w-3.5 h-3.5 text-red-400" />}
+      </div>
     </div>
   );
 }
