@@ -24,8 +24,11 @@ interface LogEntry {
   time: string;
 }
 
+const MAX_LEADS_PER_ROUND = 20;
+const MIN_INTERVAL_SEC = 60;
+
 const DEFAULT_MESSAGE =
-  "Oi {nome}, tudo bem? Vi seu negócio e criei uma página profissional gratuita pra você. Dá uma olhada: {link}";
+  "{Oi|Olá} {nome}, {tudo bem|tudo certo}? Vi seu negócio em {cidade} e {achei interessante|me chamou atenção}. {Posso te mostrar uma ideia rápida?|Te explico em 1 minuto?}";
 
 const FALLBACKS: Record<string, string> = {};
 DISPATCH_VARIABLES.forEach((v) => {
@@ -33,21 +36,23 @@ DISPATCH_VARIABLES.forEach((v) => {
 });
 
 function buildMessageForLead(template: string, lead: Lead): string {
-  const siteUrl = `${window.location.origin}/site/${lead.slug}`;
   const values: Record<string, string> = {
     "{nome}": lead.company_name || FALLBACKS["{nome}"],
     "{empresa}": lead.company_name || FALLBACKS["{empresa}"],
     "{telefone}": lead.phone || FALLBACKS["{telefone}"],
-    "{link}": siteUrl,
+    "{link}": "",
     "{cidade}": lead.city || FALLBACKS["{cidade}"],
     "{nicho}": lead.niche || FALLBACKS["{nicho}"],
   };
 
-  let result = template;
+  // Strip any {link} from dispatch messages (safety rule)
+  let result = template.replace(/\{link\}/gi, "").replace(/\s{2,}/g, " ").trim();
   for (const [key, val] of Object.entries(values)) {
     result = result.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
   }
-  return result;
+  // Resolve spintax
+  const { resolveSpintax } = require("@/lib/spintax");
+  return resolveSpintax(result);
 }
 
 const MessageDispatch = () => {
@@ -56,7 +61,7 @@ const MessageDispatch = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [message, setMessage] = useState(DEFAULT_MESSAGE);
-  const [interval, setIntervalSec] = useState(10);
+  const [interval, setIntervalSec] = useState(MIN_INTERVAL_SEC);
   const [status, setStatus] = useState<DispatchStatus>("idle");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [log, setLog] = useState<LogEntry[]>([]);
@@ -76,7 +81,7 @@ const MessageDispatch = () => {
     },
   });
 
-  const eligibleLeads = leads?.filter((l) => l.lead_status !== "fechado") ?? [];
+  const eligibleLeads = (leads?.filter((l) => l.lead_status === "novo") ?? []).slice(0, MAX_LEADS_PER_ROUND);
 
   const templateWarnings = validateTemplate(message);
 
@@ -136,7 +141,7 @@ const MessageDispatch = () => {
         openWhatsApp(lead.phone, text);
         await supabase
           .from("leads")
-          .update({ last_interaction: new Date().toISOString() })
+          .update({ lead_status: "respondeu", last_interaction: new Date().toISOString() } as any)
           .eq("id", lead.id);
 
         setLog((prev) => [
