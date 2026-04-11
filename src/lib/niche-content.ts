@@ -972,7 +972,9 @@ function findTemplate(niche: string): NicheTemplate {
 
 export function getNicheContent(niche: string, city: string = "", companyName: string = ""): NicheContent {
   const template = findTemplate(niche);
-  const cityName = city || "sua cidade";
+  // Strip placeholder cities like "Não informada"
+  const cleanCity = (city || "").replace(/n[aã]o\s+informad[ao]/gi, "").trim();
+  const cityName = cleanCity || "";
   const company = companyName || "nosso estabelecimento";
 
   return {
