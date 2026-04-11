@@ -204,6 +204,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: barber4, alt: "Ferramentas profissionais de barbeiro" },
     { src: barber5, alt: "Cliente satisfeito com o corte" },
     { src: barber6, alt: "Corte fade perfeito" },
+    { src: barber7, alt: "Aparando barba com precisão" },
+    { src: barber8, alt: "Produtos de barbearia" },
+    { src: barber9, alt: "Área de espera da barbearia" },
   ],
   "estética": [
     { src: heroAesthetics, alt: "Clínica de estética moderna" },
@@ -212,6 +215,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: aesthetics3, alt: "Produtos dermatológicos premium" },
     { src: aesthetics5, alt: "Sala de procedimentos moderna" },
     { src: aesthetics6, alt: "Linha de produtos de skincare" },
+    { src: aesthetics7, alt: "Sala com vaporizador facial" },
+    { src: aesthetics8, alt: "Recepção da clínica de estética" },
+    { src: aesthetics10, alt: "Produtos de skincare premium" },
   ],
   "clínica odontológica": [
     { src: heroDental, alt: "Consultório odontológico moderno" },
@@ -221,6 +227,7 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: dental4, alt: "Procedimento de clareamento dental" },
     { src: dental5, alt: "Instrumentos odontológicos esterilizados" },
     { src: dental7, alt: "Radiografia panorâmica digital" },
+    { src: dental9, alt: "Recepção com atendente" },
   ],
   "fisioterapia": [
     { src: heroPhysiotherapy, alt: "Sessão de fisioterapia" },
@@ -228,6 +235,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: physio2, alt: "Sala de pilates clínico" },
     { src: physio3, alt: "Sessão de alongamento com fisioterapeuta" },
     { src: physio4, alt: "Sala de exercícios com bolas e faixas" },
+    { src: physio5, alt: "Área de alongamento com tapetes" },
+    { src: physio6, alt: "Equipamentos de fisioterapia" },
+    { src: physio7, alt: "Recepção da clínica de fisioterapia" },
   ],
   "pet shop": [
     { src: heroPetshop, alt: "Pet shop acolhedor" },
