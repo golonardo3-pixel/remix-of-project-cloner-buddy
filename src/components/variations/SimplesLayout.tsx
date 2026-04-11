@@ -12,16 +12,18 @@ const SimplesLayout = (p: VariationLayoutProps) => {
       {/* Header — plain text */}
       <header className="border-b border-gray-200 px-5 py-4 max-w-2xl mx-auto">
         <h1 className="text-xl font-bold">{p.displayName}</h1>
-        <p className="text-sm text-gray-400 flex items-center gap-1 mt-0.5">
-          {p.lead.city ? <><MapPin className="w-3.5 h-3.5" /> {p.lead.city}</> : null}
-        </p>
+        {p.lead.city && (
+          <p className="text-sm text-gray-400 flex items-center gap-1 mt-0.5">
+            <MapPin className="w-3.5 h-3.5" /> {p.lead.city}
+          </p>
+        )}
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-10 space-y-12">
         {/* Hero — text only, no image */}
         <section>
           <h2 className="text-2xl md:text-3xl font-bold leading-snug mb-3">{p.heroTitle}</h2>
-          <p className="text-gray-500 text-base leading-relaxed mb-6">{p.heroSubtitle}</p>
+          {p.heroSubtitle && <p className="text-gray-500 text-base leading-relaxed mb-6">{p.heroSubtitle}</p>}
           <a
             href={p.whatsappLink}
             target="_blank"
@@ -36,7 +38,7 @@ const SimplesLayout = (p: VariationLayoutProps) => {
         {/* Gallery — simple grid */}
         {p.gallery.length > 0 && (
           <section>
-            <h3 className="text-lg font-bold mb-4">Fotos</h3>
+            <h3 className="text-lg font-bold mb-4">Galeria do negócio</h3>
             <div className="grid grid-cols-2 gap-2">
               {p.gallery.slice(0, 6).map((img, i) => (
                 <img key={i} src={img.src} alt={img.alt} className="w-full aspect-square object-cover rounded-lg" loading="lazy" />
@@ -50,8 +52,12 @@ const SimplesLayout = (p: VariationLayoutProps) => {
           <h3 className="text-lg font-bold mb-4">Serviços</h3>
           <ul className="space-y-3">
             {p.services.map((s, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
+              <li key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 p-3">
+                {p.serviceImages[i] ? (
+                  <img src={p.serviceImages[i].src} alt={p.serviceImages[i].alt || s.title} className="w-16 h-16 rounded-md object-cover shrink-0" loading="lazy" />
+                ) : (
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
+                )}
                 <div>
                   <p className="font-medium text-sm">{s.title}</p>
                   <p className="text-gray-400 text-xs">{s.desc}</p>

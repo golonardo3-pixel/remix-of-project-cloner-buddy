@@ -2,7 +2,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
-import { getGalleryImages, getNicheColors } from "@/lib/gallery-images";
+import { getGalleryImages, getNicheColors, type GalleryImage } from "@/lib/gallery-images";
 import { MessageCircle, MapPin, Phone, Clock, ExternalLink, Instagram } from "lucide-react";
 import LeadSiteGallery from "@/components/LeadSiteGallery";
 import LeadSiteContactForm from "@/components/LeadSiteContactForm";
@@ -19,9 +19,25 @@ import VisualLayout from "@/components/variations/VisualLayout";
 /** Helper: return value only if it's a non-empty, meaningful string */
 const safe = (v: string | null | undefined): string | undefined => {
   if (!v) return undefined;
-  const t = v.trim();
-  if (!t || t.toLowerCase() === "não informado" || t.toLowerCase() === "nao informado") return undefined;
+  const t = v.trim().replace(/\s+/g, " ");
+  const normalized = t
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  if (!t || ["nao informado", "sem dado", "sem dados", "n a", "null", "undefined", "nao disponivel"].includes(normalized)) return undefined;
   return t;
+};
+
+const uniqueImages = (images: GalleryImage[]) => {
+  const seen = new Set<string>();
+  return images.filter((image) => {
+    const src = image?.src?.trim();
+    if (!src || seen.has(src) || /placeholder|null|undefined/i.test(src)) return false;
+    seen.add(src);
+    return true;
+  });
 };
 
 const LeadSite = () => {
@@ -79,15 +95,12 @@ const LeadSite = () => {
     }
   }
 
-  const heroTitle = variationOverrides.heroTitle || sc?.heroTitle || content.heroTitle;
-  const heroSubtitle = variationOverrides.heroSubtitle || sc?.heroSubtitle || content.heroSubtitle;
-  const ctaText = variationOverrides.ctaText || sc?.ctaText || content.ctaText;
-  const whatsappMessage = variationOverrides.whatsappMessage || sc?.whatsappMessage || content.whatsappMessage;
+  const heroTitle = safe(variationOverrides.heroTitle) || safe(sc?.heroTitle) || safe(content.heroTitle) || displayName;
+  const heroSubtitle = safe(variationOverrides.heroSubtitle) || safe(sc?.heroSubtitle) || safe(content.heroSubtitle) || "";
+  const ctaText = safe(variationOverrides.ctaText) || safe(sc?.ctaText) || safe(content.ctaText) || "Fale no WhatsApp";
+  const whatsappMessage = safe(variationOverrides.whatsappMessage) || safe(sc?.whatsappMessage) || safe(content.whatsappMessage) || `Olá! Quero saber mais sobre ${displayName}.`;
   const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
-  const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
-  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMessage)}`;
   const generatedReviews = generateReviews(lead.niche, lead.slug);
-  const heroImage = sc?.heroImage && !sc.heroImage.startsWith("/src/") ? sc.heroImage : content.heroImage;
 
   const mapsQuery = encodeURIComponent(`${displayName} ${city || ""}`);
   const mapsLink = lead.google_maps_url || `https://www.google.com/maps/search/${mapsQuery}`;
@@ -103,13 +116,22 @@ const LeadSite = () => {
     ? variationOverrides.benefits
     : content.benefits;
 
+  const galleryPool = uniqueImages(getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug));
+  const customHeroImage = sc?.heroImage && !sc.heroImage.startsWith("/src/") ? safe(sc.heroImage) : undefined;
+  const heroImage = customHeroImage || galleryPool[0]?.src || content.heroImage;
+  const remainingImages = galleryPool.filter((image) => image.src !== heroImage);
+  const reservedForServices = Math.min(displayServices.length, Math.max(0, galleryPool.length - 5));
+  const serviceImages = remainingImages.slice(0, reservedForServices);
+  const gallery = remainingImages.slice(reservedForServices, reservedForServices + 8);
+
   const instagram = safe(lead.instagram);
   const description = safe(lead.description);
 
   const safeNiche = safe(lead.niche);
+  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMessage)}`;
 
   const layoutProps = {
-    lead: { ...lead, city: city || "", instagram, description, niche: safeNiche || lead.niche },
+    lead: { ...lead, city: city || "", instagram, description, niche: safeNiche || "" },
     displayName,
     heroTitle,
     heroSubtitle,
@@ -117,6 +139,7 @@ const LeadSite = () => {
     whatsappLink,
     heroImage,
     gallery,
+    serviceImages,
     reviews: generatedReviews,
     services: displayServices,
     benefits,
@@ -241,7 +264,7 @@ const LeadSite = () => {
           <LeadSiteGallery
             images={gallery}
             label={content.galleryLabel}
-            heading={content.galleryHeading}
+            heading="Galeria do negócio"
           />
         )}
 
@@ -256,8 +279,16 @@ const LeadSite = () => {
               <div className="w-16 h-0.5 mx-auto" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             </div>
             <div id="servicos" className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {displayServices.map((s) => (
+              {displayServices.map((s, index) => (
                 <div key={s.title} className="bg-background rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+                  {serviceImages[index] && (
+                    <img
+                      src={serviceImages[index].src}
+                      alt={serviceImages[index].alt || s.title}
+                      className="w-full h-48 object-cover rounded-lg mb-5"
+                      loading="lazy"
+                    />
+                  )}
                   <h3 className="font-display text-xl font-semibold mb-3 text-foreground">{s.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
                 </div>

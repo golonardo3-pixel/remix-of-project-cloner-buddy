@@ -8,8 +8,6 @@ import { MessageCircle, MapPin, Phone, Star, ArrowRight } from "lucide-react";
  */
 const PremiumLayout = (p: VariationLayoutProps) => {
   const accent = `hsl(${p.colors.accent})`;
-  const primary = `hsl(${p.colors.primary})`;
-  const primaryFg = `hsl(${p.colors.primaryForeground})`;
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
@@ -32,9 +30,11 @@ const PremiumLayout = (p: VariationLayoutProps) => {
           <h1 className="text-3xl md:text-5xl lg:text-6xl leading-tight font-normal text-white mb-6">
             {p.heroTitle}
           </h1>
-          <p className="text-white/70 text-base md:text-xl max-w-xl mx-auto mb-10 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-            {p.heroSubtitle}
-          </p>
+          {p.heroSubtitle && (
+            <p className="text-white/70 text-base md:text-xl max-w-xl mx-auto mb-10 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+              {p.heroSubtitle}
+            </p>
+          )}
           <a
             href={p.whatsappLink}
             target="_blank"
@@ -66,6 +66,9 @@ const PremiumLayout = (p: VariationLayoutProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {p.services.map((s, i) => (
               <div key={i} className="bg-white p-8 md:p-10 border border-stone-200">
+                {p.serviceImages[i] && (
+                  <img src={p.serviceImages[i].src} alt={p.serviceImages[i].alt || s.title} className="w-full h-48 object-cover mb-6" loading="lazy" />
+                )}
                 <h3 className="text-xl mb-3">{s.title}</h3>
                 <p className="text-stone-500 text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>{s.desc}</p>
               </div>
@@ -96,6 +99,7 @@ const PremiumLayout = (p: VariationLayoutProps) => {
       {/* Gallery — edge-to-edge strip */}
       {p.gallery.length > 0 && (
         <section className="overflow-hidden">
+          <h2 className="sr-only">Galeria do negócio</h2>
           <div className="flex">
             {p.gallery.slice(0, 5).map((img, i) => (
               <img key={i} src={img.src} alt={img.alt} className="w-1/3 md:w-1/5 h-64 object-cover" loading="lazy" />
