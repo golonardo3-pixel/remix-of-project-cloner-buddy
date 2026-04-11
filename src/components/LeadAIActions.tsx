@@ -4,7 +4,7 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, Copy, Brain, MessageSquareReply } from "lucide-react";
+import { Loader2, Sparkles, Copy, Brain, MessageSquareReply, CalendarClock } from "lucide-react";
 import type { Lead } from "@/components/KanbanBoard";
 
 interface Props {

@@ -63,6 +63,51 @@ Tem site: ${lead.site_status !== "nao_criado" ? "sim" : "não"}
 Tem fotos: ${(lead.photos?.length ?? 0) > 0 ? "sim" : "não"}
 Instagram: ${lead.instagram || "não tem"}`;
 
+    } else if (action === "followup_day1") {
+      systemPrompt = `Você é um vendedor consultivo e humano.
+O lead recebeu uma mensagem ontem sobre um site por R$97 mas não respondeu.
+
+Gere UMA mensagem curta de follow-up para WhatsApp que:
+- Pareça natural, não robótica
+- Não mencione que está fazendo follow-up
+- Mostre um benefício novo (aparecer no Google quando cliente pesquisa)
+- Termine com pergunta simples
+- Máximo 3 linhas
+- Responda APENAS com a mensagem, sem explicações.`;
+
+      const city1 = lead.city && !["não informada", "não informado", "n/a", "sem dados"].includes(lead.city.toLowerCase())
+        ? lead.city : "";
+      userPrompt = `Dados do lead: ${lead.company_name}, ${lead.niche}${city1 ? `, ${city1}` : ""}`;
+
+    } else if (action === "followup_day3") {
+      systemPrompt = `Você é um vendedor consultivo e humano.
+Este lead não respondeu em 3 dias.
+
+Gere UMA mensagem para WhatsApp que:
+- Crie urgência REAL sem pressão falsa
+- Mencione que atende poucos clientes por semana em Campinas
+- Ofereça mostrar exemplo de site do mesmo segmento dele
+- Máximo 3 linhas
+- Tom leve, sem desespero
+- Responda APENAS com a mensagem, sem explicações.`;
+
+      userPrompt = `Dados do lead: ${lead.company_name}, ${lead.niche}`;
+
+    } else if (action === "followup_day7") {
+      systemPrompt = `Você é um vendedor consultivo e humano.
+Este lead ficou em silêncio por 7 dias.
+É a última mensagem antes de arquivar.
+
+Gere UMA mensagem que:
+- Seja honesta: diga que é o último contato
+- Deixe a porta aberta sem pressão
+- Seja a mais curta das três (2 linhas max)
+- Tom tranquilo, sem mágoa
+- Pode mencionar que o valor de R$97 não vai durar sempre
+- Responda APENAS com a mensagem, sem explicações.`;
+
+      userPrompt = `Dados do lead: ${lead.company_name}, ${lead.niche}`;
+
     } else if (action === "generate_reply") {
       systemPrompt = `Você é um consultor de presença digital.
 O cliente enviou uma mensagem. Gere uma resposta consultiva que:
