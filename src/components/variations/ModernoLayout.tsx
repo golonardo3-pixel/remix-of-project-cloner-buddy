@@ -1,181 +1,151 @@
-import { MessageCircle, MapPin, ArrowRight, ChevronRight } from "lucide-react";
-import type { VariationLayoutProps } from "./VariationShared";
+import { VariationLayoutProps } from "./VariationShared";
+import { MessageCircle, MapPin, Phone, Star, ChevronRight, Instagram } from "lucide-react";
 
-const ModernoLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, whatsappLink, heroImage, gallery, reviews, services, benefits, colors, content, mapsLink }: VariationLayoutProps) => {
+/**
+ * MODERNO — Clean landing page style
+ * Structure: Sticky CTA bar → Full-bleed hero → Horizontal benefits strip →
+ * Services in 3-col cards → Testimonials carousel-style → Contact CTA → Minimal footer
+ */
+const ModernoLayout = (p: VariationLayoutProps) => {
+  const accent = `hsl(${p.colors.accent})`;
+  const primary = `hsl(${p.colors.primary})`;
+  const primaryFg = `hsl(${p.colors.primaryForeground})`;
+
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      {/* Minimal sticky nav */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-zinc-100">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="text-lg font-semibold tracking-tight">{displayName}</span>
-          <div className="hidden sm:flex items-center gap-8 text-sm text-zinc-500">
-            <a href="#sobre" className="hover:text-zinc-900 transition-colors">Sobre</a>
-            <a href="#servicos" className="hover:text-zinc-900 transition-colors">Serviços</a>
-            <a href="#depoimentos" className="hover:text-zinc-900 transition-colors">Depoimentos</a>
-          </div>
-          <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-            className="px-5 py-2 text-sm font-medium rounded-full text-white transition-all hover:scale-105"
-            style={{ backgroundColor: `hsl(${colors.primary})` }}>
-            Contato
+    <div className="min-h-screen bg-white text-gray-900" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {/* Floating top CTA bar */}
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
+          <span className="font-bold text-lg tracking-tight">{p.displayName}</span>
+          <a
+            href={p.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold text-white transition-transform hover:scale-105"
+            style={{ backgroundColor: "#25D366" }}
+          >
+            <MessageCircle className="w-4 h-4" /> {p.ctaText}
           </a>
         </div>
-      </nav>
+      </div>
 
-      {/* Hero: split layout - text left, image right */}
-      <section className="pt-24 pb-16 sm:pt-32 sm:pb-24">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-zinc-100 text-zinc-600 mb-6">
-              <MapPin className="w-3 h-3" />
-              {lead.city}
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-6">
-              {heroTitle}
-            </h1>
-            <p className="text-lg text-zinc-500 leading-relaxed mb-8 max-w-md">
-              {heroSubtitle}
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold hover:scale-105 transition-transform shadow-lg"
-                style={{ backgroundColor: "#25D366" }}>
-                <MessageCircle className="w-5 h-5" />
-                {ctaText}
-              </a>
-              <a href="#servicos"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-zinc-200 text-zinc-700 font-semibold hover:border-zinc-400 transition-colors">
-                Ver serviços
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
-              <img src={heroImage} alt={displayName} className="w-full h-full object-cover" />
-            </div>
-            <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `hsl(${colors.accent})` }}>
-                <span className="text-white text-sm font-bold">★</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold">{lead.google_rating || "4.9"}</p>
-                <p className="text-xs text-zinc-400">{lead.google_reviews_count || 50}+ avaliações</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits: horizontal cards */}
-      <section className="py-16 bg-zinc-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {benefits.slice(0, 4).map((b, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 text-center shadow-sm">
-                <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-lg"
-                  style={{ backgroundColor: `hsl(${colors.primary})` }}>
-                  {["✦", "◆", "●", "▲"][i]}
-                </div>
-                <p className="text-sm font-medium text-zinc-700">{typeof b === 'string' ? b : b.title}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About: centered minimal */}
-      <section id="sobre" className="py-20">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="text-sm font-medium tracking-widest uppercase mb-4" style={{ color: `hsl(${colors.accent})` }}>Sobre nós</p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">{content.aboutHeading}</h2>
-          <p className="text-zinc-500 text-lg leading-relaxed">
-            {lead.description || content.aboutText}
+      {/* Hero — full width, left-aligned text */}
+      <section className="relative h-[70vh] min-h-[420px] flex items-end">
+        <img src={p.heroImage} alt={p.displayName} className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-6 pb-12 md:pb-16">
+          <p className="text-sm font-medium tracking-widest uppercase mb-3" style={{ color: accent }}>
+            {p.lead.niche} • {p.lead.city}
           </p>
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight max-w-2xl mb-4">
+            {p.heroTitle}
+          </h1>
+          <p className="text-white/80 text-base md:text-lg max-w-lg mb-6">{p.heroSubtitle}</p>
+          <a
+            href={p.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-base font-bold text-white shadow-xl transition-transform hover:scale-105"
+            style={{ backgroundColor: "#25D366" }}
+          >
+            <MessageCircle className="w-5 h-5" /> {p.ctaText}
+          </a>
         </div>
       </section>
 
-      {/* Services: clean grid with numbered cards */}
-      <section id="servicos" className="py-20 bg-zinc-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <p className="text-sm font-medium tracking-widest uppercase mb-4" style={{ color: `hsl(${colors.accent})` }}>Serviços</p>
-            <h2 className="text-3xl sm:text-4xl font-bold">{content.servicesHeading}</h2>
-          </div>
+      {/* Horizontal benefits strip */}
+      <section className="border-b border-gray-100 py-5">
+        <div className="max-w-6xl mx-auto px-4 flex flex-wrap justify-center gap-6 md:gap-10">
+          {p.benefits.slice(0, 4).map((b, i) => (
+            <span key={i} className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
+              {typeof b === "string" ? b : b.title}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* Services — 3 column cards */}
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Nossos Serviços</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s, i) => (
-              <div key={s.title} className="bg-white rounded-2xl p-8 hover:shadow-lg transition-shadow group">
-                <span className="text-4xl font-bold text-zinc-100 group-hover:text-zinc-200 transition-colors">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="text-xl font-semibold mt-4 mb-3">{s.title}</h3>
-                <p className="text-zinc-500 text-sm leading-relaxed">{s.desc}</p>
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 mt-4 text-sm font-medium hover:gap-2 transition-all"
-                  style={{ color: `hsl(${colors.primary})` }}>
-                  Agendar <ChevronRight className="w-4 h-4" />
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Reviews: minimal cards */}
-      <section id="depoimentos" className="py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <p className="text-sm font-medium tracking-widest uppercase mb-4" style={{ color: `hsl(${colors.accent})` }}>Depoimentos</p>
-            <h2 className="text-3xl sm:text-4xl font-bold">O que dizem nossos clientes</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {reviews.slice(0, 3).map((r, i) => (
-              <div key={i} className="border border-zinc-100 rounded-2xl p-8">
-                <div className="flex gap-1 mb-4">
-                  {Array(r.rating).fill(0).map((_, j) => <span key={j} className="text-amber-400">★</span>)}
+            {p.services.map((s, i) => (
+              <div key={i} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 text-white font-bold text-lg" style={{ backgroundColor: accent }}>
+                  {i + 1}
                 </div>
-                <p className="text-zinc-600 text-sm leading-relaxed mb-6">"{r.text}"</p>
-                <p className="text-sm font-semibold">{r.name}</p>
+                <h3 className="text-lg font-bold mb-2">{s.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA footer */}
-      <section className="py-20" style={{ backgroundColor: `hsl(${colors.primary})` }}>
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6" style={{ color: `hsl(${colors.primaryForeground})` }}>
-            Pronto para começar?
-          </h2>
-          <p className="text-lg mb-8" style={{ color: `hsl(${colors.primaryForeground} / 0.7)` }}>
-            Fale conosco agora mesmo pelo WhatsApp
-          </p>
-          <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-10 py-5 rounded-full text-white font-semibold text-lg hover:scale-105 transition-transform shadow-xl"
-            style={{ backgroundColor: "#25D366" }}>
-            <MessageCircle className="w-6 h-6" />
-            {ctaText}
+      {/* Testimonials — horizontal scroll cards */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">O que dizem nossos clientes</h2>
+          <div className="flex gap-5 overflow-x-auto pb-4 snap-x">
+            {p.reviews.slice(0, 6).map((r, i) => (
+              <div key={i} className="flex-shrink-0 w-72 snap-start bg-gray-50 rounded-xl p-6 border border-gray-100">
+                <div className="flex gap-1 mb-3">
+                  {Array.from({ length: r.rating }).map((_, j) => (
+                    <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">"{r.text}"</p>
+                <p className="font-semibold text-sm">{r.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery — masonry-ish */}
+      {p.gallery.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Galeria</h2>
+            <div className="columns-2 md:columns-3 gap-4 space-y-4">
+              {p.gallery.slice(0, 9).map((img, i) => (
+                <img key={i} src={img.url} alt={img.alt} className="w-full rounded-lg" loading="lazy" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Final CTA */}
+      <section className="py-20 text-center" style={{ backgroundColor: primary, color: primaryFg }}>
+        <div className="max-w-2xl mx-auto px-4">
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">Pronto para começar?</h2>
+          <p className="opacity-70 mb-8">Atendimento profissional em {p.lead.city}. Fale conosco agora.</p>
+          <a
+            href={p.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold text-white shadow-xl hover:brightness-110 transition"
+            style={{ backgroundColor: "#25D366" }}
+          >
+            <MessageCircle className="w-5 h-5" /> {p.ctaText}
           </a>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-zinc-900 text-white py-12">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <footer className="bg-gray-900 text-gray-400 py-10">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between gap-6">
           <div>
-            <p className="font-semibold text-lg">{displayName}</p>
-            <p className="text-zinc-400 text-sm mt-1">{lead.city}</p>
+            <p className="text-white font-bold text-lg mb-1">{p.displayName}</p>
+            <p className="text-sm">{p.lead.city}</p>
           </div>
-          <p className="text-zinc-500 text-xs">© {new Date().getFullYear()} {displayName}</p>
+          <div className="flex items-center gap-4 text-sm">
+            <Phone className="w-4 h-4" /> {p.lead.phone}
+          </div>
         </div>
       </footer>
-
-      {/* WhatsApp float */}
-      <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
-        style={{ backgroundColor: "#25D366" }}>
-        <MessageCircle className="w-6 h-6" />
-      </a>
     </div>
   );
 };

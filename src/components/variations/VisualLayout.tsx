@@ -1,117 +1,136 @@
-import { MessageCircle, MapPin } from "lucide-react";
-import type { VariationLayoutProps } from "./VariationShared";
+import { VariationLayoutProps } from "./VariationShared";
+import { MessageCircle, Phone, MapPin, Star, Instagram } from "lucide-react";
 
-const VisualLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, whatsappLink, heroImage, gallery, reviews, services, colors, content }: VariationLayoutProps) => {
+/**
+ * VISUAL — Image-forward, portfolio style
+ * Structure: Full-screen hero → Mosaic gallery → Minimal about →
+ * Services grid → Review strip → Split image+CTA → Footer
+ */
+const VisualLayout = (p: VariationLayoutProps) => {
+  const accent = `hsl(${p.colors.accent})`;
+
   return (
-    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-      {/* Full-screen hero image — almost no text */}
-      <section className="relative h-screen">
-        <img src={heroImage} alt={displayName} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30" />
-        <div className="relative z-10 h-full flex flex-col justify-between p-6 sm:p-10">
-          <div className="flex items-center justify-between">
-            <span className="text-white/80 text-sm tracking-widest uppercase">{displayName}</span>
-            <span className="flex items-center gap-1 text-white/60 text-xs">
-              <MapPin className="w-3 h-3" /> {lead.city}
-            </span>
-          </div>
-          <div className="max-w-lg">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-6">{heroTitle}</h1>
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold hover:scale-105 transition-transform"
-              style={{ backgroundColor: "#25D366" }}>
-              <MessageCircle className="w-5 h-5" />
-              {ctaText}
-            </a>
+    <div className="min-h-screen bg-neutral-950 text-white" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {/* Full-screen hero image */}
+      <section className="relative h-screen min-h-[500px]">
+        <img src={p.heroImage} alt={p.displayName} className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-neutral-950" />
+        <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-12 md:pb-16">
+          <div className="max-w-5xl mx-auto">
+            <p className="text-sm tracking-widest uppercase mb-3 opacity-70">{p.lead.niche} • {p.lead.city}</p>
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight max-w-xl">{p.displayName}</h1>
           </div>
         </div>
       </section>
 
-      {/* Image mosaic gallery */}
-      {gallery.length > 0 && (
-        <section className="py-2">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {gallery.slice(0, 6).map((img, i) => (
-              <div key={i} className={`overflow-hidden ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover aspect-square hover:scale-105 transition-transform duration-500" />
-              </div>
-            ))}
+      {/* Mosaic gallery */}
+      {p.gallery.length > 0 && (
+        <section className="py-10 md:py-16">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              {p.gallery.slice(0, 1).map((img, i) => (
+                <div key={i} className="col-span-2 row-span-2">
+                  <img src={img.url} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
+                </div>
+              ))}
+              {p.gallery.slice(1, 7).map((img, i) => (
+                <div key={i}>
+                  <img src={img.url} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* Minimal about text between images */}
-      <section className="py-20 px-6">
-        <div className="max-w-xl mx-auto text-center">
-          <p className="text-zinc-500 text-xs tracking-[0.3em] uppercase mb-6">{lead.niche}</p>
-          <p className="text-xl sm:text-2xl text-zinc-300 leading-relaxed">
-            {heroSubtitle}
-          </p>
+      {/* Minimal about */}
+      <section className="py-14 md:py-20">
+        <div className="max-w-2xl mx-auto text-center px-6">
+          <h2 className="text-xl md:text-2xl font-light leading-relaxed text-neutral-300 mb-4">{p.heroSubtitle}</h2>
+          <div className="w-10 h-[1px] mx-auto bg-neutral-700 mb-4" />
+          <p className="text-neutral-500 text-sm">{p.lead.description || p.content.aboutText}</p>
         </div>
       </section>
 
-      {/* Services: image-forward cards */}
-      <section className="pb-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {services.slice(0, 4).map((s, i) => {
-            const bgImg = gallery[i % gallery.length]?.src || heroImage;
-            return (
-            <div key={s.title} className="relative group overflow-hidden aspect-video">
-              <img src={bgImg} alt={s.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors" />
-              <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
-                <h3 className="text-xl sm:text-2xl font-bold mb-2">{s.title}</h3>
-                <p className="text-white/60 text-sm max-w-xs">{s.desc}</p>
-              </div>
-            </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Reviews overlay style */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {reviews.slice(0, 2).map((r, i) => (
-              <div key={i}>
-                <div className="flex gap-1 mb-4">
-                  {Array(r.rating).fill(0).map((_, j) => <span key={j} className="text-amber-400 text-lg">★</span>)}
-                </div>
-                <p className="text-zinc-300 text-lg italic leading-relaxed mb-4">"{r.text}"</p>
-                <p className="text-sm font-semibold text-white">{r.name}</p>
+      {/* Services — minimal grid */}
+      <section className="py-14 bg-neutral-900">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-xs tracking-[0.2em] uppercase text-neutral-500 text-center mb-10">Serviços</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {p.services.map((s, i) => (
+              <div key={i} className="text-center p-6">
+                <h3 className="font-medium text-sm mb-1">{s.title}</h3>
+                <p className="text-neutral-500 text-xs">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Full-width CTA image */}
-      <section className="relative py-32">
-        <img src={gallery[1]?.src || heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="relative z-10 text-center px-6">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">Agende agora</h2>
-          <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-10 py-5 rounded-full text-white font-semibold text-lg hover:scale-105 transition-transform shadow-2xl"
-            style={{ backgroundColor: "#25D366" }}>
-            <MessageCircle className="w-6 h-6" />
-            {ctaText}
+      {/* Horizontal review strip */}
+      {p.reviews.length > 0 && (
+        <section className="py-14">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex gap-6 overflow-x-auto pb-4 snap-x">
+              {p.reviews.slice(0, 5).map((r, i) => (
+                <div key={i} className="flex-shrink-0 w-64 snap-start">
+                  <div className="flex gap-0.5 mb-2">
+                    {Array.from({ length: r.rating }).map((_, j) => (
+                      <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-neutral-400 text-sm mb-2">"{r.text}"</p>
+                  <p className="text-xs font-medium text-neutral-500">{r.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Split: Image + CTA */}
+      <section className="grid grid-cols-1 md:grid-cols-2 min-h-[50vh]">
+        <div className="relative min-h-[250px]">
+          {p.gallery.length > 2 ? (
+            <img src={p.gallery[2].url} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          ) : p.gallery.length > 1 ? (
+            <img src={p.gallery[1].url} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          ) : (
+            <img src={p.heroImage} alt="Visual" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          )}
+        </div>
+        <div className="flex flex-col items-center justify-center py-16 px-8 bg-neutral-900">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">Vamos conversar?</h2>
+          <p className="text-neutral-400 text-sm text-center mb-8 max-w-xs">
+            Atendimento profissional em {p.lead.city}.
+          </p>
+          <a
+            href={p.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-bold text-white shadow-xl hover:brightness-110 transition"
+            style={{ backgroundColor: "#25D366" }}
+          >
+            <MessageCircle className="w-5 h-5" /> {p.ctaText}
           </a>
         </div>
       </section>
 
-      {/* Minimal footer */}
-      <footer className="py-8 text-center text-zinc-600 text-xs">
-        © {new Date().getFullYear()} {displayName}
+      {/* Footer */}
+      <footer className="bg-neutral-950 border-t border-neutral-800 py-8">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+          <p className="font-medium text-neutral-300">{p.displayName}</p>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {p.lead.city}</span>
+            <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {p.lead.phone}</span>
+            {p.lead.instagram && (
+              <a href={`https://instagram.com/${p.lead.instagram.replace("@","")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-neutral-300">
+                <Instagram className="w-3 h-3" /> {p.lead.instagram}
+              </a>
+            )}
+          </div>
+        </div>
       </footer>
-
-      <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
-        style={{ backgroundColor: "#25D366" }}>
-        <MessageCircle className="w-6 h-6" />
-      </a>
     </div>
   );
 };
