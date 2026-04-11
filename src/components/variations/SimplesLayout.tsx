@@ -1,72 +1,96 @@
-import { MessageCircle, MapPin, Phone } from "lucide-react";
-import type { VariationLayoutProps } from "./VariationShared";
+import { VariationLayoutProps } from "./VariationShared";
+import { MessageCircle, Phone, MapPin, Star } from "lucide-react";
 
-const SimplesLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, whatsappLink, services, colors, content }: VariationLayoutProps) => {
+/**
+ * SIMPLES — Ultra minimal, text-focused, no frills
+ * Structure: Name + city → Text hero (no image) → Bullet services list →
+ * 3 short reviews → Phone + WhatsApp CTA → One-line footer
+ */
+const SimplesLayout = (p: VariationLayoutProps) => {
   return (
-    <div className="min-h-screen bg-white text-zinc-800" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-      {/* Simple header */}
-      <header className="border-b border-zinc-200 py-4 px-6">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-lg">{displayName}</span>
-          <span className="text-sm text-zinc-500 flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5" /> {lead.city}
-          </span>
-        </div>
+    <div className="min-h-screen bg-white text-gray-800" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {/* Header — plain text */}
+      <header className="border-b border-gray-200 px-5 py-4 max-w-2xl mx-auto">
+        <h1 className="text-xl font-bold">{p.displayName}</h1>
+        <p className="text-sm text-gray-400 flex items-center gap-1 mt-0.5">
+          <MapPin className="w-3.5 h-3.5" /> {p.lead.city}
+        </p>
       </header>
 
-      {/* No hero image — text only hero */}
-      <section className="max-w-2xl mx-auto px-6 py-16 sm:py-24">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">{heroTitle}</h1>
-        <p className="text-zinc-500 text-base mb-8">{heroSubtitle}</p>
-        <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-white font-medium text-sm"
-          style={{ backgroundColor: "#25D366" }}>
-          <MessageCircle className="w-4 h-4" />
-          {ctaText}
-        </a>
-      </section>
+      <main className="max-w-2xl mx-auto px-5 py-10 space-y-12">
+        {/* Hero — text only, no image */}
+        <section>
+          <h2 className="text-2xl md:text-3xl font-bold leading-snug mb-3">{p.heroTitle}</h2>
+          <p className="text-gray-500 text-base leading-relaxed mb-6">{p.heroSubtitle}</p>
+          <a
+            href={p.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white"
+            style={{ backgroundColor: "#25D366" }}
+          >
+            <MessageCircle className="w-4 h-4" /> {p.ctaText}
+          </a>
+        </section>
 
-      <hr className="border-zinc-100 max-w-2xl mx-auto" />
+        {/* Services — simple bullet list */}
+        <section>
+          <h3 className="text-lg font-bold mb-4">Serviços</h3>
+          <ul className="space-y-3">
+            {p.services.map((s, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
+                <div>
+                  <p className="font-medium text-sm">{s.title}</p>
+                  <p className="text-gray-400 text-xs">{s.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      {/* Services: simple list */}
-      <section className="max-w-2xl mx-auto px-6 py-12">
-        <h2 className="text-xl font-bold mb-6">Serviços</h2>
-        <ul className="space-y-4">
-          {services.map((s) => (
-            <li key={s.title} className="border-b border-zinc-100 pb-4">
-              <h3 className="font-semibold text-base">{s.title}</h3>
-              <p className="text-zinc-500 text-sm mt-1">{s.desc}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+        {/* Reviews — compact */}
+        {p.reviews.length > 0 && (
+          <section>
+            <h3 className="text-lg font-bold mb-4">Avaliações</h3>
+            <div className="space-y-4">
+              {p.reviews.slice(0, 3).map((r, i) => (
+                <div key={i} className="border-l-2 border-gray-200 pl-4">
+                  <div className="flex gap-0.5 mb-1">
+                    {Array.from({ length: r.rating }).map((_, j) => (
+                      <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">"{r.text}"</p>
+                  <p className="text-xs text-gray-400 font-medium">{r.name}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-      <hr className="border-zinc-100 max-w-2xl mx-auto" />
-
-      {/* Contact: inline */}
-      <section className="max-w-2xl mx-auto px-6 py-12">
-        <h2 className="text-xl font-bold mb-4">Contato</h2>
-        <div className="space-y-3 text-sm text-zinc-600">
-          <p className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-zinc-400" />
-            {lead.phone}
-          </p>
-          <p className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-zinc-400" />
-            {lead.city}
-          </p>
-        </div>
-        <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-md text-white font-medium text-sm"
-          style={{ backgroundColor: "#25D366" }}>
-          <MessageCircle className="w-4 h-4" />
-          Falar pelo WhatsApp
-        </a>
-      </section>
+        {/* Contact info */}
+        <section className="bg-gray-50 rounded-lg p-6">
+          <h3 className="text-lg font-bold mb-3">Contato</h3>
+          <div className="space-y-2 text-sm">
+            <p className="flex items-center gap-2 text-gray-600"><Phone className="w-4 h-4" /> {p.lead.phone}</p>
+            <p className="flex items-center gap-2 text-gray-600"><MapPin className="w-4 h-4" /> {p.lead.city}</p>
+          </div>
+          <a
+            href={p.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-white"
+            style={{ backgroundColor: "#25D366" }}
+          >
+            <MessageCircle className="w-4 h-4" /> Chamar no WhatsApp
+          </a>
+        </section>
+      </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 py-6 px-6 text-center text-xs text-zinc-400">
-        © {new Date().getFullYear()} {displayName}
+      <footer className="border-t border-gray-200 py-4 text-center text-xs text-gray-400">
+        © {new Date().getFullYear()} {p.displayName} • {p.lead.city}
       </footer>
     </div>
   );
