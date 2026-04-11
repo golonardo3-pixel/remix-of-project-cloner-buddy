@@ -139,6 +139,9 @@ export default function SiteVariationGenerator({ lead }: Props) {
           })}
         </div>
       )}
+      {existingVariations && existingVariations.length > 0 && (
+        <VariationEditorSheet lead={lead} open={editorOpen} onOpenChange={setEditorOpen} />
+      )}
     </div>
   );
 }
