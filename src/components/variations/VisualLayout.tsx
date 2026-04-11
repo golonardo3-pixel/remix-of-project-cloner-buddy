@@ -17,7 +17,7 @@ const VisualLayout = (p: VariationLayoutProps) => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-neutral-950" />
         <div className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-12 md:pb-16">
           <div className="max-w-5xl mx-auto">
-            <p className="text-sm tracking-widest uppercase mb-3 opacity-70">{p.lead.niche} • {p.lead.city}</p>
+            <p className="text-sm tracking-widest uppercase mb-3 opacity-70">{p.lead.niche}{p.lead.city ? ` • ${p.lead.city}` : ""}</p>
             <h1 className="text-3xl md:text-5xl font-bold leading-tight max-w-xl">{p.displayName}</h1>
           </div>
         </div>
@@ -102,7 +102,7 @@ const VisualLayout = (p: VariationLayoutProps) => {
         <div className="flex flex-col items-center justify-center py-16 px-8 bg-neutral-900">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">Vamos conversar?</h2>
           <p className="text-neutral-400 text-sm text-center mb-8 max-w-xs">
-            Atendimento profissional em {p.lead.city}.
+            {p.lead.city ? `Atendimento profissional em ${p.lead.city}.` : "Atendimento profissional."}
           </p>
           <a
             href={p.whatsappLink}

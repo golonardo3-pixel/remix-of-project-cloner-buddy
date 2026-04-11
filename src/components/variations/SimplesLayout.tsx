@@ -13,7 +13,7 @@ const SimplesLayout = (p: VariationLayoutProps) => {
       <header className="border-b border-gray-200 px-5 py-4 max-w-2xl mx-auto">
         <h1 className="text-xl font-bold">{p.displayName}</h1>
         <p className="text-sm text-gray-400 flex items-center gap-1 mt-0.5">
-          <MapPin className="w-3.5 h-3.5" /> {p.lead.city}
+          {p.lead.city ? <><MapPin className="w-3.5 h-3.5" /> {p.lead.city}</> : null}
         </p>
       </header>
 
@@ -74,7 +74,7 @@ const SimplesLayout = (p: VariationLayoutProps) => {
           <h3 className="text-lg font-bold mb-3">Contato</h3>
           <div className="space-y-2 text-sm">
             <p className="flex items-center gap-2 text-gray-600"><Phone className="w-4 h-4" /> {p.lead.phone}</p>
-            <p className="flex items-center gap-2 text-gray-600"><MapPin className="w-4 h-4" /> {p.lead.city}</p>
+            {p.lead.city && <p className="flex items-center gap-2 text-gray-600"><MapPin className="w-4 h-4" /> {p.lead.city}</p>}
           </div>
           <a
             href={p.whatsappLink}
@@ -90,7 +90,7 @@ const SimplesLayout = (p: VariationLayoutProps) => {
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-4 text-center text-xs text-gray-400">
-        © {new Date().getFullYear()} {p.displayName} • {p.lead.city}
+        © {new Date().getFullYear()} {p.displayName}{p.lead.city ? ` • ${p.lead.city}` : ""}
       </footer>
     </div>
   );

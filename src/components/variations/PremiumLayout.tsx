@@ -18,7 +18,7 @@ const PremiumLayout = (p: VariationLayoutProps) => {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <span className="tracking-[0.15em] uppercase font-medium">{p.displayName}</span>
           <span className="flex items-center gap-2">
-            <MapPin className="w-3 h-3" /> {p.lead.city}
+            {p.lead.city && <><MapPin className="w-3 h-3" /> {p.lead.city}</>}
           </span>
         </div>
       </header>
@@ -110,7 +110,7 @@ const PremiumLayout = (p: VariationLayoutProps) => {
           <div className="w-20 h-[1px] mx-auto mb-8" style={{ backgroundColor: accent }} />
           <h2 className="text-2xl md:text-4xl mb-4">Entre em contato</h2>
           <p className="text-stone-400 text-sm mb-10" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Atendimento exclusivo em {p.lead.city} e região.
+            {p.lead.city ? `Atendimento exclusivo em ${p.lead.city} e região.` : "Atendimento exclusivo."}
           </p>
           <a
             href={p.whatsappLink}
