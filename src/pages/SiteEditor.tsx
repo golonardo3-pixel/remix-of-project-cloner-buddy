@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save, Plus, Trash2, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
-import type { SiteContentOverrides } from "@/lib/site-content-types";
+import type { SiteContentOverrides, SiteServiceOverride, SiteBenefitOverride } from "@/lib/site-content-types";
 import ImageUploadSection from "@/components/editor/ImageUploadSection";
 
 const SiteEditor = () => {
@@ -50,8 +50,14 @@ const SiteEditor = () => {
       servicesSubtitle: saved.servicesSubtitle || "Toque no botão e pergunte sobre qualquer serviço",
       services: saved.services || (
         lead.services_list?.length > 0
-          ? lead.services_list
-          : defaults.services.map((s: any) => typeof s === "string" ? s : s.title)
+          ? lead.services_list.map((title: string) => ({
+              title,
+              desc: `Atendimento profissional em ${lead.city}. Chame no WhatsApp para saber mais.`,
+            }))
+          : defaults.services.map((s: any) => ({
+              title: typeof s === "string" ? s : s.title,
+              desc: typeof s === "string" ? `Atendimento profissional em ${lead.city}.` : s.desc,
+            }))
       ),
       reviewsTitle: saved.reviewsTitle || "O que dizem nossos clientes",
       reviews: saved.reviews || defaults.reviews.map((r: any) => ({
@@ -97,13 +103,13 @@ const SiteEditor = () => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const updateService = (idx: number, value: string) => {
+  const updateService = (idx: number, key: keyof SiteServiceOverride, value: string) => {
     const next = [...(form.services || [])];
-    next[idx] = value;
+    next[idx] = { ...next[idx], [key]: value };
     updateField("services", next);
   };
 
-  const addService = () => updateField("services", [...(form.services || []), ""]);
+  const addService = () => updateField("services", [...(form.services || []), { title: "", desc: "" }]);
   const removeService = (idx: number) => updateField("services", (form.services || []).filter((_, i) => i !== idx));
 
   const updateReview = (idx: number, key: string, value: any) => {
@@ -115,7 +121,7 @@ const SiteEditor = () => {
   const addReview = () => updateField("reviews", [...(form.reviews || []), { name: "", text: "", rating: 5 }]);
   const removeReview = (idx: number) => updateField("reviews", (form.reviews || []).filter((_, i) => i !== idx));
 
-  const updateBenefit = (idx: number, key: string, value: string) => {
+  const updateBenefit = (idx: number, key: keyof SiteBenefitOverride, value: string) => {
     const next = [...(form.benefits || [])];
     next[idx] = { ...next[idx], [key]: value };
     updateField("benefits", next);
@@ -222,10 +228,11 @@ const SiteEditor = () => {
           <Field label="Subtítulo">
             <Input value={form.servicesSubtitle || ""} onChange={(e) => updateField("servicesSubtitle", e.target.value)} />
           </Field>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {(form.services || []).map((s, i) => (
-              <div key={i} className="flex gap-2">
-                <Input value={s} onChange={(e) => updateService(i, e.target.value)} className="flex-1" />
+              <div key={i} className="grid gap-2 rounded-lg border border-border p-3">
+                <Input placeholder="Título do serviço" value={s.title} onChange={(e) => updateService(i, "title", e.target.value)} className="flex-1" />
+                <Textarea placeholder="Descrição do serviço" value={s.desc} onChange={(e) => updateService(i, "desc", e.target.value)} rows={2} />
                 <Button variant="ghost" size="icon" className="shrink-0 text-destructive" onClick={() => removeService(i)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>

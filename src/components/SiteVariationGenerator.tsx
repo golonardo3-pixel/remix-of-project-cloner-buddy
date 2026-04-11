@@ -97,16 +97,16 @@ export default function SiteVariationGenerator({ lead }: Props) {
                     className="h-7 gap-1 text-[11px]"
                     onClick={() => {
                       navigator.clipboard.writeText(url);
-                      toast({ title: `Link da versão "${v.label}" copiado!` });
+                      toast({ title: `Link da versão \"${v.label}\" copiado!` });
                     }}
                   >
                     <Copy className="w-3 h-3" />
-                    Copiar
+                    Copiar link
                   </Button>
                   <a href={url} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" size="sm" className="h-7 gap-1 text-[11px]">
                       <Eye className="w-3 h-3" />
-                      Ver
+                      Ver site
                     </Button>
                   </a>
                 </div>
