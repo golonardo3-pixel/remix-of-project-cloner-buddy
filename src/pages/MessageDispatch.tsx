@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
 import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
+import { resolveSpintax } from "@/lib/spintax";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 
 type DispatchStatus = "idle" | "running" | "paused" | "done";
@@ -50,8 +51,6 @@ function buildMessageForLead(template: string, lead: Lead): string {
   for (const [key, val] of Object.entries(values)) {
     result = result.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
   }
-  // Resolve spintax
-  const { resolveSpintax } = require("@/lib/spintax");
   return resolveSpintax(result);
 }
 
@@ -230,13 +229,14 @@ const MessageDispatch = () => {
               </Label>
               <Input
                 type="number"
-                min={5}
-                max={120}
+                min={MIN_INTERVAL_SEC}
+                max={300}
                 value={interval}
-                onChange={(e) => setIntervalSec(Math.max(5, Number(e.target.value)))}
+                onChange={(e) => setIntervalSec(Math.max(MIN_INTERVAL_SEC, Number(e.target.value)))}
                 disabled={status === "running"}
                 className="w-32"
               />
+              <p className="text-[10px] text-muted-foreground">Mínimo {MIN_INTERVAL_SEC}s · Máximo {MAX_LEADS_PER_ROUND} leads por rodada · Links bloqueados</p>
             </div>
           </CardContent>
         </Card>
