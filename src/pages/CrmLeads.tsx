@@ -9,6 +9,7 @@ import AddLeadDialog from "@/components/AddLeadDialog";
 import KanbanBoard from "@/components/KanbanBoard";
 import type { Lead } from "@/components/KanbanBoard";
 import CrmDashboard from "@/components/CrmDashboard";
+import HotLeadsSection from "@/components/HotLeadsSection";
 import CrmFilters, { EMPTY_FILTERS, type CrmFilterValues } from "@/components/CrmFilters";
 import {
   AlertDialog,
@@ -218,6 +219,7 @@ const CrmLeads = () => {
         ) : (
           <>
             <CrmDashboard leads={leads} />
+            <HotLeadsSection leads={leads} />
             <CrmFilters filters={filters} onChange={setFilters} niches={niches} cities={cities} />
             {filteredLeads.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
