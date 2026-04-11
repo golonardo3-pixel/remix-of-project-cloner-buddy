@@ -457,8 +457,8 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
   nicheImages = uniqueImages(nicheImages);
 
   if (uploaded.length > 0) {
-    // Uploaded photos first, then fill with niche stock to reach 8+
-    return uniqueImages([...uploaded, ...nicheImages]).slice(0, 8);
+    // Uploaded photos first, then fill with niche stock to reach 10+
+    return uniqueImages([...uploaded, ...nicheImages]).slice(0, 12);
   }
 
   return nicheImages.length > 0 ? nicheImages : uniqueImages(defaultGallery);
