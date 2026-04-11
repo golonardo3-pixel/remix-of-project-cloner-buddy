@@ -236,7 +236,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           onClick={(e) => {
             e.stopPropagation();
             const msg = encodeURIComponent(
-              resolveSpintax("{Oi|Olá|Fala}, tudo {bem|certo}?\n\nVi seu negócio e achei que você pode estar perdendo clientes no Google.\n\nPosso te mostrar uma ideia rápida?")
+              resolveSpintax(`{Oi|Olá|Fala} {tudo bem|tudo certo}?\n\nVi ${lead.company_name} em ${lead.city} e {achei interessante|me chamou atenção|resolvi te chamar} porque muitos negócios {não aparecem bem no Google|estão perdendo clientes online}.\n\n{Posso te mostrar uma ideia rápida?|Quer ver uma sugestão rápida?|Te explico em 1 minuto?}`)
             );
             window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
           }}
