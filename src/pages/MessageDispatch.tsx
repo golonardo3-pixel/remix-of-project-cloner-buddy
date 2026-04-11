@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, Square, MessageSquare, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Play, Square, MessageSquare, Clock, CheckCircle2, AlertCircle, ShieldAlert, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -84,6 +84,18 @@ const MessageDispatch = () => {
 
   const templateWarnings = validateTemplate(message);
 
+  // Anti-ban warnings
+  const antiBanWarnings: string[] = [];
+  if (/https?:\/\/|www\.|\.com|\.br|\{link\}/i.test(message)) {
+    antiBanWarnings.push("⚠️ Evite links na primeira mensagem — risco de ban no WhatsApp");
+  }
+  if (interval < MIN_INTERVAL_SEC) {
+    antiBanWarnings.push(`⚠️ Intervalo muito curto — recomendado mínimo de ${MIN_INTERVAL_SEC}s`);
+  }
+  if (eligibleLeads.length > 15) {
+    antiBanWarnings.push("💡 Recomendado enviar em lotes de 15–20 leads com pausas entre rodadas");
+  }
+
   const insertVariable = (variable: string) => {
     const ta = textareaRef.current;
     if (!ta) {
@@ -162,7 +174,10 @@ const MessageDispatch = () => {
     runningRef.current = false;
     setStatus("done");
     queryClient.invalidateQueries({ queryKey: ["leads"] });
-    toast({ title: "Disparo finalizado!" });
+    toast({
+      title: "Disparo finalizado!",
+      description: "Faça uma pausa de 5–10 minutos antes da próxima rodada.",
+    });
   }, [eligibleLeads, message, interval, queryClient, templateWarnings]);
 
   const stopDispatch = () => {
@@ -196,6 +211,24 @@ const MessageDispatch = () => {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+        {/* Anti-ban tips */}
+        <Card className="border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20">
+          <CardContent className="pt-4 pb-3">
+            <div className="flex items-start gap-2">
+              <ShieldAlert className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">Proteção anti-ban</p>
+                <ul className="text-[11px] text-muted-foreground space-y-0.5">
+                  <li>• Não envie links na primeira mensagem</li>
+                  <li>• Intervalo mínimo recomendado: 60 segundos</li>
+                  <li>• Envie em lotes de 15–20 leads</li>
+                  <li>• Faça pausas de 5–10 min entre rodadas</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Message config */}
         <Card>
           <CardHeader className="pb-3">
