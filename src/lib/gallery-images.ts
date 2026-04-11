@@ -112,6 +112,8 @@ import heroRealestate from "@/assets/hero-realestate.jpg";
 import heroAccounting from "@/assets/hero-accounting.jpg";
 import heroPhysiotherapy from "@/assets/hero-physiotherapy.jpg";
 import heroDefault from "@/assets/hero-default.jpg";
+import heroManicure from "@/assets/hero-manicure.jpg";
+import heroLawyer from "@/assets/hero-lawyer.jpg";
 
 export interface GalleryImage {
   src: string;
