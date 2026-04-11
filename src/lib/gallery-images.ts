@@ -247,6 +247,9 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: petshop4, alt: "Filhotes no banho e tosa" },
     { src: petshop5, alt: "Prateleira de rações e produtos" },
     { src: petshop6, alt: "Veterinária examinando gato" },
+    { src: petshop7, alt: "Fachada do pet shop" },
+    { src: petshop8, alt: "Cachorrinho na tosa" },
+    { src: petshop9, alt: "Balcão e produtos da loja" },
   ],
   "oficina mecânica": [
     { src: heroMechanic, alt: "Oficina mecânica equipada" },
@@ -256,6 +259,8 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: mechanic4, alt: "Mecânico inspecionando motor" },
     { src: mechanic5, alt: "Troca de pneus profissional" },
     { src: mechanic6, alt: "Reparo de freio a disco" },
+    { src: mechanic7, alt: "Fachada da oficina" },
+    { src: mechanic8, alt: "Troca de óleo" },
   ],
   "baterias": [
     { src: heroBatteries, alt: "Loja de baterias automotivas" },
