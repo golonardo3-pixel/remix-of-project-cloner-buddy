@@ -110,7 +110,7 @@ const ModernoLayout = (p: VariationLayoutProps) => {
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Galeria</h2>
             <div className="columns-2 md:columns-3 gap-4 space-y-4">
               {p.gallery.slice(0, 9).map((img, i) => (
-                <img key={i} src={img.url} alt={img.alt} className="w-full rounded-lg" loading="lazy" />
+                <img key={i} src={img.src} alt={img.alt} className="w-full rounded-lg" loading="lazy" />
               ))}
             </div>
           </div>

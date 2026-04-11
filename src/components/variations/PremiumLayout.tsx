@@ -98,7 +98,7 @@ const PremiumLayout = (p: VariationLayoutProps) => {
         <section className="overflow-hidden">
           <div className="flex">
             {p.gallery.slice(0, 5).map((img, i) => (
-              <img key={i} src={img.url} alt={img.alt} className="w-1/3 md:w-1/5 h-64 object-cover" loading="lazy" />
+              <img key={i} src={img.src} alt={img.alt} className="w-1/3 md:w-1/5 h-64 object-cover" loading="lazy" />
             ))}
           </div>
         </section>

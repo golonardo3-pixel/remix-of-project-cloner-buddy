@@ -30,12 +30,12 @@ const VisualLayout = (p: VariationLayoutProps) => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
               {p.gallery.slice(0, 1).map((img, i) => (
                 <div key={i} className="col-span-2 row-span-2">
-                  <img src={img.url} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
+                  <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
                 </div>
               ))}
               {p.gallery.slice(1, 7).map((img, i) => (
                 <div key={i}>
-                  <img src={img.url} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
+                  <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg aspect-square" loading="lazy" />
                 </div>
               ))}
             </div>
