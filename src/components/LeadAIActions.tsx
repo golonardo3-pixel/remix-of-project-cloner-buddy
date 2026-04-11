@@ -93,6 +93,19 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
     }
   };
 
+  const handleFollowup = async (action: string) => {
+    setFollowupLoading(action);
+    setFollowupMsg("");
+    try {
+      const result = await callAI(action, lead);
+      setFollowupMsg(result);
+    } catch (e: any) {
+      toast({ title: "Erro ao gerar follow-up", description: e.message, variant: "destructive" });
+    } finally {
+      setFollowupLoading(null);
+    }
+  };
+
   const handleReply = async () => {
     if (!clientMsg.trim()) {
       toast({ title: "Cole a mensagem do cliente primeiro", variant: "destructive" });
