@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Save, Plus, Trash2, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
-import type { SiteContentOverrides } from "@/lib/site-content-types";
+import type { SiteContentOverrides, SiteServiceOverride } from "@/lib/site-content-types";
 import ImageUploadSection from "@/components/editor/ImageUploadSection";
 
 const SiteEditor = () => {
@@ -50,8 +50,14 @@ const SiteEditor = () => {
       servicesSubtitle: saved.servicesSubtitle || "Toque no botão e pergunte sobre qualquer serviço",
       services: saved.services || (
         lead.services_list?.length > 0
-          ? lead.services_list
-          : defaults.services.map((s: any) => typeof s === "string" ? s : s.title)
+          ? lead.services_list.map((title: string) => ({
+              title,
+              desc: `Atendimento profissional em ${lead.city}. Chame no WhatsApp para saber mais.`,
+            }))
+          : defaults.services.map((s: any) => ({
+              title: typeof s === "string" ? s : s.title,
+              desc: typeof s === "string" ? `Atendimento profissional em ${lead.city}.` : s.desc,
+            }))
       ),
       reviewsTitle: saved.reviewsTitle || "O que dizem nossos clientes",
       reviews: saved.reviews || defaults.reviews.map((r: any) => ({
@@ -97,13 +103,13 @@ const SiteEditor = () => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const updateService = (idx: number, value: string) => {
+  const updateService = (idx: number, key: keyof SiteServiceOverride, value: string) => {
     const next = [...(form.services || [])];
-    next[idx] = value;
+    next[idx] = { ...next[idx], [key]: value };
     updateField("services", next);
   };
 
-  const addService = () => updateField("services", [...(form.services || []), ""]);
+  const addService = () => updateField("services", [...(form.services || []), { title: "", desc: "" }]);
   const removeService = (idx: number) => updateField("services", (form.services || []).filter((_, i) => i !== idx));
 
   const updateReview = (idx: number, key: string, value: any) => {
