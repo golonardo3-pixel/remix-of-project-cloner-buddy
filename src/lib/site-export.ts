@@ -425,9 +425,70 @@ function buildSiteHTML(lead: LeadData): string {
 </html>`;
 }
 
+/**
+ * Extract all image URLs from the HTML, download them, store in /images/
+ * inside the ZIP, and rewrite the HTML src attributes to local paths.
+ */
+async function bundleImagesIntoZip(
+  zip: JSZip,
+  html: string
+): Promise<string> {
+  // Match src="..." for images (jpg, jpeg, png, webp, svg, gif, avif) and QR API
+  const srcRegex = /src="(https?:\/\/[^"]+?)"/gi;
+  const urls = new Map<string, string>(); // url → local filename
+  let match: RegExpExecArray | null;
+  let idx = 0;
+
+  while ((match = srcRegex.exec(html)) !== null) {
+    const url = match[1];
+    if (urls.has(url)) continue;
+    // Skip iframes (maps) — only process image-like URLs
+    if (url.includes("maps.google.com")) continue;
+    const ext = url.match(/\.(jpe?g|png|webp|svg|gif|avif)/i)?.[1] || "jpg";
+    const filename = `images/img-${idx++}.${ext.toLowerCase()}`;
+    urls.set(url, filename);
+  }
+
+  // Download images in parallel (max 6 concurrent)
+  const entries = Array.from(urls.entries());
+  const imgFolder = zip.folder("images")!;
+  const batchSize = 6;
+
+  for (let i = 0; i < entries.length; i += batchSize) {
+    const batch = entries.slice(i, i + batchSize);
+    const results = await Promise.allSettled(
+      batch.map(async ([url, filename]) => {
+        try {
+          const resp = await fetch(url, { mode: "cors" });
+          if (!resp.ok) return null;
+          const blob = await resp.blob();
+          return { filename: filename.replace("images/", ""), blob };
+        } catch {
+          return null;
+        }
+      })
+    );
+    for (const r of results) {
+      if (r.status === "fulfilled" && r.value) {
+        imgFolder.file(r.value.filename, r.value.blob);
+      }
+    }
+  }
+
+  // Rewrite HTML: replace absolute URLs with local paths
+  let localHtml = html;
+  for (const [url, filename] of urls) {
+    // Replace all occurrences of this URL
+    localHtml = localHtml.split(url).join(filename);
+  }
+
+  return localHtml;
+}
+
 export async function downloadStaticHTML(lead: LeadData) {
   const zip = new JSZip();
-  const html = buildSiteHTML(lead);
+  let html = buildSiteHTML(lead);
+  html = await bundleImagesIntoZip(zip, html);
   zip.file("index.html", html);
   const blob = await zip.generateAsync({ type: "blob" });
   saveAs(blob, `${lead.slug}-site.zip`);
