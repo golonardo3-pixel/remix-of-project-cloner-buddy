@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Layers, Eye, Loader2, Copy, Download } from "lucide-react";
+import { Layers, Eye, Loader2, Copy, Download, Pencil } from "lucide-react";
 import { downloadStaticHTML } from "@/lib/site-export";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { generateAllVariations } from "@/lib/site-variations";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import type { Lead } from "@/components/KanbanBoard";
 import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+import VariationEditorSheet from "@/components/VariationEditorSheet";
 
 interface Props {
   lead: Lead;
