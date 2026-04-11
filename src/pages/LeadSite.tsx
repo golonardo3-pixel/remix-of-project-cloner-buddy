@@ -318,7 +318,7 @@ const LeadSite = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-5 h-5" />
-              {content.ctaText}
+              {ctaText}
             </a>
           </div>
         </section>
