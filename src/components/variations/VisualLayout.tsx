@@ -89,7 +89,7 @@ const VisualLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, wha
 
       {/* Full-width CTA image */}
       <section className="relative py-32">
-        <img src={gallery[1] || heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={gallery[1]?.src || heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/70" />
         <div className="relative z-10 text-center px-6">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">Agende agora</h2>
