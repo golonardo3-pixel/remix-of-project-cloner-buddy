@@ -236,8 +236,12 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           className="h-9 px-2 gap-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-medium"
           onClick={(e) => {
             e.stopPropagation();
+            const name = (lead.company_name || "").trim();
+            const city = (lead.city || "").trim();
+            const hasCity = city && !["não informada", "não informado", "nao informada", "nao informado", "n/a", "sem dados", "null", "sua cidade", ""].includes(city.toLowerCase());
+            const cityPart = hasCity ? ` em ${city}` : "";
             const msg = encodeURIComponent(
-              resolveSpintax(`{Oi|Olá|Fala} {tudo bem|tudo certo}?\n\nVi ${lead.company_name} em ${lead.city} e {achei interessante|me chamou atenção|resolvi te chamar} porque muitos negócios {não aparecem bem no Google|estão perdendo clientes online}.\n\n{Posso te mostrar uma ideia rápida?|Quer ver uma sugestão rápida?|Te explico em 1 minuto?}`)
+              resolveSpintax(`Oi, tudo bem?\n\nVi ${name}${cityPart} e me chamou atenção porque muitos negócios não aparecem bem no Google.\n\nPosso te mostrar uma ideia rápida?`)
             );
             window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
           }}
