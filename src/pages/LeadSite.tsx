@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
@@ -12,6 +12,8 @@ import type { SiteContentOverrides } from "@/lib/site-content-types";
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
+  const variationId = searchParams.get("v");
 
   const { data: lead, isLoading, error } = useQuery({
     queryKey: ["lead-site", slug],
@@ -48,9 +50,25 @@ const LeadSite = () => {
 
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const content = getNicheContent(lead.niche, lead.city, displayName);
-  const colors = getNicheColors(lead.niche);
+  let colors = getNicheColors(lead.niche);
   const sc: SiteContentOverrides | null = lead.site_content;
 
+  // Apply variation if selected
+  let variationOverrides: Partial<SiteContentOverrides> = {};
+  if (variationId && lead.site_variations) {
+    const variations = lead.site_variations as any[];
+    const variation = variations.find((v: any) => v.id === variationId);
+    if (variation) {
+      colors = variation.colors;
+      variationOverrides = variation.contentOverrides || {};
+    }
+  }
+
+  // Merge: variation overrides take priority over sc overrides
+  const heroTitle = variationOverrides.heroTitle || (sc?.heroTitle) || content.heroTitle;
+  const heroSubtitle = variationOverrides.heroSubtitle || (sc?.heroSubtitle) || content.heroSubtitle;
+  const ctaText = variationOverrides.ctaText || (sc?.ctaText) || content.ctaText;
+  const urgencyBadge = variationOverrides.urgencyBadge || (sc?.urgencyBadge) || content.urgencyBadge;
   const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
   const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
   
@@ -123,10 +141,10 @@ const LeadSite = () => {
           <div className="relative z-[2] px-4 sm:px-5 pb-10 pt-20 sm:pb-14 md:pb-24 max-w-5xl mx-auto w-full">
             <div className="w-10 sm:w-12 md:w-16 h-0.5 mb-4 sm:mb-5 md:mb-6" style={{ backgroundColor: `hsl(${colors.accent})` }} />
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-snug sm:leading-tight mb-3 sm:mb-4 text-white drop-shadow-lg">
-              {content.heroTitle}
+              {heroTitle}
             </h2>
             <p className="text-white/80 text-sm sm:text-base md:text-lg max-w-lg mb-3 sm:mb-4 font-body leading-relaxed drop-shadow">
-              {content.heroSubtitle}
+              {heroSubtitle}
             </p>
             <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8">
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm bg-white/10 text-white/90">
@@ -142,7 +160,7 @@ const LeadSite = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-5 h-5" />
-              {content.ctaText}
+              {ctaText}
             </a>
           </div>
         </section>
@@ -300,7 +318,7 @@ const LeadSite = () => {
               style={{ backgroundColor: "#25D366", color: "#fff" }}
             >
               <MessageCircle className="w-5 h-5" />
-              {content.ctaText}
+              {ctaText}
             </a>
           </div>
         </section>

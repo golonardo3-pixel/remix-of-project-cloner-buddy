@@ -37,6 +37,7 @@ export type Database = {
           services_list: string[] | null
           site_content: Json | null
           site_status: string
+          site_variations: Json | null
           slug: string
           updated_at: string
         }
@@ -62,6 +63,7 @@ export type Database = {
           services_list?: string[] | null
           site_content?: Json | null
           site_status?: string
+          site_variations?: Json | null
           slug: string
           updated_at?: string
         }
@@ -87,6 +89,7 @@ export type Database = {
           services_list?: string[] | null
           site_content?: Json | null
           site_status?: string
+          site_variations?: Json | null
           slug?: string
           updated_at?: string
         }
