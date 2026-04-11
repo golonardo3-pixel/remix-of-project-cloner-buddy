@@ -65,19 +65,19 @@ const LeadSiteConversion = () => {
   const sc: SiteContentOverrides | null = lead.site_content;
   const safeCity = (lead.city || "").replace(/n[aã]o\s+informad[ao]/gi, "").trim();
 
-  const heroTitle = sc?.heroTitle || displayName;
+  const heroTitle = cleanText(sc?.heroTitle) || displayName;
   const heroSubtitle = cleanText(sc?.heroSubtitle) || cleanText(content.heroSubtitle) || "";
   const urgencyBadge = cleanText((sc?.urgencyBadge || content.urgencyBadge).replace("⚡ ", "")) || "Atendimento rápido";
-  const ctaText = sc?.ctaText || content.ctaText;
-  const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;
-  const servicesTitle = sc?.servicesTitle || "O que oferecemos";
-  const servicesSubtitle = sc?.servicesSubtitle || "Toque no botão e pergunte sobre qualquer serviço";
-  const reviewsTitle = sc?.reviewsTitle || "O que dizem nossos clientes";
-  const contactTitle = sc?.contactTitle || `Fale diretamente com ${displayName}`;
-  const contactSubtitle = sc?.contactSubtitle || "Sem formulário, sem espera. Atendimento direto e pessoal.";
-  const finalCtaTitle = sc?.finalCtaTitle || "Não perca tempo!";
-  const finalCtaSubtitle = sc?.finalCtaSubtitle || (safeCity ? `Clique no botão abaixo e fale agora com ${displayName} em ${safeCity}. Atendimento imediato via WhatsApp.` : `Clique no botão abaixo e fale agora com ${displayName}. Atendimento imediato via WhatsApp.`);
-  const workingHours = sc?.workingHours || "Seg a Sex: 9h às 20h · Sáb: 9h às 18h";
+  const ctaText = cleanText(sc?.ctaText) || content.ctaText;
+  const whatsappMsg = cleanText(sc?.whatsappMessage) || content.whatsappMessage;
+  const servicesTitle = cleanText(sc?.servicesTitle) || "O que oferecemos";
+  const servicesSubtitle = cleanText(sc?.servicesSubtitle) || "Toque no botão e pergunte sobre qualquer serviço";
+  const reviewsTitle = cleanText(sc?.reviewsTitle) || "O que dizem nossos clientes";
+  const contactTitle = cleanText(sc?.contactTitle) || `Fale diretamente com ${displayName}`;
+  const contactSubtitle = cleanText(sc?.contactSubtitle) || "Sem formulário, sem espera. Atendimento direto e pessoal.";
+  const finalCtaTitle = cleanText(sc?.finalCtaTitle) || "Não perca tempo!";
+  const finalCtaSubtitle = cleanText(sc?.finalCtaSubtitle) || (safeCity ? `Clique no botão abaixo e fale agora com ${displayName} em ${safeCity}. Atendimento imediato via WhatsApp.` : `Clique no botão abaixo e fale agora com ${displayName}. Atendimento imediato via WhatsApp.`);
+  const workingHours = cleanText(sc?.workingHours) || "Seg a Sex: 9h às 20h · Sáb: 9h às 18h";
 
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
 
