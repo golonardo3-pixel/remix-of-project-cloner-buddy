@@ -310,7 +310,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
 
       {/* Edit / Duplicate — only when site exists */}
       {siteExists && (
-        <div className="grid grid-cols-2 gap-1.5 mt-1.5">
+        <div className="grid grid-cols-3 gap-1.5 mt-1.5">
           <Button
             variant="ghost"
             size="sm"
@@ -318,7 +318,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
             onClick={handleEditSite}
           >
             <Pencil className="w-4 h-4" />
-            Editar Site
+            Editar
           </Button>
           <Button
             variant="ghost"
@@ -328,6 +328,20 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           >
             <Copy className="w-4 h-4" />
             Duplicar
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 px-2 gap-1.5 text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50 text-xs font-medium"
+            onClick={(e) => {
+              e.stopPropagation();
+              const url = getPublicLeadSiteUrl(lead.slug);
+              navigator.clipboard.writeText(url);
+              toast({ title: "Link copiado!" });
+            }}
+          >
+            <ExternalLink className="w-4 h-4" />
+            Copiar Link
           </Button>
         </div>
       )}
