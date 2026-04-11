@@ -121,6 +121,8 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
 
           <GmbAnalysis lead={lead} />
 
+          <LeadAIActions lead={lead} />
+
           <LeadSuggestions lead={lead} />
 
           <SiteVariationGenerator lead={lead} />

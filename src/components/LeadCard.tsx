@@ -315,6 +315,11 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
         </Button>
       </div>
 
+      {/* AI Outreach */}
+      <div className="mt-1.5">
+        <LeadAIActions lead={lead} compact />
+      </div>
+
       {/* Edit / Duplicate — only when site exists */}
       {siteExists && (
         <div className="grid grid-cols-3 gap-1.5 mt-1.5">
