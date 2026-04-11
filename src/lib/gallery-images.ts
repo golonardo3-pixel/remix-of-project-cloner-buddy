@@ -290,6 +290,33 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: accounting4, alt: "Documentos e calculadora" },
     { src: accounting5, alt: "Sala de reuniões corporativa" },
   ],
+  "chaveiro": [
+    { src: heroLocksmith, alt: "Chaveiro profissional" },
+    { src: locksmith1, alt: "Abertura de fechadura" },
+    { src: locksmith2, alt: "Máquina de corte de chaves" },
+    { src: locksmith3, alt: "Cadeados e chaves variados" },
+    { src: locksmith4, alt: "Instalação de fechadura digital" },
+    { src: locksmith5, alt: "Van de chaveiro com ferramentas" },
+    { src: locksmith6, alt: "Abertura de carro automotivo" },
+  ],
+  "eletricista": [
+    { src: heroElectrician, alt: "Eletricista profissional" },
+    { src: electrician1, alt: "Trabalho em painel elétrico" },
+    { src: electrician2, alt: "Instalação de interruptor" },
+    { src: electrician3, alt: "Teste com multímetro" },
+    { src: electrician4, alt: "Ferramentas elétricas organizadas" },
+    { src: electrician5, alt: "Instalação de luminária" },
+    { src: electrician6, alt: "Quadro de disjuntores" },
+  ],
+  "encanador": [
+    { src: heroPlumber, alt: "Encanador profissional" },
+    { src: plumber1, alt: "Reparo de tubulação" },
+    { src: plumber2, alt: "Instalação de torneira" },
+    { src: plumber3, alt: "Ferramentas de encanamento" },
+    { src: plumber4, alt: "Manutenção de aquecedor" },
+    { src: plumber5, alt: "Instalação de tubos de cobre" },
+    { src: plumber6, alt: "Banheiro com instalação nova" },
+  ],
 };
 
 // Alias map: niches without dedicated photos use a related niche's gallery
@@ -301,12 +328,9 @@ const nicheAliasMap: Record<string, string> = {
   "auto elétrica": "oficina mecânica",
   "funilaria": "oficina mecânica",
   "guincho": "oficina mecânica",
-  "chaveiro": "oficina mecânica",
-  "eletricista": "oficina mecânica",
-  "encanador": "oficina mecânica",
   "pintor": "oficina mecânica",
-  "marido de aluguel": "oficina mecânica",
-  "desentupidora": "oficina mecânica",
+  "marido de aluguel": "encanador",
+  "desentupidora": "encanador",
 };
 
 // Hero image overrides for aliased niches that have their own hero
