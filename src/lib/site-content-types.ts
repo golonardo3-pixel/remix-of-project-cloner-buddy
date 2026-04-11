@@ -11,6 +11,8 @@ export interface SiteBenefitOverride {
 export interface SiteContentOverrides {
   heroTitle?: string;
   heroSubtitle?: string;
+  aboutText?: string;
+  description?: string;
   urgencyBadge?: string;
   ctaText?: string;
   whatsappMessage?: string;
@@ -40,6 +42,8 @@ export function applySiteOverrides(
     ...content,
     heroTitle: overrides.heroTitle || content.heroTitle,
     heroSubtitle: overrides.heroSubtitle || content.heroSubtitle,
+    aboutText: overrides.aboutText || overrides.description || content.aboutText || lead.description,
+    description: overrides.description || overrides.aboutText || content.description || lead.description,
     urgencyBadge: overrides.urgencyBadge || content.urgencyBadge,
     ctaText: overrides.ctaText || content.ctaText,
     whatsappMessage: overrides.whatsappMessage || content.whatsappMessage,

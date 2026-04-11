@@ -134,7 +134,10 @@ const LeadSite = () => {
   const heroSubtitle = cleanText(variationOverrides.heroSubtitle) || cleanText(sc?.heroSubtitle) || cleanText(content.heroSubtitle) || "";
   const ctaText = cleanText(variationOverrides.ctaText) || cleanText(sc?.ctaText) || cleanText(content.ctaText) || "Fale no WhatsApp";
   const whatsappMessage = cleanText(variationOverrides.whatsappMessage) || cleanText(sc?.whatsappMessage) || cleanText(content.whatsappMessage) || `Olá! Quero saber mais sobre ${displayName}.`;
-  const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
+  const variationGalleryOverrides = Array.isArray((variationOverrides as any).galleryImages) && (variationOverrides as any).galleryImages.length > 0
+    ? (variationOverrides as any).galleryImages
+    : undefined;
+  const galleryOverrides = variationGalleryOverrides || (sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined);
   const generatedReviews = generateReviews(normalizedNiche, lead.slug);
 
   const mapsQuery = encodeURIComponent(`${displayName} ${city || ""}`);
@@ -152,7 +155,14 @@ const LeadSite = () => {
     : content.benefits;
 
   const galleryPool = uniqueImages(getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug));
-  const customHeroImage = sc?.heroImage && !sc.heroImage.startsWith("/src/") ? safe(sc.heroImage) : undefined;
+  const variationHeroImage = typeof (variationOverrides as any).heroImage === "string" && !(variationOverrides as any).heroImage.startsWith("/src/")
+    ? (variationOverrides as any).heroImage
+    : undefined;
+  const customHeroImage = variationHeroImage
+    ? safe(variationHeroImage)
+    : sc?.heroImage && !sc.heroImage.startsWith("/src/")
+      ? safe(sc.heroImage)
+      : undefined;
   const heroImage = customHeroImage || galleryPool[0]?.src || content.heroImage;
   const remainingImages = galleryPool.filter((image) => image.src !== heroImage);
   const reservedForServices = Math.min(displayServices.length, Math.max(0, galleryPool.length - 6));
@@ -160,7 +170,7 @@ const LeadSite = () => {
   const gallery = remainingImages.slice(reservedForServices, reservedForServices + 10);
 
   const instagram = safe(lead.instagram);
-  const description = safe(lead.description);
+  const description = safe((variationOverrides as any).aboutText) || safe((variationOverrides as any).description) || safe(lead.description);
 
   const safeNiche = safe(normalizedNiche);
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMessage)}`;

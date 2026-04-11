@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Layers, Eye, Loader2, Copy, Download, Pencil } from "lucide-react";
 import { downloadStaticHTML } from "@/lib/site-export";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { generateAllVariations } from "@/lib/site-variations";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
@@ -20,6 +19,7 @@ export default function SiteVariationGenerator({ lead }: Props) {
   const queryClient = useQueryClient();
   const [generating, setGenerating] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [selectedVariation, setSelectedVariation] = useState<any | null>(null);
   const savedVariations = (lead as any).site_variations as any[] | null;
   const [localVariations, setLocalVariations] = useState<any[] | null>(null);
   const existingVariations = localVariations || savedVariations;
@@ -119,7 +119,10 @@ export default function SiteVariationGenerator({ lead }: Props) {
                     variant="outline"
                     size="sm"
                     className="h-7 gap-1 text-[11px]"
-                    onClick={() => setEditorOpen(true)}
+                    onClick={() => {
+                      setSelectedVariation(v);
+                      setEditorOpen(true);
+                    }}
                   >
                     <Pencil className="w-3 h-3" />
                     Editar
@@ -128,7 +131,11 @@ export default function SiteVariationGenerator({ lead }: Props) {
                     variant="outline"
                     size="sm"
                     className="h-7 gap-1 text-[11px]"
-                    onClick={() => downloadStaticHTML(lead as any).then(() => toast({ title: "Download iniciado!" })).catch(() => toast({ title: "Erro ao baixar", variant: "destructive" }))}
+                    onClick={() =>
+                      downloadStaticHTML(lead as any, v.id)
+                        .then(() => toast({ title: `Download de "${v.label}" iniciado!` }))
+                        .catch(() => toast({ title: "Erro ao baixar", variant: "destructive" }))
+                    }
                   >
                     <Download className="w-3 h-3" />
                     Baixar
@@ -140,7 +147,16 @@ export default function SiteVariationGenerator({ lead }: Props) {
         </div>
       )}
       {existingVariations && existingVariations.length > 0 && (
-        <VariationEditorSheet lead={lead} open={editorOpen} onOpenChange={setEditorOpen} />
+        <VariationEditorSheet
+          lead={lead}
+          open={editorOpen}
+          onOpenChange={(open) => {
+            setEditorOpen(open);
+            if (!open) setSelectedVariation(null);
+          }}
+          variationId={selectedVariation?.id}
+          variationLabel={selectedVariation?.label}
+        />
       )}
     </div>
   );

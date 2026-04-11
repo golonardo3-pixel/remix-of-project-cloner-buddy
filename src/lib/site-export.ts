@@ -29,35 +29,79 @@ interface LeadData {
   google_maps_url?: string | null;
   instagram?: string | null;
   description?: string | null;
+  site_variations?: any[] | null;
 }
 
-function buildSiteHTML(lead: LeadData): string {
+type VariationOverrides = Partial<SiteContentOverrides> & {
+  aboutText?: string | null;
+  description?: string | null;
+};
+
+const validAssetPath = (src?: string | null) => {
+  if (!src || src.startsWith("/src/")) return undefined;
+  return src;
+};
+
+const nonEmptyText = (value?: string | null) => value?.trim() || undefined;
+
+function buildSiteHTML(lead: LeadData, variationId?: string): string {
   const normalizedNiche = canonicalizeBusinessNiche(lead.niche);
   const displayName = professionalizeName(lead.company_name, normalizedNiche);
   const content = getNicheContent(normalizedNiche, lead.city, displayName);
-  const colors = getNicheColors(normalizedNiche);
-  const sc = lead.site_content;
+  const sc = (lead.site_content || null) as VariationOverrides | null;
+  const variation = variationId && Array.isArray(lead.site_variations)
+    ? lead.site_variations.find((item: any) => item.id === variationId) || null
+    : null;
+  const variationOverrides = (variation?.contentOverrides || {}) as VariationOverrides;
+  const colors = variation?.colors || getNicheColors(normalizedNiche);
 
-  const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
-  const gallery = getGalleryImages(normalizedNiche, galleryOverrides || lead.photos || undefined, lead.slug);
+  const galleryOverrides = variationOverrides.galleryImages && variationOverrides.galleryImages.length > 0
+    ? variationOverrides.galleryImages
+    : sc?.galleryImages && sc.galleryImages.length > 0
+      ? sc.galleryImages
+      : undefined;
+  const gallery = getGalleryImages(
+    normalizedNiche,
+    galleryOverrides || lead.photos || undefined,
+    variationId ? `${lead.slug}-${variationId}` : lead.slug
+  );
   const reviews = generateReviews(normalizedNiche, lead.slug);
 
-  const heroImage = toAbsoluteUrl(sc?.heroImage || content.heroImage);
-  const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;
+  const heroImage = toAbsoluteUrl(
+    validAssetPath(variationOverrides.heroImage) ||
+    validAssetPath(sc?.heroImage) ||
+    gallery[0]?.src ||
+    content.heroImage
+  );
+  const heroTitle = nonEmptyText(variationOverrides.heroTitle) || nonEmptyText(sc?.heroTitle) || content.heroTitle;
+  const heroSubtitle = nonEmptyText(variationOverrides.heroSubtitle) || nonEmptyText(sc?.heroSubtitle) || content.heroSubtitle;
+  const ctaText = nonEmptyText(variationOverrides.ctaText) || nonEmptyText(sc?.ctaText) || content.ctaText;
+  const whatsappMsg = nonEmptyText(variationOverrides.whatsappMessage) || nonEmptyText(sc?.whatsappMessage) || content.whatsappMessage;
+  const aboutText = nonEmptyText(variationOverrides.aboutText) || nonEmptyText(variationOverrides.description) || nonEmptyText(sc?.aboutText) || nonEmptyText(sc?.description) || nonEmptyText(lead.description) || content.aboutText;
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
 
-  const displayServices = lead.services_list && lead.services_list.length > 0
+  const displayServices = variationOverrides.services && variationOverrides.services.length > 0
+    ? variationOverrides.services
+    : sc?.services && sc.services.length > 0
+      ? sc.services
+      : lead.services_list && lead.services_list.length > 0
     ? lead.services_list.map((s: string) => ({ title: s, desc: `Serviço profissional de qualidade em ${lead.city}. Chame no WhatsApp para saber mais.` }))
     : content.services;
+
+  const benefits = variationOverrides.benefits && variationOverrides.benefits.length > 0
+    ? variationOverrides.benefits
+    : sc?.benefits && sc.benefits.length > 0
+      ? sc.benefits
+      : content.benefits;
 
   const mapsQuery = encodeURIComponent(`${displayName} ${lead.city}`);
   const mapsEmbedUrl = `https://maps.google.com/maps?q=${mapsQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
   const mapsLink = lead.google_maps_url || `https://www.google.com/maps/search/${mapsQuery}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(mapsLink)}`;
 
-  const benefitsHTML = content.benefits.map((b: string) =>
+  const benefitsHTML = benefits.map((b: string | { title: string; desc: string }) =>
     `<div style="display:flex;align-items:center;gap:8px;font-size:0.875rem;font-weight:500;color:hsl(${colors.primaryForeground})">
-      <span style="color:hsl(${colors.accent})">✓</span>${b}
+      <span style="color:hsl(${colors.accent})">✓</span>${typeof b === "string" ? b : b.title}
     </div>`
   ).join("\n");
 
@@ -109,7 +153,7 @@ function buildSiteHTML(lead: LeadData): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${displayName} - ${lead.city}</title>
-  <meta name="description" content="${content.heroSubtitle}">
+  <meta name="description" content="${heroSubtitle}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -225,15 +269,15 @@ function buildSiteHTML(lead: LeadData): string {
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <div class="hero-divider" style="background:hsl(${colors.accent})"></div>
-        <h2>${content.heroTitle}</h2>
-        <p>${content.heroSubtitle}</p>
+        <h2>${heroTitle}</h2>
+        <p>${heroSubtitle}</p>
         <div class="hero-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:hsl(${colors.accent})"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           ${lead.city}
         </div>
         <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer" class="cta-btn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          ${content.ctaText}
+          ${ctaText}
         </a>
       </div>
     </section>
@@ -263,7 +307,7 @@ function buildSiteHTML(lead: LeadData): string {
         <p class="section-label" style="color:hsl(${colors.accent})">${content.aboutLabel}</p>
         <h2 class="section-heading" style="white-space:pre-line">${content.aboutHeading}</h2>
         <div class="section-divider" style="background:hsl(${colors.accent})"></div>
-        <p class="section-text">${lead.description || content.aboutText}</p>
+        <p class="section-text">${aboutText}</p>
       </div>
     </section>
 
@@ -300,7 +344,7 @@ function buildSiteHTML(lead: LeadData): string {
           <p class="section-label" style="color:hsl(${colors.accent})">Contato</p>
           <h2 class="section-heading">Fale conosco</h2>
           <div class="section-divider" style="background:hsl(${colors.accent})"></div>
-          <p style="color:#6b7280;font-size:0.875rem">Preencha seus dados e envie direto pelo WhatsApp.</p>
+         <p style="color:#6b7280;font-size:0.875rem">Preencha seus dados e envie direto pelo WhatsApp.</p>
         </div>
         <div class="contact-form">
           <label>Seu nome *</label>
@@ -364,7 +408,7 @@ function buildSiteHTML(lead: LeadData): string {
       <p style="color:hsl(${colors.primaryForeground} / 0.7)">Atendimento profissional em ${lead.city} e região. Fale conosco pelo WhatsApp.</p>
       <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer" class="cta-btn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        ${content.ctaText}
+        ${ctaText}
       </a>
     </section>
   </main>
@@ -485,18 +529,18 @@ async function bundleImagesIntoZip(
   return localHtml;
 }
 
-export async function downloadStaticHTML(lead: LeadData) {
+export async function downloadStaticHTML(lead: LeadData, variationId?: string) {
   const zip = new JSZip();
-  let html = buildSiteHTML(lead);
+  let html = buildSiteHTML(lead, variationId);
   html = await bundleImagesIntoZip(zip, html);
   zip.file("index.html", html);
   const blob = await zip.generateAsync({ type: "blob" });
-  saveAs(blob, `${lead.slug}-site.zip`);
+  saveAs(blob, `${lead.slug}${variationId ? `-${variationId}` : ""}-site.zip`);
 }
 
-export async function downloadReactProject(lead: LeadData) {
+export async function downloadReactProject(lead: LeadData, variationId?: string) {
   const zip = new JSZip();
-  const html = buildSiteHTML(lead);
+  const html = buildSiteHTML(lead, variationId);
   const displayName = professionalizeName(lead.company_name, lead.niche);
 
   const packageJson = JSON.stringify({
@@ -544,5 +588,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   zip.file("vercel.json", vercelJson);
 
   const blob = await zip.generateAsync({ type: "blob" });
-  saveAs(blob, `${lead.slug}-react.zip`);
+  saveAs(blob, `${lead.slug}${variationId ? `-${variationId}` : ""}-react.zip`);
 }
