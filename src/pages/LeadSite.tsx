@@ -17,6 +17,18 @@ import SimplesLayout from "@/components/variations/SimplesLayout";
 import PromocaoLayout from "@/components/variations/PromocaoLayout";
 import VisualLayout from "@/components/variations/VisualLayout";
 
+const PLACEHOLDER_VALUES = [
+  "nao informado",
+  "nao informada",
+  "sem dado",
+  "sem dados",
+  "n a",
+  "null",
+  "undefined",
+  "nao disponivel",
+  "sua cidade",
+];
+
 /** Helper: return value only if it's a non-empty, meaningful string */
 const safe = (v: string | null | undefined): string | undefined => {
   if (!v) return undefined;
@@ -27,7 +39,7 @@ const safe = (v: string | null | undefined): string | undefined => {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
-  if (!t || ["nao informado", "sem dado", "sem dados", "n a", "null", "undefined", "nao disponivel"].includes(normalized)) return undefined;
+  if (!t || PLACEHOLDER_VALUES.includes(normalized)) return undefined;
   return t;
 };
 
