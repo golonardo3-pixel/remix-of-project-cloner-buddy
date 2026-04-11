@@ -178,6 +178,8 @@ function uniqueImages(images: GalleryImage[]): GalleryImage[] {
   return images.filter((image) => {
     const src = image?.src?.trim();
     if (!src || seen.has(src) || /placeholder|null|undefined/i.test(src)) return false;
+    // Filter out dev-only /src/ paths that may have been saved to DB
+    if (src.startsWith("/src/")) return false;
     seen.add(src);
     return true;
   });
@@ -381,16 +383,50 @@ const normalizedGalleryEntries = Object.entries(galleryMap).map(([key, images]) 
 const normalizedAliasEntries = Object.entries(nicheAliasMap).map(([key, alias]) => [normalizeNicheKey(key), normalizeNicheKey(alias)] as const);
 const normalizedHeroOverrideEntries = Object.entries(nicheHeroOverrides).map(([key, hero]) => [normalizeNicheKey(key), hero] as const);
 
-const defaultGallery: GalleryImage[] = [
-  { src: heroDefault, alt: "Nosso espaço profissional" },
-  { src: salon1, alt: "Ambiente profissional" },
-  { src: salon5, alt: "Fachada do estabelecimento" },
-  { src: accounting1, alt: "Estação de trabalho" },
-  { src: accounting2, alt: "Atendimento ao cliente" },
-  { src: realestate2, alt: "Ambiente interno" },
-  { src: realestate5, alt: "Espaço moderno" },
-  { src: gym1, alt: "Infraestrutura" },
-];
+// Category-based fallback: maps broad categories to the best matching gallery niche
+const nicheCategoryFallback: Record<string, string> = {
+  "beleza": "salão de beleza",
+  "saude": "fisioterapia",
+  "medic": "clínica odontológica",
+  "clinica": "estética",
+  "animal": "pet shop",
+  "veterinar": "pet shop",
+  "carro": "oficina mecânica",
+  "auto": "oficina mecânica",
+  "veicul": "oficina mecânica",
+  "moto": "oficina mecânica",
+  "comida": "restaurante",
+  "aliment": "marmitaria",
+  "pizz": "restaurante",
+  "lanche": "hamburgueria",
+  "casa": "encanador",
+  "reform": "encanador",
+  "constru": "encanador",
+  "escrit": "contabilidade",
+  "consult": "contabilidade",
+  "juridic": "contabilidade",
+  "fitness": "academia",
+  "sport": "academia",
+  "corpo": "estética",
+  "pele": "estética",
+  "cabelo": "salão de beleza",
+  "unha": "salão de beleza",
+  "imovel": "imobiliária",
+  "segur": "contabilidade",
+};
+
+function findClosestNicheGallery(nicheKey: string): GalleryImage[] {
+  // Try category keyword matching
+  for (const [keyword, targetNiche] of Object.entries(nicheCategoryFallback)) {
+    if (nicheKey.includes(keyword)) {
+      const match = normalizedGalleryEntries.find(([k]) => k === normalizeNicheKey(targetNiche));
+      if (match) return [...match[1]];
+    }
+  }
+  // Last resort: use the first available gallery (contabilidade as most generic professional look)
+  const fallbackNiche = normalizedGalleryEntries.find(([k]) => k === normalizeNicheKey("contabilidade"));
+  return fallbackNiche ? [...fallbackNiche[1]] : [];
+}
 
 // Simple hash from string to get a deterministic seed for shuffling
 function hashCode(str: string): number {
@@ -458,12 +494,21 @@ export function getGalleryImages(niche: string, uploadedPhotos?: string[], slug?
   }
   nicheImages = uniqueImages(nicheImages);
 
+  // If no niche images found, use intelligent category-based fallback (never generic)
+  if (nicheImages.length === 0) {
+    nicheImages = findClosestNicheGallery(key);
+    if (slug && nicheImages.length > 1) {
+      nicheImages = seededShuffle(nicheImages, hashCode(slug));
+    }
+    nicheImages = uniqueImages(nicheImages);
+  }
+
   if (uploaded.length > 0) {
     // Uploaded photos first, then fill with niche stock to reach 10+
     return uniqueImages([...uploaded, ...nicheImages]).slice(0, 12);
   }
 
-  return nicheImages.length > 0 ? nicheImages : uniqueImages(defaultGallery);
+  return nicheImages;
 }
 
 // Niche-specific color schemes (HSL values)
