@@ -4,7 +4,7 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, Copy, Brain, MessageSquareReply } from "lucide-react";
+import { Loader2, Sparkles, Copy, Brain, MessageSquareReply, CalendarClock } from "lucide-react";
 import type { Lead } from "@/components/KanbanBoard";
 
 interface Props {
@@ -41,6 +41,12 @@ async function callAI(action: string, lead: Lead, clientMessage?: string) {
   return data.result as string;
 }
 
+const FOLLOWUP_OPTIONS = [
+  { action: "followup_day1", label: "Follow-up Dia 1", desc: "24h sem resposta" },
+  { action: "followup_day3", label: "Follow-up Dia 3", desc: "3 dias sem resposta" },
+  { action: "followup_day7", label: "Follow-up Dia 7", desc: "Última tentativa" },
+] as const;
+
 export default function LeadAIActions({ lead, compact = false }: Props) {
   const [outreachMsg, setOutreachMsg] = useState("");
   const [outreachLoading, setOutreachLoading] = useState(false);
@@ -51,6 +57,9 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
   const [clientMsg, setClientMsg] = useState("");
   const [replyMsg, setReplyMsg] = useState("");
   const [replyLoading, setReplyLoading] = useState(false);
+
+  const [followupMsg, setFollowupMsg] = useState("");
+  const [followupLoading, setFollowupLoading] = useState<string | null>(null);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -81,6 +90,19 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
       toast({ title: "Erro ao analisar lead", description: e.message, variant: "destructive" });
     } finally {
       setAnalysisLoading(false);
+    }
+  };
+
+  const handleFollowup = async (action: string) => {
+    setFollowupLoading(action);
+    setFollowupMsg("");
+    try {
+      const result = await callAI(action, lead);
+      setFollowupMsg(result);
+    } catch (e: any) {
+      toast({ title: "Erro ao gerar follow-up", description: e.message, variant: "destructive" });
+    } finally {
+      setFollowupLoading(null);
     }
   };
 
@@ -195,7 +217,42 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
         )}
       </div>
 
-      {/* 3. Reply to client */}
+      {/* 4. Follow-ups */}
+      <div className="space-y-2">
+        <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+          <CalendarClock className="w-3.5 h-3.5" /> Follow-ups automáticos
+        </span>
+        <div className="grid grid-cols-3 gap-2">
+          {FOLLOWUP_OPTIONS.map((opt) => (
+            <Button
+              key={opt.action}
+              size="sm"
+              variant="outline"
+              className="h-auto py-2 px-2 flex flex-col items-center gap-0.5 text-[10px]"
+              disabled={followupLoading !== null}
+              onClick={() => handleFollowup(opt.action)}
+            >
+              {followupLoading === opt.action ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <CalendarClock className="w-3.5 h-3.5" />
+              )}
+              <span className="font-medium">{opt.label}</span>
+              <span className="text-muted-foreground">{opt.desc}</span>
+            </Button>
+          ))}
+        </div>
+        {followupMsg && (
+          <div className="bg-amber-50 rounded-md p-3 text-sm text-amber-900 space-y-2">
+            <p className="whitespace-pre-wrap">{followupMsg}</p>
+            <Button size="sm" variant="outline" className="gap-1.5" onClick={() => handleCopy(followupMsg)}>
+              <Copy className="w-3.5 h-3.5" /> Copiar follow-up
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* 5. Reply to client */}
       <div className="space-y-2">
         <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
           <MessageSquareReply className="w-3.5 h-3.5" /> Responder cliente com IA
