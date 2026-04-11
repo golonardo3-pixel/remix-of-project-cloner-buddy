@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Layers, Eye, Loader2 } from "lucide-react";
+import { Layers, Eye, Loader2, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
@@ -65,31 +65,50 @@ export default function SiteVariationGenerator({ lead }: Props) {
 
       {existingVariations && existingVariations.length > 0 && (
         <div className="grid gap-2">
-          {existingVariations.map((v: any) => (
-            <div
-              key={v.id}
-              className="flex items-center justify-between p-2.5 bg-muted/50 rounded-lg border border-border"
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <div
-                  className="w-4 h-4 rounded-full shrink-0"
-                  style={{ backgroundColor: `hsl(${v.colors.accent})` }}
-                />
-                <span className="text-sm font-medium text-foreground">{v.label}</span>
-                <Badge variant="secondary" className="text-[10px]">{v.id}</Badge>
-              </div>
-              <a
-                href={`${baseUrl}?v=${v.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
+          {existingVariations.map((v: any, index: number) => {
+            const url = `${baseUrl}?v=${v.id}`;
+            return (
+              <div
+                key={v.id}
+                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border"
               >
-                <Button variant="ghost" size="sm" className="h-7 gap-1 text-[11px]">
-                  <Eye className="w-3 h-3" />
-                  Ver
-                </Button>
-              </a>
-            </div>
-          ))}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold text-white"
+                    style={{ backgroundColor: `hsl(${v.colors.accent})` }}
+                  >
+                    {index + 1}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground">{v.label}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      {v.contentOverrides?.heroTitle || `Versão ${index + 1}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 gap-1 text-[11px]"
+                    onClick={() => {
+                      navigator.clipboard.writeText(url);
+                      toast({ title: `Link da versão "${v.label}" copiado!` });
+                    }}
+                  >
+                    <Copy className="w-3 h-3" />
+                    Copiar
+                  </Button>
+                  <a href={url} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="h-7 gap-1 text-[11px]">
+                      <Eye className="w-3 h-3" />
+                      Ver
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
