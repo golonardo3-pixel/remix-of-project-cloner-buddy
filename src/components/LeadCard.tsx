@@ -111,9 +111,10 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
   ];
 
   const followUpMessages = [
-    `{Oi|Olá}! Tudo {bem|certo}? 😊\n\nHugo aqui. Te mandei uma mensagem uns dias atrás sobre a ${lead.company_name}.\n\nConseguiu dar uma olhada? Se quiser posso te explicar {rapidinho|rapidamente} como funciona.`,
-    `{E aí|Oi}, tudo {certo|bem}? 😊\n\n{Sou o|Aqui é o} Hugo, te mandei uma mensagem recentemente.\n\nSó passando pra saber se viu aquele modelo que fiz pra ${lead.company_name}. Quer que eu te mostre?`,
-    `{Oi|Olá}! Hugo aqui 😊\n\nTe escrevi uns dias atrás sobre algo que montei pra ${lead.company_name}.\n\nAinda tem interesse em dar uma olhada? {É rapidinho|É rápido}!`,
+    `{Oi|Olá}, consegui dar uma olhada melhor no seu perfil e vi alguns pontos que podem melhorar.\n\n{Se ainda fizer sentido|Se quiser}, posso te mostrar rapidinho.`,
+    `{Oi|Olá|E aí}, {tudo bem|tudo certo}?\n\nDei mais uma olhada na ${lead.company_name} e {tive umas ideias|vi umas oportunidades} que acho que podem te ajudar.\n\n{Quer que eu te mostre?|Posso te explicar em 1 minuto?}`,
+    `{Oi|Olá}! Passando aqui de novo porque {achei mais umas coisas legais|vi mais detalhes} sobre como a ${lead.company_name} pode {aparecer melhor no Google|atrair mais clientes}.\n\n{Se tiver um minutinho|Se fizer sentido pra você}, te explico rapidinho.`,
+    `{Oi|Fala}, {tudo certo|tudo bem}?\n\nLembrei de você porque {analisei melhor|revi} o perfil da ${lead.company_name} e {tem coisa que dá pra melhorar fácil|vi oportunidade boa}.\n\n{Posso te mandar|Quer ver}?`,
   ];
 
   const handleSendProposal = (e: React.MouseEvent) => {
