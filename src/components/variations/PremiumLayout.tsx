@@ -1,6 +1,5 @@
 import { VariationLayoutProps } from "./VariationShared";
 import { MessageCircle, MapPin, Phone, Star, ArrowRight } from "lucide-react";
-import DownloadSiteButton from "./DownloadSiteButton";
 
 /**
  * PREMIUM — Institutional / luxury style
@@ -130,10 +129,6 @@ const PremiumLayout = (p: VariationLayoutProps) => {
         </div>
       </section>
 
-      {/* Download */}
-      <section className="py-10 text-center" style={{ backgroundColor: "#f5f0eb" }}>
-        <DownloadSiteButton lead={p.lead} accent={accent} />
-      </section>
 
       {/* Footer */}
       <footer className="bg-stone-950 text-stone-500 py-8">

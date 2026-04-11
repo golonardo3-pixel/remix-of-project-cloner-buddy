@@ -1,6 +1,5 @@
 import { VariationLayoutProps } from "./VariationShared";
 import { MessageCircle, Phone, MapPin, Star, Instagram } from "lucide-react";
-import DownloadSiteButton from "./DownloadSiteButton";
 
 /**
  * VISUAL — Image-forward, portfolio style
@@ -122,10 +121,6 @@ const VisualLayout = (p: VariationLayoutProps) => {
         </div>
       </section>
 
-      {/* Download */}
-      <section className="py-10 text-center bg-neutral-900">
-        <DownloadSiteButton lead={p.lead} accent={accent} />
-      </section>
 
       {/* Footer */}
       <footer className="bg-neutral-950 border-t border-neutral-800 py-8">

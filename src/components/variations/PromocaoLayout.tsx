@@ -1,6 +1,5 @@
 import { VariationLayoutProps } from "./VariationShared";
 import { MessageCircle, Clock, Zap, Star, Phone, AlertTriangle } from "lucide-react";
-import DownloadSiteButton from "./DownloadSiteButton";
 
 /**
  * PROMOÇÃO — High-urgency sales page
@@ -133,10 +132,6 @@ const PromocaoLayout = (p: VariationLayoutProps) => {
         </div>
       </section>
 
-      {/* Download */}
-      <section className="py-10 text-center bg-gray-900">
-        <DownloadSiteButton lead={p.lead} accent="#22c55e" />
-      </section>
 
       {/* Footer */}
       <footer className="bg-gray-950 border-t border-gray-800 py-6 text-center text-xs text-gray-500">

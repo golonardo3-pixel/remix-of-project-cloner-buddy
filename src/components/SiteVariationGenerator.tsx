@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Layers, Eye, Loader2, Copy, ExternalLink } from "lucide-react";
+import { Layers, Eye, Loader2, Copy, Download } from "lucide-react";
+import { downloadStaticHTML } from "@/lib/site-export";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
@@ -100,18 +101,27 @@ export default function SiteVariationGenerator({ lead }: Props) {
                     className="h-7 gap-1 text-[11px]"
                     onClick={() => {
                       navigator.clipboard.writeText(url);
-                      toast({ title: `Link da versão \"${v.label}\" copiado!` });
+                      toast({ title: `Link da versão "${v.label}" copiado!` });
                     }}
                   >
                     <Copy className="w-3 h-3" />
-                    Copiar link
+                    Copiar
                   </Button>
                   <a href={url} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" size="sm" className="h-7 gap-1 text-[11px]">
                       <Eye className="w-3 h-3" />
-                      Ver site
+                      Ver
                     </Button>
                   </a>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 gap-1 text-[11px]"
+                    onClick={() => downloadStaticHTML(lead as any).then(() => toast({ title: "Download iniciado!" })).catch(() => toast({ title: "Erro ao baixar", variant: "destructive" }))}
+                  >
+                    <Download className="w-3 h-3" />
+                    Baixar
+                  </Button>
                 </div>
               </div>
             );

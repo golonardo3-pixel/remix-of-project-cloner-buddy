@@ -1,6 +1,5 @@
 import { VariationLayoutProps } from "./VariationShared";
 import { MessageCircle, Phone, Star } from "lucide-react";
-import DownloadSiteButton from "./DownloadSiteButton";
 
 /**
  * MODERNO — Clean landing page style
@@ -140,10 +139,6 @@ const ModernoLayout = (p: VariationLayoutProps) => {
         </div>
       </section>
 
-      {/* Download */}
-      <section className="py-10 text-center bg-gray-50">
-        <DownloadSiteButton lead={p.lead} accent={accent} />
-      </section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-10">
