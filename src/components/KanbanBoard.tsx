@@ -35,6 +35,9 @@ export interface Lead {
   services_list: string[] | null;
   photos: string[] | null;
   site_content: any;
+  google_rating: number | null;
+  google_reviews_count: number | null;
+  site_variations: any;
 }
 
 interface Props {
