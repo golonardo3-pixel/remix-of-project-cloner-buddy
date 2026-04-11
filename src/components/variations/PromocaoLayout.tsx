@@ -73,6 +73,21 @@ const PromocaoLayout = (p: VariationLayoutProps) => {
         </div>
       </section>
 
+      {/* Gallery */}
+      {p.gallery.length > 0 && (
+        <section className="py-14 bg-gray-900">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-2xl font-black text-center mb-2">Conheça Nosso Espaço</h2>
+            <p className="text-center text-gray-500 text-sm mb-8">Veja a estrutura que preparamos para você</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {p.gallery.slice(0, 6).map((img, i) => (
+                <img key={i} src={img.src} alt={img.alt} className="w-full aspect-square object-cover rounded-lg" loading="lazy" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Testimonials */}
       {p.reviews.length > 0 && (
         <section className="py-14 bg-gray-900">

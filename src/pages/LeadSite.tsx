@@ -16,9 +16,13 @@ import SimplesLayout from "@/components/variations/SimplesLayout";
 import PromocaoLayout from "@/components/variations/PromocaoLayout";
 import VisualLayout from "@/components/variations/VisualLayout";
 
-/** Helper: return value only if it's a non-empty string */
-const safe = (v: string | null | undefined): string | undefined =>
-  v && v.trim() && v.trim().toLowerCase() !== "não informado" ? v.trim() : undefined;
+/** Helper: return value only if it's a non-empty, meaningful string */
+const safe = (v: string | null | undefined): string | undefined => {
+  if (!v) return undefined;
+  const t = v.trim();
+  if (!t || t.toLowerCase() === "não informado" || t.toLowerCase() === "nao informado") return undefined;
+  return t;
+};
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -102,8 +106,10 @@ const LeadSite = () => {
   const instagram = safe(lead.instagram);
   const description = safe(lead.description);
 
+  const safeNiche = safe(lead.niche);
+
   const layoutProps = {
-    lead: { ...lead, city: city || "", instagram, description },
+    lead: { ...lead, city: city || "", instagram, description, niche: safeNiche || lead.niche },
     displayName,
     heroTitle,
     heroSubtitle,

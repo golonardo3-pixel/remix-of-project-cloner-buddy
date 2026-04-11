@@ -33,6 +33,18 @@ const SimplesLayout = (p: VariationLayoutProps) => {
           </a>
         </section>
 
+        {/* Gallery — simple grid */}
+        {p.gallery.length > 0 && (
+          <section>
+            <h3 className="text-lg font-bold mb-4">Fotos</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {p.gallery.slice(0, 6).map((img, i) => (
+                <img key={i} src={img.src} alt={img.alt} className="w-full aspect-square object-cover rounded-lg" loading="lazy" />
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Services — simple bullet list */}
         <section>
           <h3 className="text-lg font-bold mb-4">Serviços</h3>
