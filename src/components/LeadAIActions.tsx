@@ -14,8 +14,10 @@ interface Props {
 
 interface AnalysisResult {
   score: number;
+  motivo: string;
   problems: { title: string; severity: "alta" | "media" | "baixa" }[];
   opportunity: string;
+  urgencia: "baixa" | "media" | "alta";
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -160,7 +162,19 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
               <span className="text-xs text-muted-foreground">Pontuação:</span>
               <span className={`text-2xl font-bold ${getScoreColor(analysis.score)}`}>{analysis.score}</span>
               <span className="text-xs text-muted-foreground">/ 100</span>
+              {analysis.urgencia && (
+                <Badge variant="outline" className={`text-[10px] ml-auto ${
+                  analysis.urgencia === "alta" ? "bg-destructive/10 text-destructive border-destructive/20" :
+                  analysis.urgencia === "media" ? "bg-yellow-100 text-yellow-700 border-yellow-200" :
+                  "bg-blue-100 text-blue-700 border-blue-200"
+                }`}>
+                  Urgência: {analysis.urgencia}
+                </Badge>
+              )}
             </div>
+            {analysis.motivo && (
+              <p className="text-xs text-muted-foreground italic">{analysis.motivo}</p>
+            )}
             {analysis.problems.length > 0 && (
               <div className="space-y-1">
                 <span className="text-xs font-medium text-muted-foreground">Problemas:</span>
@@ -174,7 +188,7 @@ export default function LeadAIActions({ lead, compact = false }: Props) {
               </div>
             )}
             <div>
-              <span className="text-xs font-medium text-muted-foreground">Oportunidade:</span>
+              <span className="text-xs font-medium text-muted-foreground">Produto recomendado:</span>
               <p className="text-sm mt-0.5">{analysis.opportunity}</p>
             </div>
           </div>
