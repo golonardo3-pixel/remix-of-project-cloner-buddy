@@ -71,12 +71,14 @@ const ModernoLayout = (p: VariationLayoutProps) => {
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Nossos Serviços</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {p.services.map((s, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 text-white font-bold text-lg" style={{ backgroundColor: accent }}>
-                  {i + 1}
+              <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                {p.gallery[i + 1] && (
+                  <img src={p.gallery[i + 1].src} alt={s.title} className="w-full h-40 object-cover" loading="lazy" />
+                )}
+                <div className="p-6">
+                  <h3 className="text-lg font-bold mb-2">{s.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
                 </div>
-                <h3 className="text-lg font-bold mb-2">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
