@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { generateAllVariations } from "@/lib/site-variations";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import type { Lead } from "@/components/KanbanBoard";
+import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
 
 interface Props {
   lead: Lead;
@@ -23,7 +24,9 @@ export default function SiteVariationGenerator({ lead }: Props) {
   const generateMutation = useMutation({
     mutationFn: async () => {
       setGenerating(true);
-      const variations = generateAllVariations(lead.company_name, lead.city, lead.niche);
+      const safeCity = (lead.city || "").replace(/n[aã]o\s+informad[ao]/gi, "").trim();
+      const safeNiche = canonicalizeBusinessNiche(lead.niche) || lead.niche;
+      const variations = generateAllVariations(lead.company_name, safeCity, safeNiche);
       const { error } = await supabase
         .from("leads")
         .update({
