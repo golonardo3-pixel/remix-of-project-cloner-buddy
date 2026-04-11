@@ -21,6 +21,8 @@ export type Database = {
           created_at: string
           description: string | null
           google_maps_url: string | null
+          google_rating: number | null
+          google_reviews_count: number | null
           id: string
           instagram: string | null
           last_interaction: string | null
@@ -44,6 +46,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           google_maps_url?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
           id?: string
           instagram?: string | null
           last_interaction?: string | null
@@ -67,6 +71,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           google_maps_url?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
           id?: string
           instagram?: string | null
           last_interaction?: string | null
