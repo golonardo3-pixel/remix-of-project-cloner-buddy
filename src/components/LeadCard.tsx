@@ -25,6 +25,7 @@ import {
 import { downloadStaticHTML, downloadReactProject } from "@/lib/site-export";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
+import { resolveSpintax } from "@/lib/spintax";
 
 const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: string }> = {
   quente: { emoji: "🔥", label: "Quente", className: "bg-red-100 text-red-700 border-red-200" },
