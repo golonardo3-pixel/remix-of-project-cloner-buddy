@@ -252,6 +252,16 @@ const MessageDispatch = () => {
                   <span>{templateWarnings.join(", ")}</span>
                 </div>
               )}
+              {antiBanWarnings.length > 0 && (
+                <div className="space-y-1">
+                  {antiBanWarnings.map((w, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-orange-600 dark:text-orange-400">
+                      <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                      <span>{w}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <VariableChips onInsert={insertVariable} disabled={status === "running"} />
