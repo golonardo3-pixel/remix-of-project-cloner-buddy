@@ -120,14 +120,14 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     e.stopPropagation();
     const url = getPublicLeadSiteUrl(lead.slug);
     const template = proposalMessages[Math.floor(Math.random() * proposalMessages.length)];
-    const msg = encodeURIComponent(template);
+    const msg = encodeURIComponent(resolveSpintax(template));
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
 
   const handleFollowUp = (e: React.MouseEvent) => {
     e.stopPropagation();
     const template = followUpMessages[Math.floor(Math.random() * followUpMessages.length)];
-    const msg = encodeURIComponent(template);
+    const msg = encodeURIComponent(resolveSpintax(template));
     window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
   };
 
@@ -236,7 +236,7 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
           onClick={(e) => {
             e.stopPropagation();
             const msg = encodeURIComponent(
-              "Oi, tudo bem?\n\nVi seu negócio e achei que você pode estar perdendo clientes no Google.\n\nPosso te mostrar uma ideia rápida?"
+              resolveSpintax("{Oi|Olá|Fala}, tudo {bem|certo}?\n\nVi seu negócio e achei que você pode estar perdendo clientes no Google.\n\nPosso te mostrar uma ideia rápida?")
             );
             window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
           }}
