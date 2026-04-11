@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Layers, Eye, Loader2, Copy, ExternalLink } from "lucide-react";
+import { Layers, Eye, Loader2, Copy, Download } from "lucide-react";
+import { downloadStaticHTML } from "@/lib/site-export";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
