@@ -3,6 +3,11 @@ export interface SiteServiceOverride {
   desc: string;
 }
 
+export interface SiteBenefitOverride {
+  title: string;
+  desc: string;
+}
+
 export interface SiteContentOverrides {
   heroTitle?: string;
   heroSubtitle?: string;
@@ -19,7 +24,7 @@ export interface SiteContentOverrides {
   finalCtaTitle?: string;
   finalCtaSubtitle?: string;
   workingHours?: string;
-  benefits?: string[];
+  benefits?: SiteBenefitOverride[];
   heroImage?: string;
   galleryImages?: string[];
 }
