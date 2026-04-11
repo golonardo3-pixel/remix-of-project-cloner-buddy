@@ -97,6 +97,27 @@ import physio2 from "@/assets/gallery/physio-2.jpg";
 import physio3 from "@/assets/gallery/physio-3.jpg";
 import physio4 from "@/assets/gallery/physio-4.jpg";
 
+import locksmith1 from "@/assets/gallery/locksmith-1.jpg";
+import locksmith2 from "@/assets/gallery/locksmith-2.jpg";
+import locksmith3 from "@/assets/gallery/locksmith-3.jpg";
+import locksmith4 from "@/assets/gallery/locksmith-4.jpg";
+import locksmith5 from "@/assets/gallery/locksmith-5.jpg";
+import locksmith6 from "@/assets/gallery/locksmith-6.jpg";
+
+import electrician1 from "@/assets/gallery/electrician-1.jpg";
+import electrician2 from "@/assets/gallery/electrician-2.jpg";
+import electrician3 from "@/assets/gallery/electrician-3.jpg";
+import electrician4 from "@/assets/gallery/electrician-4.jpg";
+import electrician5 from "@/assets/gallery/electrician-5.jpg";
+import electrician6 from "@/assets/gallery/electrician-6.jpg";
+
+import plumber1 from "@/assets/gallery/plumber-1.jpg";
+import plumber2 from "@/assets/gallery/plumber-2.jpg";
+import plumber3 from "@/assets/gallery/plumber-3.jpg";
+import plumber4 from "@/assets/gallery/plumber-4.jpg";
+import plumber5 from "@/assets/gallery/plumber-5.jpg";
+import plumber6 from "@/assets/gallery/plumber-6.jpg";
+
 // Hero images
 import heroSalon from "@/assets/hero-salon.jpg";
 import heroBarbershop from "@/assets/hero-barbershop.jpg";
@@ -114,6 +135,9 @@ import heroPhysiotherapy from "@/assets/hero-physiotherapy.jpg";
 import heroDefault from "@/assets/hero-default.jpg";
 import heroManicure from "@/assets/hero-manicure.jpg";
 import heroLawyer from "@/assets/hero-lawyer.jpg";
+import heroLocksmith from "@/assets/hero-locksmith.jpg";
+import heroElectrician from "@/assets/hero-electrician.jpg";
+import heroPlumber from "@/assets/hero-plumber.jpg";
 
 export interface GalleryImage {
   src: string;
