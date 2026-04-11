@@ -16,11 +16,18 @@ interface Props {
   lead: Lead;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  variationId?: string;
+  variationLabel?: string;
 }
 
-export default function VariationEditorSheet({ lead, open, onOpenChange }: Props) {
+export default function VariationEditorSheet({ lead, open, onOpenChange, variationId, variationLabel }: Props) {
   const queryClient = useQueryClient();
-  const existingContent = (lead as any).site_content as any | null;
+  const existingGlobalContent = (lead as any).site_content as any | null;
+  const existingVariations = ((lead as any).site_variations as any[] | null) || [];
+  const activeVariation = variationId
+    ? existingVariations.find((variation) => variation.id === variationId) || null
+    : null;
+  const isVariationMode = !!variationId;
 
   const [companyName, setCompanyName] = useState(lead.company_name);
   const [city, setCity] = useState(lead.city);
@@ -38,7 +45,10 @@ export default function VariationEditorSheet({ lead, open, onOpenChange }: Props
     setCity(lead.city);
     setPhone(lead.phone);
 
-    const c = existingContent || {};
+    const c = isVariationMode
+      ? { ...(existingGlobalContent || {}), ...(activeVariation?.contentOverrides || {}) }
+      : (existingGlobalContent || {});
+
     setHeroTitle(c.heroTitle || "");
     setHeroSubtitle(c.heroSubtitle || "");
     setDescription(c.aboutText || c.description || "");
@@ -49,7 +59,7 @@ export default function VariationEditorSheet({ lead, open, onOpenChange }: Props
     );
     setHeroImage(c.heroImage || undefined);
     setGalleryImages(c.galleryImages || (lead as any).photos || []);
-  }, [open, lead]);
+  }, [open, lead, isVariationMode, existingGlobalContent, activeVariation]);
 
   const updateService = (idx: number, field: "title" | "desc", value: string) => {
     setServices((prev) => prev.map((s, i) => (i === idx ? { ...s, [field]: value } : s)));
@@ -60,32 +70,61 @@ export default function VariationEditorSheet({ lead, open, onOpenChange }: Props
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const siteContent = {
-        ...(existingContent || {}),
-        heroTitle: heroTitle || undefined,
-        heroSubtitle: heroSubtitle || undefined,
-        aboutText: description || undefined,
-        services: services.filter((s) => s.title.trim()),
-        heroImage: heroImage || undefined,
-        galleryImages: galleryImages.length > 0 ? galleryImages : undefined,
+      const normalizedServices = services
+        .map((service) => ({
+          title: service.title.trim(),
+          desc: service.desc.trim(),
+        }))
+        .filter((service) => service.title);
+
+      const scopedContent = {
+        ...(activeVariation?.contentOverrides || {}),
+        heroTitle: heroTitle.trim() || null,
+        heroSubtitle: heroSubtitle.trim() || null,
+        aboutText: description.trim() || null,
+        description: description.trim() || null,
+        services: normalizedServices.length > 0 ? normalizedServices : null,
+        heroImage: heroImage || null,
+        galleryImages: galleryImages.length > 0 ? galleryImages : null,
       };
+
+      const payload = isVariationMode
+        ? {
+            site_variations: existingVariations.map((variation) =>
+              variation.id === variationId
+                ? { ...variation, contentOverrides: scopedContent }
+                : variation
+            ),
+            last_interaction: new Date().toISOString(),
+          }
+        : {
+            company_name: companyName,
+            city,
+            phone,
+            site_content: {
+              ...(existingGlobalContent || {}),
+              heroTitle: heroTitle.trim() || undefined,
+              heroSubtitle: heroSubtitle.trim() || undefined,
+              aboutText: description.trim() || undefined,
+              description: description.trim() || undefined,
+              services: normalizedServices,
+              heroImage: heroImage || undefined,
+              galleryImages: galleryImages.length > 0 ? galleryImages : undefined,
+            },
+            photos: galleryImages.length > 0 ? galleryImages : null,
+            last_interaction: new Date().toISOString(),
+          };
 
       const { error } = await supabase
         .from("leads")
-        .update({
-          company_name: companyName,
-          city,
-          phone,
-          site_content: siteContent,
-          photos: galleryImages.length > 0 ? galleryImages : null,
-          last_interaction: new Date().toISOString(),
-        } as any)
+        .update(payload as any)
         .eq("id", lead.id);
+
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
-      toast({ title: "Site atualizado com sucesso!" });
+      toast({ title: isVariationMode ? `Variação "${variationLabel}" atualizada!` : "Site atualizado com sucesso!" });
       onOpenChange(false);
     },
     onError: (err: Error) => {
@@ -97,32 +136,39 @@ export default function VariationEditorSheet({ lead, open, onOpenChange }: Props
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto w-full sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle className="text-lg">Editar Site — {lead.company_name}</SheetTitle>
+          <SheetTitle className="text-lg">
+            {isVariationMode ? `Editar variação — ${variationLabel || activeVariation?.label || lead.company_name}` : `Editar Site — ${lead.company_name}`}
+          </SheetTitle>
         </SheetHeader>
 
         <div className="space-y-5 mt-4">
-          {/* Basic info */}
-          <section className="space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Dados do negócio</h3>
-            <div>
-              <Label>Nome do negócio</Label>
-              <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
-            </div>
-            <div>
-              <Label>Cidade</Label>
-              <Input value={city} onChange={(e) => setCity(e.target.value)} />
-            </div>
-            <div>
-              <Label>WhatsApp</Label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-          </section>
+          {!isVariationMode && (
+            <>
+              <section className="space-y-3">
+                <h3 className="text-sm font-semibold text-foreground">Dados do negócio</h3>
+                <div>
+                  <Label>Nome do negócio</Label>
+                  <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+                </div>
+                <div>
+                  <Label>Cidade</Label>
+                  <Input value={city} onChange={(e) => setCity(e.target.value)} />
+                </div>
+                <div>
+                  <Label>WhatsApp</Label>
+                  <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+                </div>
+              </section>
 
-          <Separator />
+              <Separator />
+            </>
+          )}
 
           {/* Content */}
           <section className="space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Textos do site</h3>
+            <h3 className="text-sm font-semibold text-foreground">
+              {isVariationMode ? "Conteúdo da variação" : "Textos do site"}
+            </h3>
             <div>
               <Label>Título principal</Label>
               <Input
@@ -194,7 +240,9 @@ export default function VariationEditorSheet({ lead, open, onOpenChange }: Props
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Fotos do site</h3>
             <p className="text-xs text-muted-foreground">
-              Mínimo 5 imagens recomendadas. As fotos aparecem em todas as 5 variações.
+              {isVariationMode
+                ? "As fotos salvas aqui afetam apenas esta variação dos 5 modelos."
+                : "Mínimo 5 imagens recomendadas. As fotos aparecem em todas as 5 variações."}
             </p>
             <ImageUploadSection
               leadId={lead.id}
