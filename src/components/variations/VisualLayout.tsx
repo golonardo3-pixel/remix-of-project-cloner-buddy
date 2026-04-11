@@ -65,7 +65,8 @@ const VisualLayout = ({ lead, displayName, heroTitle, heroSubtitle, ctaText, wha
                 <p className="text-white/60 text-sm max-w-xs">{s.desc}</p>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
