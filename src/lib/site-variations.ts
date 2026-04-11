@@ -1,4 +1,12 @@
 import type { SiteContentOverrides } from "./site-content-types";
+import { canonicalizeBusinessNiche } from "./niche-normalization";
+
+/** Strip placeholders like "Não informada" from any string */
+const stripPlaceholder = (v: string): string => {
+  const normalized = v.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, "").trim();
+  const bad = ["nao informado", "nao informada", "sem dados", "sem dado", "n a", "null", "undefined", "nao disponivel", "sua cidade"];
+  return bad.includes(normalized) ? "" : v.trim();
+};
 
 export interface SiteVariation {
   id: string;
@@ -77,24 +85,27 @@ function generateVariationContent(
   city: string,
   niche: string
 ): Partial<SiteContentOverrides> {
+  const safeCity = stripPlaceholder(city);
+  const safeNiche = canonicalizeBusinessNiche(niche) || niche;
+
   switch (variationId) {
     case "moderno":
       return {
-        heroTitle: `${companyName} — Referência em ${city}`,
+        heroTitle: safeCity ? `${companyName} — Referência em ${safeCity}` : companyName,
         heroSubtitle: `Tecnologia e inovação a serviço do seu negócio. Conheça nosso trabalho.`,
         ctaText: "Falar com a gente",
-        urgencyBadge: `Atendimento digital em ${city}`,
+        urgencyBadge: safeCity ? `Atendimento digital em ${safeCity}` : "Atendimento digital",
       };
     case "premium":
       return {
         heroTitle: `${companyName}`,
-        heroSubtitle: `Experiência exclusiva e atendimento personalizado em ${city}. Qualidade que você merece.`,
+        heroSubtitle: safeCity ? `Experiência exclusiva e atendimento personalizado em ${safeCity}. Qualidade que você merece.` : `Experiência exclusiva e atendimento personalizado. Qualidade que você merece.`,
         ctaText: "Agendar atendimento",
         urgencyBadge: `Atendimento premium`,
       };
     case "simples":
       return {
-        heroTitle: `${companyName} em ${city}`,
+        heroTitle: safeCity ? `${companyName} em ${safeCity}` : companyName,
         heroSubtitle: `Atendimento profissional, rápido e de confiança. Chame no WhatsApp.`,
         ctaText: "Chamar no WhatsApp",
         urgencyBadge: `Disponível agora`,
@@ -102,14 +113,16 @@ function generateVariationContent(
     case "promocao":
       return {
         heroTitle: `${companyName} — Condição Especial`,
-        heroSubtitle: `Aproveite condições exclusivas para novos clientes em ${city}.`,
+        heroSubtitle: safeCity ? `Aproveite condições exclusivas para novos clientes em ${safeCity}.` : `Aproveite condições exclusivas para novos clientes.`,
         ctaText: "Quero aproveitar",
         urgencyBadge: `Oferta por tempo limitado`,
       };
     case "visual":
       return {
         heroTitle: `Conheça o ${companyName}`,
-        heroSubtitle: `Veja nosso trabalho e descubra por que somos referência em ${niche} na região de ${city}.`,
+        heroSubtitle: safeCity
+          ? `Veja nosso trabalho e descubra por que somos referência na região de ${safeCity}.`
+          : `Veja nosso trabalho e descubra por que somos referência.`,
         ctaText: "Ver mais e conversar",
         urgencyBadge: `Galeria de trabalhos`,
       };

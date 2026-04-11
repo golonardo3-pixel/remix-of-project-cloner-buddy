@@ -166,7 +166,7 @@ const GoogleSheetsImport = () => {
         .map((r) => {
           const name = findField(r, ["nome", "name", "empresa", "company"]) || "Lead Importado";
           const phone = findField(r, ["telefone", "phone", "whatsapp", "cel", "celular"]) || "";
-          const city = findField(r, ["cidade", "city"]) || "Não informada";
+          const city = findField(r, ["cidade", "city"]) || "";
           const niche = findField(r, ["nicho", "niche", "segmento", "categoria"]) || "Outro";
           return {
             company_name: name,

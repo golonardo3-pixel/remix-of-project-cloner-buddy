@@ -7,6 +7,21 @@ import type { SiteContentOverrides } from "@/lib/site-content-types";
 import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
 import { MessageCircle, Star, MapPin, Phone, CheckCircle, Zap, Shield, Clock } from "lucide-react";
 
+/** Remove placeholder fragments from inside text */
+const cleanText = (v: string | null | undefined): string => {
+  if (!v) return "";
+  let t = v.trim();
+  t = t.replace(/\b[Nn][aã]o\s+informad[ao]\b/gi, "").trim();
+  t = t.replace(/\b[Ss]em\s+dados?\b/gi, "").trim();
+  t = t.replace(/\s+em\s*\.\s*/g, ". ").trim();
+  t = t.replace(/\s+em\s*$/g, "").trim();
+  t = t.replace(/\bna\s+regi[aã]o\s+de\s*\.?\s*$/gi, "").trim();
+  t = t.replace(/\s*—\s*Refer[eê]ncia\s+em\s*$/gi, "").trim();
+  t = t.replace(/\s{2,}/g, " ").trim();
+  if (!t || t.length < 3) return "";
+  return t;
+};
+
 const LeadSiteConversion = () => {
   const { slug } = useParams<{ slug: string }>();
 
@@ -48,10 +63,11 @@ const LeadSiteConversion = () => {
   const content = getNicheContent(normalizedNiche, lead.city, displayName);
   const colors = getNicheColors(normalizedNiche);
   const sc: SiteContentOverrides | null = lead.site_content;
+  const safeCity = (lead.city || "").replace(/n[aã]o\s+informad[ao]/gi, "").trim();
 
   const heroTitle = sc?.heroTitle || displayName;
-  const heroSubtitle = sc?.heroSubtitle || content.heroSubtitle;
-  const urgencyBadge = (sc?.urgencyBadge || content.urgencyBadge).replace("⚡ ", "");
+  const heroSubtitle = cleanText(sc?.heroSubtitle) || cleanText(content.heroSubtitle) || "";
+  const urgencyBadge = cleanText((sc?.urgencyBadge || content.urgencyBadge).replace("⚡ ", "")) || "Atendimento rápido";
   const ctaText = sc?.ctaText || content.ctaText;
   const whatsappMsg = sc?.whatsappMessage || content.whatsappMessage;
   const servicesTitle = sc?.servicesTitle || "O que oferecemos";
@@ -60,7 +76,7 @@ const LeadSiteConversion = () => {
   const contactTitle = sc?.contactTitle || `Fale diretamente com ${displayName}`;
   const contactSubtitle = sc?.contactSubtitle || "Sem formulário, sem espera. Atendimento direto e pessoal.";
   const finalCtaTitle = sc?.finalCtaTitle || "Não perca tempo!";
-  const finalCtaSubtitle = sc?.finalCtaSubtitle || `Clique no botão abaixo e fale agora com ${displayName} em ${lead.city}. Atendimento imediato via WhatsApp.`;
+  const finalCtaSubtitle = sc?.finalCtaSubtitle || (safeCity ? `Clique no botão abaixo e fale agora com ${displayName} em ${safeCity}. Atendimento imediato via WhatsApp.` : `Clique no botão abaixo e fale agora com ${displayName}. Atendimento imediato via WhatsApp.`);
   const workingHours = sc?.workingHours || "Seg a Sex: 9h às 20h · Sáb: 9h às 18h";
 
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
@@ -77,7 +93,7 @@ const LeadSiteConversion = () => {
     ? sc.benefits.map((b) => ({ ...b, icon: Zap }))
     : [
         { icon: Zap, title: "Atendimento Imediato", desc: "Resposta na hora pelo WhatsApp" },
-        { icon: Shield, title: "Equipe Preparada", desc: `Profissionais de confiança em ${lead.city}` },
+        { icon: Shield, title: "Equipe Preparada", desc: safeCity ? `Profissionais de confiança em ${safeCity}` : "Profissionais de confiança" },
         { icon: Clock, title: "Não Espere Piorar", desc: "Resolva hoje, não amanhã" },
         { icon: CheckCircle, title: "Serviço com Garantia", desc: "Trabalho profissional e seguro" },
       ];
@@ -90,10 +106,12 @@ const LeadSiteConversion = () => {
           <h1 className="font-display text-base sm:text-xl font-semibold tracking-tight text-foreground">
             {displayName}
           </h1>
-          <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-            <MapPin className="w-3.5 h-3.5 text-green-500" />
-            {lead.city}
-          </span>
+          {safeCity && (
+            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+              <MapPin className="w-3.5 h-3.5 text-green-500" />
+              {safeCity}
+            </span>
+          )}
         </div>
       </header>
 
@@ -119,10 +137,12 @@ const LeadSiteConversion = () => {
               {heroTitle}
             </h1>
 
-            <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
-              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400" />
-              <span className="text-white/90 text-xs sm:text-sm font-medium drop-shadow">{lead.city}</span>
-            </div>
+            {safeCity && (
+              <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+                <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400" />
+                <span className="text-white/90 text-xs sm:text-sm font-medium drop-shadow">{safeCity}</span>
+              </div>
+            )}
 
             <p className="text-white/85 text-xs sm:text-base md:text-lg mb-4 sm:mb-6 max-w-lg mx-auto leading-relaxed drop-shadow">
               {heroSubtitle}
@@ -241,7 +261,7 @@ const LeadSiteConversion = () => {
             <div className="space-y-3 mb-8 text-left">
               <div className="flex items-center gap-3 p-4 rounded-lg border border-border">
                 <MapPin className="w-5 h-5 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
-                <span className="text-foreground text-sm">{lead.city}</span>
+                <span className="text-foreground text-sm">{safeCity || "Região de atendimento"}</span>
               </div>
               <div className="flex items-center gap-3 p-4 rounded-lg border border-border">
                 <Phone className="w-5 h-5 shrink-0" style={{ color: `hsl(${colors.accent})` }} />
@@ -292,7 +312,7 @@ const LeadSiteConversion = () => {
       {/* Mini footer */}
       <footer className="py-8 px-5 text-center" style={{ backgroundColor: `hsl(${colors.primary})` }}>
         <p className="text-xs" style={{ color: `hsl(${colors.primaryForeground} / 0.5)` }}>
-          © {new Date().getFullYear()} {displayName} · {lead.city}
+          © {new Date().getFullYear()} {displayName}{safeCity ? ` · ${safeCity}` : ""}
         </p>
       </footer>
 

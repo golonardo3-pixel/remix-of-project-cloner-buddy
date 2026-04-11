@@ -31,6 +31,27 @@ const safe = (v: string | null | undefined): string | undefined => {
   return t;
 };
 
+/** Remove placeholder fragments like "Não informada" from inside text strings */
+const cleanText = (v: string | null | undefined): string => {
+  if (!v) return "";
+  let t = v.trim();
+  // Remove "Não informado/a", "sem dados", etc. embedded in longer strings
+  t = t.replace(/\b[Nn][aã]o\s+informad[ao]\b/gi, "").trim();
+  t = t.replace(/\b[Ss]em\s+dados?\b/gi, "").trim();
+  // Clean up leftover punctuation/prepositions: "em ", "na região de ", trailing " —", "• ", etc.
+  t = t.replace(/\s+em\s*\.\s*/g, ". ").trim();
+  t = t.replace(/\s+em\s*$/g, "").trim();
+  t = t.replace(/\bna\s+regi[aã]o\s+de\s*\.?\s*$/gi, "").trim();
+  t = t.replace(/\bde\s*\.?\s*$/gi, "").trim();
+  t = t.replace(/\s*[•·]\s*$/g, "").trim();
+  t = t.replace(/\s*—\s*Refer[eê]ncia\s+em\s*$/gi, "").trim();
+  t = t.replace(/\s+em\s+na\s/g, " na ").trim();
+  t = t.replace(/\s{2,}/g, " ").trim();
+  // If the entire string became empty after cleaning
+  if (!t || t.length < 3) return "";
+  return t;
+};
+
 const uniqueImages = (images: GalleryImage[]) => {
   const seen = new Set<string>();
   return images.filter((image) => {
@@ -97,10 +118,10 @@ const LeadSite = () => {
     }
   }
 
-  const heroTitle = safe(variationOverrides.heroTitle) || safe(sc?.heroTitle) || safe(content.heroTitle) || displayName;
-  const heroSubtitle = safe(variationOverrides.heroSubtitle) || safe(sc?.heroSubtitle) || safe(content.heroSubtitle) || "";
-  const ctaText = safe(variationOverrides.ctaText) || safe(sc?.ctaText) || safe(content.ctaText) || "Fale no WhatsApp";
-  const whatsappMessage = safe(variationOverrides.whatsappMessage) || safe(sc?.whatsappMessage) || safe(content.whatsappMessage) || `Olá! Quero saber mais sobre ${displayName}.`;
+  const heroTitle = cleanText(variationOverrides.heroTitle) || cleanText(sc?.heroTitle) || cleanText(content.heroTitle) || displayName;
+  const heroSubtitle = cleanText(variationOverrides.heroSubtitle) || cleanText(sc?.heroSubtitle) || cleanText(content.heroSubtitle) || "";
+  const ctaText = cleanText(variationOverrides.ctaText) || cleanText(sc?.ctaText) || cleanText(content.ctaText) || "Fale no WhatsApp";
+  const whatsappMessage = cleanText(variationOverrides.whatsappMessage) || cleanText(sc?.whatsappMessage) || cleanText(content.whatsappMessage) || `Olá! Quero saber mais sobre ${displayName}.`;
   const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
   const generatedReviews = generateReviews(normalizedNiche, lead.slug);
 
