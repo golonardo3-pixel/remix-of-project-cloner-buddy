@@ -69,6 +69,7 @@ const LeadSite = () => {
   const heroSubtitle = variationOverrides.heroSubtitle || (sc?.heroSubtitle) || content.heroSubtitle;
   const ctaText = variationOverrides.ctaText || (sc?.ctaText) || content.ctaText;
   const urgencyBadge = variationOverrides.urgencyBadge || (sc?.urgencyBadge) || content.urgencyBadge;
+  const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
   const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
