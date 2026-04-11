@@ -97,6 +97,27 @@ import physio2 from "@/assets/gallery/physio-2.jpg";
 import physio3 from "@/assets/gallery/physio-3.jpg";
 import physio4 from "@/assets/gallery/physio-4.jpg";
 
+import locksmith1 from "@/assets/gallery/locksmith-1.jpg";
+import locksmith2 from "@/assets/gallery/locksmith-2.jpg";
+import locksmith3 from "@/assets/gallery/locksmith-3.jpg";
+import locksmith4 from "@/assets/gallery/locksmith-4.jpg";
+import locksmith5 from "@/assets/gallery/locksmith-5.jpg";
+import locksmith6 from "@/assets/gallery/locksmith-6.jpg";
+
+import electrician1 from "@/assets/gallery/electrician-1.jpg";
+import electrician2 from "@/assets/gallery/electrician-2.jpg";
+import electrician3 from "@/assets/gallery/electrician-3.jpg";
+import electrician4 from "@/assets/gallery/electrician-4.jpg";
+import electrician5 from "@/assets/gallery/electrician-5.jpg";
+import electrician6 from "@/assets/gallery/electrician-6.jpg";
+
+import plumber1 from "@/assets/gallery/plumber-1.jpg";
+import plumber2 from "@/assets/gallery/plumber-2.jpg";
+import plumber3 from "@/assets/gallery/plumber-3.jpg";
+import plumber4 from "@/assets/gallery/plumber-4.jpg";
+import plumber5 from "@/assets/gallery/plumber-5.jpg";
+import plumber6 from "@/assets/gallery/plumber-6.jpg";
+
 // Hero images
 import heroSalon from "@/assets/hero-salon.jpg";
 import heroBarbershop from "@/assets/hero-barbershop.jpg";
@@ -114,6 +135,9 @@ import heroPhysiotherapy from "@/assets/hero-physiotherapy.jpg";
 import heroDefault from "@/assets/hero-default.jpg";
 import heroManicure from "@/assets/hero-manicure.jpg";
 import heroLawyer from "@/assets/hero-lawyer.jpg";
+import heroLocksmith from "@/assets/hero-locksmith.jpg";
+import heroElectrician from "@/assets/hero-electrician.jpg";
+import heroPlumber from "@/assets/hero-plumber.jpg";
 
 export interface GalleryImage {
   src: string;
@@ -266,6 +290,33 @@ const galleryMap: Record<string, GalleryImage[]> = {
     { src: accounting4, alt: "Documentos e calculadora" },
     { src: accounting5, alt: "Sala de reuniões corporativa" },
   ],
+  "chaveiro": [
+    { src: heroLocksmith, alt: "Chaveiro profissional" },
+    { src: locksmith1, alt: "Abertura de fechadura" },
+    { src: locksmith2, alt: "Máquina de corte de chaves" },
+    { src: locksmith3, alt: "Cadeados e chaves variados" },
+    { src: locksmith4, alt: "Instalação de fechadura digital" },
+    { src: locksmith5, alt: "Van de chaveiro com ferramentas" },
+    { src: locksmith6, alt: "Abertura de carro automotivo" },
+  ],
+  "eletricista": [
+    { src: heroElectrician, alt: "Eletricista profissional" },
+    { src: electrician1, alt: "Trabalho em painel elétrico" },
+    { src: electrician2, alt: "Instalação de interruptor" },
+    { src: electrician3, alt: "Teste com multímetro" },
+    { src: electrician4, alt: "Ferramentas elétricas organizadas" },
+    { src: electrician5, alt: "Instalação de luminária" },
+    { src: electrician6, alt: "Quadro de disjuntores" },
+  ],
+  "encanador": [
+    { src: heroPlumber, alt: "Encanador profissional" },
+    { src: plumber1, alt: "Reparo de tubulação" },
+    { src: plumber2, alt: "Instalação de torneira" },
+    { src: plumber3, alt: "Ferramentas de encanamento" },
+    { src: plumber4, alt: "Manutenção de aquecedor" },
+    { src: plumber5, alt: "Instalação de tubos de cobre" },
+    { src: plumber6, alt: "Banheiro com instalação nova" },
+  ],
 };
 
 // Alias map: niches without dedicated photos use a related niche's gallery
@@ -277,12 +328,9 @@ const nicheAliasMap: Record<string, string> = {
   "auto elétrica": "oficina mecânica",
   "funilaria": "oficina mecânica",
   "guincho": "oficina mecânica",
-  "chaveiro": "oficina mecânica",
-  "eletricista": "oficina mecânica",
-  "encanador": "oficina mecânica",
   "pintor": "oficina mecânica",
-  "marido de aluguel": "oficina mecânica",
-  "desentupidora": "oficina mecânica",
+  "marido de aluguel": "encanador",
+  "desentupidora": "encanador",
 };
 
 // Hero image overrides for aliased niches that have their own hero
