@@ -12,6 +12,7 @@ import { Trash2, ExternalLink, Phone } from "lucide-react";
 import { KANBAN_COLUMNS } from "./KanbanBoard";
 import type { Lead } from "./KanbanBoard";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
+import GmbAnalysis from "@/components/GmbAnalysis";
 
 interface Props {
   lead: Lead | null;
@@ -114,6 +115,8 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
               </Button>
             </a>
           </div>
+
+          <GmbAnalysis lead={lead} />
 
           <div>
             <Label>Status do Lead</Label>
