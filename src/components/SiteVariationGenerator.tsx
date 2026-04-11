@@ -16,7 +16,9 @@ interface Props {
 export default function SiteVariationGenerator({ lead }: Props) {
   const queryClient = useQueryClient();
   const [generating, setGenerating] = useState(false);
-  const existingVariations = (lead as any).site_variations as any[] | null;
+  const savedVariations = (lead as any).site_variations as any[] | null;
+  const [localVariations, setLocalVariations] = useState<any[] | null>(null);
+  const existingVariations = localVariations || savedVariations;
 
   const generateMutation = useMutation({
     mutationFn: async () => {
@@ -31,8 +33,10 @@ export default function SiteVariationGenerator({ lead }: Props) {
         } as any)
         .eq("id", lead.id);
       if (error) throw error;
+      return variations;
     },
-    onSuccess: () => {
+    onSuccess: (variations) => {
+      setLocalVariations(variations);
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       toast({ title: "5 variações de site geradas!" });
       setGenerating(false);
