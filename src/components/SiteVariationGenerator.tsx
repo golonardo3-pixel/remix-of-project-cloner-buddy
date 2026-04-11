@@ -19,6 +19,7 @@ interface Props {
 export default function SiteVariationGenerator({ lead }: Props) {
   const queryClient = useQueryClient();
   const [generating, setGenerating] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
   const savedVariations = (lead as any).site_variations as any[] | null;
   const [localVariations, setLocalVariations] = useState<any[] | null>(null);
   const existingVariations = localVariations || savedVariations;
@@ -114,6 +115,15 @@ export default function SiteVariationGenerator({ lead }: Props) {
                       Ver
                     </Button>
                   </a>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 gap-1 text-[11px]"
+                    onClick={() => setEditorOpen(true)}
+                  >
+                    <Pencil className="w-3 h-3" />
+                    Editar
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
