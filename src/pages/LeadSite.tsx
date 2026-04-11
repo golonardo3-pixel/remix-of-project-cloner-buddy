@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getNicheContent, professionalizeName } from "@/lib/niche-content";
@@ -12,6 +12,8 @@ import type { SiteContentOverrides } from "@/lib/site-content-types";
 
 const LeadSite = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
+  const variationId = searchParams.get("v");
 
   const { data: lead, isLoading, error } = useQuery({
     queryKey: ["lead-site", slug],
@@ -48,10 +50,25 @@ const LeadSite = () => {
 
   const displayName = professionalizeName(lead.company_name, lead.niche);
   const content = getNicheContent(lead.niche, lead.city, displayName);
-  const colors = getNicheColors(lead.niche);
+  let colors = getNicheColors(lead.niche);
   const sc: SiteContentOverrides | null = lead.site_content;
 
-  const galleryOverrides = sc?.galleryImages && sc.galleryImages.length > 0 ? sc.galleryImages : undefined;
+  // Apply variation if selected
+  let variationOverrides: Partial<SiteContentOverrides> = {};
+  if (variationId && lead.site_variations) {
+    const variations = lead.site_variations as any[];
+    const variation = variations.find((v: any) => v.id === variationId);
+    if (variation) {
+      colors = variation.colors;
+      variationOverrides = variation.contentOverrides || {};
+    }
+  }
+
+  // Merge: variation overrides take priority over sc overrides
+  const heroTitle = variationOverrides.heroTitle || (sc?.heroTitle) || content.heroTitle;
+  const heroSubtitle = variationOverrides.heroSubtitle || (sc?.heroSubtitle) || content.heroSubtitle;
+  const ctaText = variationOverrides.ctaText || (sc?.ctaText) || content.ctaText;
+  const urgencyBadge = variationOverrides.urgencyBadge || (sc?.urgencyBadge) || content.urgencyBadge;
   const gallery = getGalleryImages(lead.niche, galleryOverrides || lead.photos || undefined, lead.slug);
   
   const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(content.whatsappMessage)}`;
