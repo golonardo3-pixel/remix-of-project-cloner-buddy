@@ -125,21 +125,21 @@ const Index = () => {
     <AppLayout title="Dashboard" subtitle="Visão geral do sistema">
       <div className="p-6 max-w-5xl mx-auto space-y-8">
         {/* Hero */}
-        <div className="relative rounded-2xl overflow-hidden h-48 md:h-56">
+        <div className="relative rounded-2xl overflow-hidden min-h-[260px] md:min-h-[320px]">
           <img src={heroImg} alt="Dashboard" className="absolute inset-0 w-full h-full object-cover" width={1280} height={600} />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 to-foreground/40" />
-          <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-              Transforme visitas do Google em clientes
+          <div className="absolute inset-0 bg-foreground/60" />
+          <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-6 py-14 md:py-20">
+            <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight leading-tight max-w-lg">
+              Mais clientes nas buscas, sem complicação.
             </h2>
-            <p className="text-white/70 text-sm mt-2 max-w-md">
-              Gerencie leads, crie sites e automatize abordagens — tudo em um só lugar.
+            <p className="text-white/75 text-sm md:text-base mt-3 max-w-md">
+              Transforme seu perfil em uma máquina de gerar contatos todos os dias.
             </p>
             <button
               onClick={() => navigate("/crm")}
-              className="mt-4 inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium px-5 py-2.5 rounded-lg w-fit transition-colors"
+              className="mt-6 inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-7 py-3 rounded-lg transition-colors text-sm md:text-base"
             >
-              Acessar Leads <ArrowRight className="w-4 h-4" />
+              Ver Leads <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
