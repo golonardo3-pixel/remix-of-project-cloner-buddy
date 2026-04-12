@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, Square, MessageSquare, Clock, CheckCircle2, AlertCircle, ShieldAlert, Info, Pause, Coffee } from "lucide-react";
+import { ArrowLeft, Play, Square, MessageSquare, Clock, CheckCircle2, AlertCircle, ShieldAlert, Info, Pause, Coffee, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
