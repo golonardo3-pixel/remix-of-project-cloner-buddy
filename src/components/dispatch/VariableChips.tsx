@@ -29,11 +29,16 @@ export function applyVariables(
   return result;
 }
 
+export function isSpintax(token: string): boolean {
+  return /\{[^{}]*\|[^{}]*\}/.test(token);
+}
+
 export function validateTemplate(template: string): string[] {
   const warnings: string[] = [];
   const found = template.match(/\{[^}]+\}/g) || [];
   const validKeys = new Set(DISPATCH_VARIABLES.map((v) => v.key.toLowerCase()));
   for (const match of found) {
+    if (isSpintax(match)) continue; // spintax — skip
     if (!validKeys.has(match.toLowerCase())) {
       warnings.push(`Variável desconhecida: ${match}`);
     }
