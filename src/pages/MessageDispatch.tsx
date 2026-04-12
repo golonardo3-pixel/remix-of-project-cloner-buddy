@@ -424,6 +424,36 @@ const MessageDispatch = () => {
             </div>
 
             <VariableChips onInsert={insertVariable} disabled={status === "running"} />
+
+            <div className="space-y-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled={status === "running"}
+                onClick={() => {
+                  const sampleLeads = eligibleLeads.length > 0
+                    ? eligibleLeads.slice(0, 5)
+                    : [{ company_name: "Barbearia Teste", phone: "11999999999", city: "São Paulo", niche: "barbearia" } as Lead];
+                  const previews = sampleLeads.map((lead) => buildMessageForLead(message, lead));
+                  setPreviewMessages(previews);
+                }}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                Pré-visualizar 5 variações
+              </Button>
+              {previewMessages.length > 0 && (
+                <div className="space-y-1.5">
+                  {previewMessages.map((msg, i) => (
+                    <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border">
+                      <span className="font-medium text-muted-foreground">#{i + 1}:</span>{" "}
+                      <span className="text-foreground">{msg}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
