@@ -133,6 +133,7 @@ const MessageDispatch = () => {
   const [log, setLog] = useState<LogEntry[]>([]);
   const [countdown, setCountdown] = useState(0);
   const [countdownLabel, setCountdownLabel] = useState("");
+  const [previewMessages, setPreviewMessages] = useState<string[]>([]);
 
   const abortRef = useRef(false);
   const runningRef = useRef(false);
