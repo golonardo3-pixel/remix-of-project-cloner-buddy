@@ -79,7 +79,7 @@ function randomBetween(min: number, max: number): number {
 }
 
 const DEFAULT_MESSAGE =
-  "{Oi|Olá|Fala, tudo bem?} {nome}, {tudo bem|tudo certo|como vai}? Vi {o|seu} {negócio|estabelecimento} {empresa} {em {cidade} |}{e achei interessante|e me chamou atenção|e queria te mostrar algo}. {Posso te mostrar uma ideia rápida?|Te explico em 1 minuto?|Tem 1 minutinho?}";
+  "{Oi|Olá|Fala, tudo bem?} {nome}, {tudo bem|tudo certo|como vai}? Vi {o|seu} {negócio|estabelecimento} {empresa} em {cidade} {e achei interessante|e me chamou atenção|e queria te mostrar algo}. {Posso te mostrar uma ideia rápida?|Te explico em 1 minuto?|Tem 1 minutinho?}";
 
 const FALLBACKS: Record<string, string> = {};
 DISPATCH_VARIABLES.forEach((v) => {
