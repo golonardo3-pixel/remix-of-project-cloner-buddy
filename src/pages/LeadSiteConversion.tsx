@@ -5,6 +5,7 @@ import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getNicheColors } from "@/lib/gallery-images";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
 import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { MessageCircle, Star, MapPin, Phone, CheckCircle, Zap, Shield, Clock } from "lucide-react";
 
 /** Remove placeholder fragments from inside text */

@@ -27,6 +27,7 @@ import LeadAIActions from "@/components/LeadAIActions";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
 import { resolveSpintax } from "@/lib/spintax";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GmbAnalysis, { calculateGmbScore } from "@/components/GmbAnalysis";
 
 const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: string }> = {

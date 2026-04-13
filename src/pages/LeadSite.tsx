@@ -10,6 +10,7 @@ import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
 import { generateReviews } from "@/lib/review-generator";
 import type { SiteContentOverrides, SiteServiceOverride } from "@/lib/site-content-types";
 import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 import ModernoLayout from "@/components/variations/ModernoLayout";
 import PremiumLayout from "@/components/variations/PremiumLayout";
