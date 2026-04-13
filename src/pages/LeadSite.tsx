@@ -10,6 +10,7 @@ import LeadSiteSocialProof from "@/components/LeadSiteSocialProof";
 import { generateReviews } from "@/lib/review-generator";
 import type { SiteContentOverrides, SiteServiceOverride } from "@/lib/site-content-types";
 import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 import ModernoLayout from "@/components/variations/ModernoLayout";
 import PremiumLayout from "@/components/variations/PremiumLayout";
@@ -173,7 +174,7 @@ const LeadSite = () => {
   const description = safe((variationOverrides as any).aboutText) || safe((variationOverrides as any).description) || safe(lead.description);
 
   const safeNiche = safe(normalizedNiche);
-  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappLink = buildWhatsAppUrl(lead.phone, whatsappMessage);
 
   const layoutProps = {
     lead: { ...lead, city: city || "", instagram, description, niche: safeNiche || "" },

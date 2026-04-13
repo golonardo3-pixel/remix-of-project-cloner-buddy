@@ -5,6 +5,7 @@ import { getNicheContent, professionalizeName } from "@/lib/niche-content";
 import { getNicheColors } from "@/lib/gallery-images";
 import type { SiteContentOverrides } from "@/lib/site-content-types";
 import { canonicalizeBusinessNiche } from "@/lib/niche-normalization";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { MessageCircle, Star, MapPin, Phone, CheckCircle, Zap, Shield, Clock } from "lucide-react";
 
 /** Remove placeholder fragments from inside text */
@@ -79,7 +80,7 @@ const LeadSiteConversion = () => {
   const finalCtaSubtitle = cleanText(sc?.finalCtaSubtitle) || (safeCity ? `Clique no botão abaixo e fale agora com ${displayName} em ${safeCity}. Atendimento imediato via WhatsApp.` : `Clique no botão abaixo e fale agora com ${displayName}. Atendimento imediato via WhatsApp.`);
   const workingHours = cleanText(sc?.workingHours) || "Seg a Sex: 9h às 20h · Sáb: 9h às 18h";
 
-  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMsg)}`;
+  const whatsappLink = buildWhatsAppUrl(lead.phone, whatsappMsg);
 
   const displayServices = sc?.services && sc.services.length > 0
     ? sc.services

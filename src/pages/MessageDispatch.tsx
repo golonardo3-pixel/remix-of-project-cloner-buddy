@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
 import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
 import { resolveSpintax } from "@/lib/spintax";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 
 type DispatchStatus = "idle" | "running" | "paused" | "done";
@@ -184,9 +185,7 @@ const MessageDispatch = () => {
   };
 
   const openWhatsApp = (phone: string, text: string) => {
-    const clean = phone.replace(/\D/g, "");
-    const num = clean.startsWith("55") ? clean : `55${clean}`;
-    window.open(`https://wa.me/${num}?text=${encodeURIComponent(text)}`, "_blank");
+    window.open(buildWhatsAppUrl(phone, text), "_blank");
   };
 
   const sleepWithCountdown = async (totalSec: number, label: string) => {

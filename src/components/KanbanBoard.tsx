@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import LeadDetailSheet from "./LeadDetailSheet";
 import LeadCard from "./LeadCard";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const KANBAN_COLUMNS = [
   { id: "novo", label: "Novo Lead", color: "bg-blue-500" },
@@ -79,7 +80,7 @@ const KanbanBoard = ({ leads, selectedIds, onToggleSelect }: Props) => {
   });
 
   const handleWhatsApp = (lead: Lead) => {
-    window.open(`https://wa.me/${lead.phone}`, "_blank");
+    window.open(buildWhatsAppUrl(lead.phone), "_blank");
     whatsappMutation.mutate(lead);
   };
 

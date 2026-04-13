@@ -27,6 +27,7 @@ import LeadAIActions from "@/components/LeadAIActions";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
 import { KANBAN_COLUMNS, type Lead } from "@/components/KanbanBoard";
 import { resolveSpintax } from "@/lib/spintax";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GmbAnalysis, { calculateGmbScore } from "@/components/GmbAnalysis";
 
 const TEMP_CONFIG: Record<string, { emoji: string; label: string; className: string }> = {
@@ -121,15 +122,15 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
     e.stopPropagation();
     const url = getPublicLeadSiteUrl(lead.slug);
     const template = proposalMessages[Math.floor(Math.random() * proposalMessages.length)];
-    const msg = encodeURIComponent(resolveSpintax(template));
-    window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
+    const msg = resolveSpintax(template);
+    window.open(buildWhatsAppUrl(lead.phone, msg), "_blank");
   };
 
   const handleFollowUp = (e: React.MouseEvent) => {
     e.stopPropagation();
     const template = followUpMessages[Math.floor(Math.random() * followUpMessages.length)];
-    const msg = encodeURIComponent(resolveSpintax(template));
-    window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
+    const msg = resolveSpintax(template);
+    window.open(buildWhatsAppUrl(lead.phone, msg), "_blank");
   };
 
   const handleEditSite = (e: React.MouseEvent) => {
@@ -241,10 +242,8 @@ export default function LeadCard({ lead, selected, onToggleSelect, onSelect, onM
             const city = (lead.city || "").trim();
             const hasCity = city && !["não informada", "não informado", "nao informada", "nao informado", "n/a", "sem dados", "null", "sua cidade", ""].includes(city.toLowerCase());
             const cityPart = hasCity ? ` em ${city}` : "";
-            const msg = encodeURIComponent(
-              resolveSpintax(`Oi, tudo bem?\n\nVi ${name}${cityPart} e me chamou atenção porque muitos negócios não aparecem bem no Google.\n\nPosso te mostrar uma ideia rápida?`)
-            );
-            window.open(`https://wa.me/${lead.phone}?text=${msg}`, "_blank");
+            const msg = resolveSpintax(`Oi, tudo bem?\n\nVi ${name}${cityPart} e me chamou atenção porque muitos negócios não aparecem bem no Google.\n\nPosso te mostrar uma ideia rápida?`);
+            window.open(buildWhatsAppUrl(lead.phone, msg), "_blank");
           }}
         >
           <MessageCircle className="w-4 h-4" />

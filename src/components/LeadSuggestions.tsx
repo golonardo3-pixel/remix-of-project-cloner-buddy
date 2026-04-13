@@ -5,6 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import type { Lead } from "@/components/KanbanBoard";
 import { resolveSpintax } from "@/lib/spintax";
 import { calculateGmbScore } from "@/components/GmbAnalysis";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 function generateSuggestions(lead: Lead): { text: string; tag: string }[] {
   const suggestions: { text: string; tag: string }[] = [];
@@ -97,7 +98,7 @@ export default function LeadSuggestions({ lead }: Props) {
 
   const handleSendConsultive = () => {
     const msg = generateConsultiveApproach(lead);
-    window.open(`https://wa.me/${lead.phone}?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(buildWhatsAppUrl(lead.phone, msg), "_blank");
   };
 
   return (

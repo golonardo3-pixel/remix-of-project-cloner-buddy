@@ -1,6 +1,7 @@
 import { Phone, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Lead } from "@/components/KanbanBoard";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 interface Props {
   leads: Lead[];
@@ -42,9 +43,7 @@ const HotLeadsSection = ({ leads }: Props) => {
               size="sm"
               className="shrink-0 gap-1.5 bg-green-600 hover:bg-green-700 text-white h-9"
               onClick={() => {
-                const clean = lead.phone.replace(/\D/g, "");
-                const num = clean.startsWith("55") ? clean : `55${clean}`;
-                window.open(`https://wa.me/${num}`, "_blank");
+                window.open(buildWhatsAppUrl(lead.phone), "_blank");
               }}
             >
               <Phone className="w-4 h-4" />
