@@ -36,9 +36,9 @@ const MSG_DELAY_MAX_SEC = 60;
 const BIG_PAUSE_EVERY = 10;
 const BIG_PAUSE_MIN_SEC = 300; // 5 min
 const BIG_PAUSE_MAX_SEC = 600; // 10 min
-const DAILY_LIMIT_MIN = 40;
-const DAILY_LIMIT_MAX = 60;
-const MAX_LEADS_PER_ROUND = 60;
+const DAILY_LIMIT_MIN = 140;
+const DAILY_LIMIT_MAX = 160;
+const MAX_LEADS_PER_ROUND = 160;
 
 const DAILY_KEY = "dispatch_daily_count";
 const DAILY_DATE_KEY = "dispatch_daily_date";
