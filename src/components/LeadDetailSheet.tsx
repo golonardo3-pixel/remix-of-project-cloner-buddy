@@ -12,6 +12,7 @@ import { Trash2, ExternalLink, Phone } from "lucide-react";
 import { KANBAN_COLUMNS } from "./KanbanBoard";
 import type { Lead } from "./KanbanBoard";
 import { getPublicLeadSiteUrl } from "@/lib/public-site-url";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GmbAnalysis from "@/components/GmbAnalysis";
 import LeadSuggestions from "@/components/LeadSuggestions";
 import SiteVariationGenerator from "@/components/SiteVariationGenerator";
@@ -107,7 +108,7 @@ const LeadDetailSheet = ({ lead, open, onOpenChange }: Props) => {
           </div>
 
           <div className="flex gap-2">
-            <a href={`https://wa.me/${lead.phone}`} target="_blank" rel="noopener noreferrer">
+            <a href={buildWhatsAppUrl(lead.phone)} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm" className="gap-1.5">
                 <Phone className="w-3.5 h-3.5" /> WhatsApp
               </Button>

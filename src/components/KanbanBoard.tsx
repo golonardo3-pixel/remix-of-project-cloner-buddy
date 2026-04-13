@@ -79,7 +79,8 @@ const KanbanBoard = ({ leads, selectedIds, onToggleSelect }: Props) => {
   });
 
   const handleWhatsApp = (lead: Lead) => {
-    window.open(`https://wa.me/${lead.phone}`, "_blank");
+    const { buildWhatsAppUrl } = require("@/lib/whatsapp");
+    window.open(buildWhatsAppUrl(lead.phone), "_blank");
     whatsappMutation.mutate(lead);
   };
 

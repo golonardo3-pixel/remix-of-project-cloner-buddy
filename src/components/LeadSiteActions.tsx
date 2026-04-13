@@ -24,7 +24,7 @@ const LeadSiteActions = ({ slug, companyName }: Props) => {
     const msg = encodeURIComponent(
       `Olá! Preparei o site da ${companyName} para você conferir: ${siteUrl}`
     );
-    window.open(`https://wa.me/?text=${msg}`, "_blank");
+    window.open(`https://wa.me/?text=${encodeURIComponent(decodeURIComponent(msg))}`, "_blank");
   };
 
   return (

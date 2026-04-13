@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MessageCircle, Send } from "lucide-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 interface LeadSiteContactFormProps {
   phone: string;
@@ -30,8 +31,7 @@ const LeadSiteContactForm = ({ phone, companyName, services, colors }: LeadSiteC
       `Encontrei vocês pelo site.`,
     ].filter(Boolean);
 
-    const fullMessage = encodeURIComponent(parts.join("\n"));
-    window.open(`https://wa.me/${phone}?text=${fullMessage}`, "_blank");
+    window.open(buildWhatsAppUrl(phone, parts.join("\n")), "_blank");
   };
 
   const isValid = name.trim() && whatsapp.replace(/\D/g, "").length >= 10;

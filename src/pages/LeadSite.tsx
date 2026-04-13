@@ -173,7 +173,7 @@ const LeadSite = () => {
   const description = safe((variationOverrides as any).aboutText) || safe((variationOverrides as any).description) || safe(lead.description);
 
   const safeNiche = safe(normalizedNiche);
-  const whatsappLink = `https://wa.me/${lead.phone}?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappLink = buildWhatsAppUrl(lead.phone, whatsappMessage);
 
   const layoutProps = {
     lead: { ...lead, city: city || "", instagram, description, niche: safeNiche || "" },
