@@ -35,10 +35,11 @@ export function isSpintax(token: string): boolean {
 
 export function validateTemplate(template: string): string[] {
   const warnings: string[] = [];
-  const found = template.match(/\{[^}]+\}/g) || [];
+  // Remove spintax blocks first so nested content isn't misinterpreted
+  const withoutSpintax = template.replace(/\{[^{}]*\|[^{}]*\}/g, "");
+  const found = withoutSpintax.match(/\{[^}]+\}/g) || [];
   const validKeys = new Set(DISPATCH_VARIABLES.map((v) => v.key.toLowerCase()));
   for (const match of found) {
-    if (isSpintax(match)) continue; // spintax — skip
     if (!validKeys.has(match.toLowerCase())) {
       warnings.push(`Variável desconhecida: ${match}`);
     }
