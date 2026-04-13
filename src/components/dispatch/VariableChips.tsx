@@ -30,19 +30,24 @@ export function applyVariables(
 }
 
 export function isSpintax(token: string): boolean {
-  return /\{[^{}]*\|[^{}]*\}/.test(token);
+  return /\|/.test(token);
 }
 
 export function validateTemplate(template: string): string[] {
   const warnings: string[] = [];
-  // Remove spintax blocks first so nested content isn't misinterpreted
-  const withoutSpintax = template.replace(/\{[^{}]*\|[^{}]*\}/g, "");
-  const found = withoutSpintax.match(/\{[^}]+\}/g) || [];
+  // Match all {...} tokens
+  const found = template.match(/\{[^}]+\}/g) || [];
   const validKeys = new Set(DISPATCH_VARIABLES.map((v) => v.key.toLowerCase()));
   for (const match of found) {
-    if (!validKeys.has(match.toLowerCase())) {
-      warnings.push(`Variável desconhecida: ${match}`);
-    }
+    // Skip spintax (contains pipe)
+    if (match.includes("|")) continue;
+    // Skip if it's a known variable
+    if (validKeys.has(match.toLowerCase())) continue;
+    // Check if the content contains a known variable (e.g. leftover from bad nesting)
+    const inner = match.slice(1, -1).toLowerCase();
+    const containsVar = DISPATCH_VARIABLES.some((v) => inner.includes(v.key.slice(1, -1).toLowerCase()));
+    if (containsVar) continue;
+    warnings.push(`Variável desconhecida: ${match}`);
   }
   return warnings;
 }
