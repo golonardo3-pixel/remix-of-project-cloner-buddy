@@ -16,29 +16,22 @@ import { resolveSpintax } from "@/lib/spintax";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 
-type DispatchStatus = "idle" | "running" | "paused" | "done";
+type DispatchStatus = "idle" | "running" | "done";
 
 interface LogEntry {
   leadId: string;
   name: string;
   phone: string;
-  status: "sent" | "error" | "pause";
+  status: "sent" | "error" | "skipped";
   time: string;
   message?: string;
 }
 
 // --- Anti-ban config ---
-const BATCH_SIZE = 5;
-const BATCH_PAUSE_MIN_SEC = 120; // 2 min
-const BATCH_PAUSE_MAX_SEC = 300; // 5 min
-const MSG_DELAY_MIN_SEC = 25;
-const MSG_DELAY_MAX_SEC = 60;
-const BIG_PAUSE_EVERY = 10;
-const BIG_PAUSE_MIN_SEC = 300; // 5 min
-const BIG_PAUSE_MAX_SEC = 600; // 10 min
 const DAILY_LIMIT_MIN = 140;
 const DAILY_LIMIT_MAX = 160;
 const MAX_LEADS_PER_ROUND = 160;
+const MIN_CLICK_INTERVAL_SEC = 25;
 
 const DAILY_KEY = "dispatch_daily_count";
 const DAILY_DATE_KEY = "dispatch_daily_date";
@@ -61,59 +54,16 @@ function incrementDailyCount() {
 }
 
 function getDailyLimit(): number {
-  // Random limit between 40-60 per day, cached for the day
   const key = "dispatch_daily_limit";
   const today = new Date().toDateString();
   const savedDate = localStorage.getItem("dispatch_daily_limit_date");
   if (savedDate === today) {
-    return parseInt(localStorage.getItem(key) || "50", 10);
+    return parseInt(localStorage.getItem(key) || "150", 10);
   }
   const limit = DAILY_LIMIT_MIN + Math.floor(Math.random() * (DAILY_LIMIT_MAX - DAILY_LIMIT_MIN + 1));
   localStorage.setItem(key, String(limit));
   localStorage.setItem("dispatch_daily_limit_date", today);
   return limit;
-}
-
-function randomBetween(min: number, max: number): number {
-  return min + Math.floor(Math.random() * (max - min + 1));
-}
-
-const DEFAULT_MESSAGE =
-  "{Oi|Olá}, tudo bem?\n\nVi {empresa} no Google em {cidade} e me chamou atenção.\n\n{Posso te mostrar uma ideia rápida?|Te explico em 1 minuto?|Tem 1 minutinho?}";
-
-const FALLBACKS: Record<string, string> = {};
-DISPATCH_VARIABLES.forEach((v) => {
-  FALLBACKS[v.key] = v.fallback;
-});
-
-function buildMessageForLead(template: string, lead: Lead): string {
-  const cityValid = lead.city && !["não informada", "não informado", "n/a", "sem dados"].includes(lead.city.toLowerCase());
-
-  const values: Record<string, string> = {
-    "{nome}": lead.company_name || FALLBACKS["{nome}"],
-    "{empresa}": lead.company_name || FALLBACKS["{empresa}"],
-    "{telefone}": lead.phone || FALLBACKS["{telefone}"],
-    "{link}": "",
-    "{cidade}": cityValid ? lead.city : "",
-    "{nicho}": lead.niche || FALLBACKS["{nicho}"],
-  };
-
-  // Strip any {link} from dispatch messages (safety rule)
-  let result = template.replace(/\{link\}/gi, "").replace(/\s{2,}/g, " ").trim();
-  
-  // Handle conditional city: "em {cidade} " becomes empty if no city
-  if (!cityValid) {
-    result = result.replace(/em\s*\{cidade\}\s*/gi, "");
-  }
-  
-  for (const [key, val] of Object.entries(values)) {
-    result = result.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
-  }
-  
-  // Clean up double spaces and trailing commas
-  result = result.replace(/\s{2,}/g, " ").replace(/,\s*\./g, ".").trim();
-  
-  return resolveSpintax(result);
 }
 
 function formatDuration(seconds: number): string {
@@ -122,198 +72,6 @@ function formatDuration(seconds: number): string {
   const s = seconds % 60;
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
 }
-
-const MessageDispatch = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const [message, setMessage] = useState(DEFAULT_MESSAGE);
-  const [status, setStatus] = useState<DispatchStatus>("idle");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [log, setLog] = useState<LogEntry[]>([]);
-  const [countdown, setCountdown] = useState(0);
-  const [countdownLabel, setCountdownLabel] = useState("");
-  const [previewMessages, setPreviewMessages] = useState<string[]>([]);
-
-  const abortRef = useRef(false);
-  const runningRef = useRef(false);
-
-  const dailyCount = getDailyCount();
-  const dailyLimit = getDailyLimit();
-  const remainingToday = Math.max(0, dailyLimit - dailyCount);
-
-  const { data: leads } = useQuery({
-    queryKey: ["leads"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as unknown as Lead[];
-    },
-  });
-
-  const eligibleLeads = (leads?.filter((l) => l.lead_status === "novo") ?? [])
-    .slice(0, Math.min(MAX_LEADS_PER_ROUND, remainingToday));
-
-  const templateWarnings = validateTemplate(message);
-
-  const antiBanWarnings: string[] = [];
-  if (/https?:\/\/|www\.|\.com|\.br|\{link\}/i.test(message)) {
-    antiBanWarnings.push("⚠️ Evite links na primeira mensagem — risco de ban no WhatsApp");
-  }
-
-  const insertVariable = (variable: string) => {
-    const ta = textareaRef.current;
-    if (!ta) {
-      setMessage((prev) => prev + variable);
-      return;
-    }
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const before = message.slice(0, start);
-    const after = message.slice(end);
-    const newMsg = before + variable + after;
-    setMessage(newMsg);
-    requestAnimationFrame(() => {
-      ta.focus();
-      const pos = start + variable.length;
-      ta.setSelectionRange(pos, pos);
-    });
-  };
-
-  const openWhatsApp = (phone: string, text: string) => {
-    window.open(buildWhatsAppUrl(phone, text), "_blank");
-  };
-
-  const sleepWithCountdown = async (totalSec: number, label: string) => {
-    setCountdownLabel(label);
-    for (let remaining = totalSec; remaining > 0; remaining--) {
-      if (abortRef.current) return;
-      setCountdown(remaining);
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-    setCountdown(0);
-    setCountdownLabel("");
-  };
-
-  const startDispatch = useCallback(async () => {
-    if (runningRef.current) return;
-
-    if (templateWarnings.length > 0) {
-      toast({
-        title: "Corrija as variáveis antes de disparar",
-        description: templateWarnings.join(", "),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (remainingToday <= 0) {
-      toast({
-        title: "Limite diário atingido",
-        description: `Você já enviou ${dailyCount} mensagens hoje. Limite: ${dailyLimit}. Tente novamente amanhã.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    runningRef.current = true;
-    abortRef.current = false;
-    setStatus("running");
-    setLog([]);
-    setCurrentIndex(0);
-
-    let totalSent = 0;
-
-    for (let i = 0; i < eligibleLeads.length; i++) {
-      if (abortRef.current) break;
-
-      // Check daily limit
-      if (getDailyCount() >= dailyLimit) {
-        setLog((prev) => [
-          ...prev,
-          { leadId: "", name: "Sistema", phone: "", status: "pause", time: new Date().toLocaleTimeString(), message: `Limite diário de ${dailyLimit} mensagens atingido. Pausado automaticamente.` },
-        ]);
-        break;
-      }
-
-      setCurrentIndex(i);
-      const lead = eligibleLeads[i];
-      const text = buildMessageForLead(message, lead);
-
-      try {
-        openWhatsApp(lead.phone, text);
-        incrementDailyCount();
-        totalSent++;
-
-        await supabase
-          .from("leads")
-          .update({ lead_status: "respondeu", last_interaction: new Date().toISOString() } as any)
-          .eq("id", lead.id);
-
-        setLog((prev) => [
-          ...prev,
-          { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString() },
-        ]);
-      } catch {
-        setLog((prev) => [
-          ...prev,
-          { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "error", time: new Date().toLocaleTimeString() },
-        ]);
-      }
-
-      if (i >= eligibleLeads.length - 1 || abortRef.current) break;
-
-      // Big pause every 10 messages
-      if (totalSent > 0 && totalSent % BIG_PAUSE_EVERY === 0) {
-        const bigPause = randomBetween(BIG_PAUSE_MIN_SEC, BIG_PAUSE_MAX_SEC);
-        setLog((prev) => [
-          ...prev,
-          { leadId: "", name: "Sistema", phone: "", status: "pause", time: new Date().toLocaleTimeString(), message: `Pausa inteligente de ${formatDuration(bigPause)} (a cada ${BIG_PAUSE_EVERY} msgs)` },
-        ]);
-        await sleepWithCountdown(bigPause, "Pausa inteligente");
-        if (abortRef.current) break;
-      }
-      // Batch pause every BATCH_SIZE messages
-      else if (totalSent > 0 && totalSent % BATCH_SIZE === 0) {
-        const batchPause = randomBetween(BATCH_PAUSE_MIN_SEC, BATCH_PAUSE_MAX_SEC);
-        setLog((prev) => [
-          ...prev,
-          { leadId: "", name: "Sistema", phone: "", status: "pause", time: new Date().toLocaleTimeString(), message: `Pausa entre lotes: ${formatDuration(batchPause)}` },
-        ]);
-        await sleepWithCountdown(batchPause, "Pausa entre lotes");
-        if (abortRef.current) break;
-      }
-      // Normal delay between messages
-      else {
-        const delay = randomBetween(MSG_DELAY_MIN_SEC, MSG_DELAY_MAX_SEC);
-        await sleepWithCountdown(delay, "Aguardando próximo envio");
-        if (abortRef.current) break;
-      }
-    }
-
-    runningRef.current = false;
-    setStatus("done");
-    setCountdown(0);
-    setCountdownLabel("");
-    queryClient.invalidateQueries({ queryKey: ["leads"] });
-    toast({
-      title: "Disparo finalizado!",
-      description: `${totalSent} mensagens enviadas. Enviados hoje: ${getDailyCount()}/${dailyLimit}.`,
-    });
-  }, [eligibleLeads, message, queryClient, templateWarnings, remainingToday, dailyCount, dailyLimit]);
-
-  const stopDispatch = () => {
-    abortRef.current = true;
-    runningRef.current = false;
-    setStatus("idle");
-    setCountdown(0);
-    setCountdownLabel("");
-    toast({ title: "Disparo interrompido" });
-  };
 
   const progress =
     eligibleLeads.length > 0
