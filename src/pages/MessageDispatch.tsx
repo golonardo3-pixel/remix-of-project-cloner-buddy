@@ -1,11 +1,9 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, Square, MessageSquare, Clock, CheckCircle2, AlertCircle, ShieldAlert, Info, Pause, Coffee, Eye } from "lucide-react";
+import { ArrowLeft, Play, Square, MessageSquare, CheckCircle2, AlertCircle, ShieldAlert, Info, Eye, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
@@ -66,12 +64,97 @@ function getDailyLimit(): number {
   return limit;
 }
 
-function formatDuration(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return s > 0 ? `${m}m ${s}s` : `${m}m`;
+const DEFAULT_MESSAGE =
+  "{Oi|Olá}, tudo bem?\n\nVi {empresa} no Google em {cidade} e me chamou atenção.\n\n{Posso te mostrar uma ideia rápida?|Te explico em 1 minuto?|Tem 1 minutinho?}";
+
+const FALLBACKS: Record<string, string> = {};
+DISPATCH_VARIABLES.forEach((v) => {
+  FALLBACKS[v.key] = v.fallback;
+});
+
+function buildMessageForLead(template: string, lead: Lead): string {
+  const cityValid = lead.city && !["não informada", "não informado", "n/a", "sem dados"].includes(lead.city.toLowerCase());
+
+  const values: Record<string, string> = {
+    "{nome}": lead.company_name || FALLBACKS["{nome}"],
+    "{empresa}": lead.company_name || FALLBACKS["{empresa}"],
+    "{telefone}": lead.phone || FALLBACKS["{telefone}"],
+    "{link}": "",
+    "{cidade}": cityValid ? lead.city : "",
+    "{nicho}": lead.niche || FALLBACKS["{nicho}"],
+  };
+
+  let result = template.replace(/\{link\}/gi, "").replace(/\s{2,}/g, " ").trim();
+
+  if (!cityValid) {
+    result = result.replace(/em\s*\{cidade\}\s*/gi, "");
+  }
+
+  for (const [key, val] of Object.entries(values)) {
+    result = result.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
+  }
+
+  result = result.replace(/\s{2,}/g, " ").replace(/,\s*\./g, ".").trim();
+
+  return resolveSpintax(result);
 }
+
+const MessageDispatch = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const [message, setMessage] = useState(DEFAULT_MESSAGE);
+  const [status, setStatus] = useState<DispatchStatus>("idle");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [log, setLog] = useState<LogEntry[]>([]);
+  const [cooldown, setCooldown] = useState(0);
+  const [previewMessages, setPreviewMessages] = useState<string[]>([]);
+
+  const dailyCount = getDailyCount();
+  const dailyLimit = getDailyLimit();
+  const remainingToday = Math.max(0, dailyLimit - dailyCount);
+
+  const { data: leads } = useQuery({
+    queryKey: ["leads"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as unknown as Lead[];
+    },
+  });
+
+  const eligibleLeads = (leads?.filter((l) => l.lead_status === "novo") ?? [])
+    .slice(0, Math.min(MAX_LEADS_PER_ROUND, remainingToday));
+
+  const templateWarnings = validateTemplate(message);
+
+  const antiBanWarnings: string[] = [];
+  if (/https?:\/\/|www\.|\.com|\.br|\{link\}/i.test(message)) {
+    antiBanWarnings.push("⚠️ Evite links na primeira mensagem — risco de ban no WhatsApp");
+  }
+
+  const insertVariable = (variable: string) => {
+    const ta = textareaRef.current;
+    if (!ta) {
+      setMessage((prev) => prev + variable);
+      return;
+    }
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const before = message.slice(0, start);
+    const after = message.slice(end);
+    const newMsg = before + variable + after;
+    setMessage(newMsg);
+    requestAnimationFrame(() => {
+      ta.focus();
+      const pos = start + variable.length;
+      ta.setSelectionRange(pos, pos);
+    });
+  };
 
   const handleStartQueue = () => {
     if (templateWarnings.length > 0) {
@@ -171,7 +254,7 @@ function formatDuration(seconds: number): string {
     toast({ title: "Disparo interrompido" });
   };
 
-  const sentCount = log.filter(l => l.status === "sent").length;
+  const sentCount = log.filter((l) => l.status === "sent").length;
   const progress = eligibleLeads.length > 0 ? Math.round((sentCount / eligibleLeads.length) * 100) : 0;
   const currentLead = status === "running" && currentIndex < eligibleLeads.length ? eligibleLeads[currentIndex] : null;
   const currentPreview = currentLead ? buildMessageForLead(message, currentLead) : null;
@@ -313,7 +396,7 @@ function formatDuration(seconds: number): string {
         {/* Google Sheets import */}
         <GoogleSheetsImport />
 
-        {/* Actions — Start or Stop */}
+        {/* Start queue */}
         {status === "idle" && (
           <Button
             onClick={handleStartQueue}
@@ -370,9 +453,7 @@ function formatDuration(seconds: number): string {
             <CardContent className="pt-5 space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Progresso</span>
-                <span className="font-medium">
-                  {sentCount}/{eligibleLeads.length}
-                </span>
+                <span className="font-medium">{sentCount}/{eligibleLeads.length}</span>
               </div>
               <Progress value={progress} className="h-2" />
             </CardContent>
@@ -388,10 +469,7 @@ function formatDuration(seconds: number): string {
             <CardContent>
               <div className="space-y-2 max-h-[40vh] overflow-y-auto">
                 {log.map((entry, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between text-sm py-1.5 border-b border-border last:border-0"
-                  >
+                  <div key={i} className="flex items-center justify-between text-sm py-1.5 border-b border-border last:border-0">
                     <div className="flex items-center gap-2 min-w-0">
                       {entry.status === "sent" ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
@@ -405,9 +483,7 @@ function formatDuration(seconds: number): string {
                         {entry.status === "skipped" && " (pulado)"}
                       </span>
                     </div>
-                    <span className="text-xs text-muted-foreground shrink-0 ml-2">
-                      {entry.time}
-                    </span>
+                    <span className="text-xs text-muted-foreground shrink-0 ml-2">{entry.time}</span>
                   </div>
                 ))}
               </div>
