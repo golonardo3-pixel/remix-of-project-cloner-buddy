@@ -73,12 +73,108 @@ function formatDuration(seconds: number): string {
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
 }
 
-  const progress =
-    eligibleLeads.length > 0
-      ? Math.round((log.filter(l => l.status === "sent").length / eligibleLeads.length) * 100)
-      : 0;
+  const handleStartQueue = () => {
+    if (templateWarnings.length > 0) {
+      toast({
+        title: "Corrija as variáveis antes de disparar",
+        description: templateWarnings.join(", "),
+        variant: "destructive",
+      });
+      return;
+    }
+    if (remainingToday <= 0) {
+      toast({
+        title: "Limite diário atingido",
+        description: `Você já enviou ${dailyCount} mensagens hoje. Limite: ${dailyLimit}. Tente novamente amanhã.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    setStatus("running");
+    setCurrentIndex(0);
+    setLog([]);
+    setCooldown(0);
+  };
+
+  const handleSendCurrent = async () => {
+    if (currentIndex >= eligibleLeads.length) return;
+    if (cooldown > 0) return;
+
+    const lead = eligibleLeads[currentIndex];
+    const text = buildMessageForLead(message, lead);
+
+    // Open WhatsApp externally — single user-initiated click
+    window.open(buildWhatsAppUrl(lead.phone, text), "_blank", "noopener,noreferrer");
+
+    try {
+      incrementDailyCount();
+      await supabase
+        .from("leads")
+        .update({ lead_status: "respondeu", last_interaction: new Date().toISOString() } as any)
+        .eq("id", lead.id);
+
+      setLog((prev) => [
+        ...prev,
+        { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString() },
+      ]);
+    } catch {
+      setLog((prev) => [
+        ...prev,
+        { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "error", time: new Date().toLocaleTimeString() },
+      ]);
+    }
+
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= eligibleLeads.length) {
+      setStatus("done");
+      setCurrentIndex(nextIndex);
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast({ title: "Disparo finalizado!", description: `${log.length + 1} mensagens enviadas.` });
+      return;
+    }
+
+    setCurrentIndex(nextIndex);
+
+    // Enforce minimum interval between clicks
+    setCooldown(MIN_CLICK_INTERVAL_SEC);
+    const interval = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleSkipCurrent = () => {
+    if (currentIndex >= eligibleLeads.length) return;
+    const lead = eligibleLeads[currentIndex];
+    setLog((prev) => [
+      ...prev,
+      { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "skipped", time: new Date().toLocaleTimeString() },
+    ]);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= eligibleLeads.length) {
+      setStatus("done");
+      setCurrentIndex(nextIndex);
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      return;
+    }
+    setCurrentIndex(nextIndex);
+  };
+
+  const stopDispatch = () => {
+    setStatus("idle");
+    setCooldown(0);
+    toast({ title: "Disparo interrompido" });
+  };
 
   const sentCount = log.filter(l => l.status === "sent").length;
+  const progress = eligibleLeads.length > 0 ? Math.round((sentCount / eligibleLeads.length) * 100) : 0;
+  const currentLead = status === "running" && currentIndex < eligibleLeads.length ? eligibleLeads[currentIndex] : null;
+  const currentPreview = currentLead ? buildMessageForLead(message, currentLead) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,12 +203,12 @@ function formatDuration(seconds: number): string {
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">Proteção anti-ban ativa</p>
                 <ul className="text-[11px] text-muted-foreground space-y-0.5">
-                  <li>• Lotes de {BATCH_SIZE} contatos com pausa de {BATCH_PAUSE_MIN_SEC/60}–{BATCH_PAUSE_MAX_SEC/60} min</li>
-                  <li>• Delay aleatório de {MSG_DELAY_MIN_SEC}–{MSG_DELAY_MAX_SEC}s entre mensagens</li>
-                  <li>• Pausa de {BIG_PAUSE_MIN_SEC/60}–{BIG_PAUSE_MAX_SEC/60} min a cada {BIG_PAUSE_EVERY} envios</li>
+                  <li>• Cada envio exige seu clique (simula comportamento humano)</li>
+                  <li>• Intervalo mínimo de {MIN_CLICK_INTERVAL_SEC}s entre envios</li>
                   <li>• Limite diário: {dailyLimit} msgs ({dailyCount} enviadas hoje)</li>
                   <li>• Variação automática de saudação e texto</li>
                   <li>• Links bloqueados na 1ª mensagem</li>
+                  <li>• Abre direto no WhatsApp (fora do navegador)</li>
                 </ul>
               </div>
             </div>
@@ -217,39 +313,52 @@ function formatDuration(seconds: number): string {
         {/* Google Sheets import */}
         <GoogleSheetsImport />
 
-        {/* Actions */}
-        <div className="flex gap-3">
-          {status !== "running" ? (
-            <Button
-              onClick={startDispatch}
-              disabled={eligibleLeads.length === 0 || remainingToday <= 0}
-              className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 flex-1"
-            >
-              <Play className="w-4 h-4" />
-              Iniciar Disparo ({eligibleLeads.length} leads)
-            </Button>
-          ) : (
-            <Button
-              onClick={stopDispatch}
-              variant="destructive"
-              className="gap-2 flex-1"
-            >
-              <Square className="w-4 h-4" />
-              Parar
-            </Button>
-          )}
-        </div>
+        {/* Actions — Start or Stop */}
+        {status === "idle" && (
+          <Button
+            onClick={handleStartQueue}
+            disabled={eligibleLeads.length === 0 || remainingToday <= 0}
+            className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 w-full"
+          >
+            <Play className="w-4 h-4" />
+            Iniciar Fila de Envio ({eligibleLeads.length} leads)
+          </Button>
+        )}
 
-        {/* Countdown */}
-        {countdown > 0 && (
-          <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
-            <CardContent className="pt-3 pb-3">
-              <div className="flex items-center gap-3">
-                <Coffee className="w-5 h-5 text-blue-500 animate-pulse" />
+        {/* Current lead to send */}
+        {status === "running" && currentLead && (
+          <Card className="border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-950/20">
+            <CardContent className="pt-4 pb-4 space-y-3">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">{countdownLabel}</p>
-                  <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{formatDuration(countdown)}</p>
+                  <p className="text-sm font-semibold text-foreground">{currentLead.company_name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {currentLead.niche} · {currentLead.city} · Lead {currentIndex + 1} de {eligibleLeads.length}
+                  </p>
                 </div>
+                <Button variant="ghost" size="sm" onClick={stopDispatch} className="text-xs text-destructive">
+                  <Square className="w-3.5 h-3.5 mr-1" /> Parar
+                </Button>
+              </div>
+
+              {/* Message preview */}
+              <div className="bg-muted/60 rounded-lg p-3 border border-border">
+                <p className="text-xs text-muted-foreground mb-1 font-medium">Mensagem que será enviada:</p>
+                <p className="text-sm text-foreground whitespace-pre-line">{currentPreview}</p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSendCurrent}
+                  disabled={cooldown > 0}
+                  className="gap-2 bg-green-600 hover:bg-green-700 text-white flex-1"
+                >
+                  <Send className="w-4 h-4" />
+                  {cooldown > 0 ? `Aguarde ${cooldown}s` : "Enviar no WhatsApp"}
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleSkipCurrent} className="text-xs">
+                  Pular
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -266,11 +375,6 @@ function formatDuration(seconds: number): string {
                 </span>
               </div>
               <Progress value={progress} className="h-2" />
-              {status === "running" && countdown === 0 && (
-                <p className="text-xs text-muted-foreground animate-pulse">
-                  Enviando para: {eligibleLeads[currentIndex]?.company_name}...
-                </p>
-              )}
             </CardContent>
           </Card>
         )}
@@ -286,18 +390,19 @@ function formatDuration(seconds: number): string {
                 {log.map((entry, i) => (
                   <div
                     key={i}
-                    className={`flex items-center justify-between text-sm py-1.5 border-b border-border last:border-0 ${entry.status === "pause" ? "bg-muted/30" : ""}`}
+                    className="flex items-center justify-between text-sm py-1.5 border-b border-border last:border-0"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       {entry.status === "sent" ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
-                      ) : entry.status === "pause" ? (
-                        <Pause className="w-4 h-4 text-blue-500 shrink-0" />
+                      ) : entry.status === "skipped" ? (
+                        <AlertCircle className="w-4 h-4 text-muted-foreground shrink-0" />
                       ) : (
                         <AlertCircle className="w-4 h-4 text-destructive shrink-0" />
                       )}
                       <span className="truncate text-xs">
                         {entry.message || entry.name}
+                        {entry.status === "skipped" && " (pulado)"}
                       </span>
                     </div>
                     <span className="text-xs text-muted-foreground shrink-0 ml-2">
@@ -306,6 +411,19 @@ function formatDuration(seconds: number): string {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {status === "done" && (
+          <Card className="border-green-200 dark:border-green-800">
+            <CardContent className="pt-4 pb-4 text-center">
+              <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+              <p className="text-sm font-medium text-foreground">Disparo finalizado!</p>
+              <p className="text-xs text-muted-foreground">{sentCount} mensagens enviadas · {getDailyCount()}/{dailyLimit} hoje</p>
+              <Button variant="outline" size="sm" className="mt-3" onClick={() => { setStatus("idle"); setLog([]); }}>
+                Novo disparo
+              </Button>
             </CardContent>
           </Card>
         )}
