@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const ExtensionDownload = () => {
   const navigate = useNavigate();
 
-  const downloadUrl = `${window.location.origin}/lovable-helper-pro.zip`;
+  const downloadUrl = "https://clientesnogoogle.lovable.app/lovable-helper-pro.zip";
 
   const steps = [
     "Baixe o arquivo ZIP clicando no botão acima",
