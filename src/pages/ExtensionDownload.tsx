@@ -43,10 +43,12 @@ const ExtensionDownload = () => {
             </p>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Button onClick={handleDownload} className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
-              <Download className="w-4 h-4" />
-              Baixar Extensão (.zip)
-            </Button>
+            <a href={downloadUrl} download="lovable-helper-pro.zip">
+              <Button className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
+                <Download className="w-4 h-4" />
+                Baixar Extensão (.zip)
+              </Button>
+            </a>
           </CardContent>
         </Card>
 
