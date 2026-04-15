@@ -2,12 +2,11 @@ const HISTORY_KEY = "lovable_helper_history";
 const MAX_HISTORY = 20;
 
 const promptInput = document.getElementById("prompt-input");
-const sendBtn = document.getElementById("send-btn");
+const copyBtn = document.getElementById("copy-btn");
 const statusBar = document.getElementById("status-bar");
 const historyList = document.getElementById("history-list");
 const clearHistoryBtn = document.getElementById("clear-history");
 
-// --- Status feedback ---
 function showStatus(message, type) {
   statusBar.textContent = message;
   statusBar.className = "status-bar " + type;
@@ -15,7 +14,6 @@ function showStatus(message, type) {
   setTimeout(() => statusBar.classList.add("hidden"), 3000);
 }
 
-// --- History ---
 function loadHistory(callback) {
   chrome.storage.local.get([HISTORY_KEY], (result) => {
     callback(result[HISTORY_KEY] || []);
@@ -37,7 +35,7 @@ function addToHistory(text) {
 
 function renderHistory(history) {
   if (!history || history.length === 0) {
-    historyList.innerHTML = '<p class="empty-msg">Nenhum prompt enviado ainda.</p>';
+    historyList.innerHTML = '<p class="empty-msg">Nenhum prompt copiado ainda.</p>';
     return;
   }
   historyList.innerHTML = history
@@ -65,10 +63,10 @@ function renderHistory(history) {
       if (btn.dataset.action === "reuse") {
         promptInput.value = item.text;
         promptInput.focus();
-        showStatus("Prompt carregado — edite ou envie!", "success");
+        showStatus("Prompt carregado — edite ou copie!", "success");
       } else if (btn.dataset.action === "copy") {
         navigator.clipboard.writeText(item.text).then(() => {
-          showStatus("Copiado!", "success");
+          showStatus("✅ Copiado!", "success");
         });
       }
     });
@@ -81,60 +79,27 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// --- Send to Lovable ---
-async function sendToLovable(text) {
-  if (!text.trim()) {
-    showStatus("Digite um prompt antes de enviar.", "error");
+function copyPrompt() {
+  const text = promptInput.value.trim();
+  if (!text) {
+    showStatus("Digite um prompt antes de copiar.", "error");
     return;
   }
-
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    if (!tab || !tab.url) {
-      showStatus("Nenhuma aba ativa encontrada.", "error");
-      return;
-    }
-
-    const isLovable = /lovable\.(dev|app)/.test(tab.url);
-
-    if (!isLovable) {
-      showStatus("Abra o Lovable primeiro (lovable.dev).", "error");
-      return;
-    }
-
-    // Inject content script if not already there, then send message
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ["content.js"],
-    });
-
-    chrome.tabs.sendMessage(tab.id, { action: "insertPrompt", text }, (response) => {
-      if (chrome.runtime.lastError) {
-        showStatus("Erro ao comunicar com a página. Recarregue o Lovable.", "error");
-        return;
-      }
-
-      if (response && response.success) {
-        showStatus("✅ Prompt enviado com sucesso!", "success");
-        addToHistory(text);
-        promptInput.value = "";
-      } else {
-        showStatus(response?.error || "Não foi possível inserir o prompt.", "error");
-      }
-    });
-  } catch (err) {
-    showStatus("Erro: " + err.message, "error");
-  }
+  navigator.clipboard.writeText(text).then(() => {
+    showStatus("✅ Prompt copiado! Cole no chat do Lovable.", "success");
+    addToHistory(text);
+    promptInput.value = "";
+  }).catch(() => {
+    showStatus("Erro ao copiar. Tente selecionar e copiar manualmente.", "error");
+  });
 }
 
-// --- Event listeners ---
-sendBtn.addEventListener("click", () => sendToLovable(promptInput.value));
+copyBtn.addEventListener("click", copyPrompt);
 
 promptInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
-    sendToLovable(promptInput.value);
+    copyPrompt();
   }
 });
 
@@ -143,7 +108,7 @@ document.querySelectorAll(".template-btn").forEach((btn) => {
     const prompt = btn.dataset.prompt;
     promptInput.value = prompt;
     promptInput.focus();
-    showStatus("Template carregado — envie ou edite!", "success");
+    showStatus("Template carregado — edite ou copie!", "success");
   });
 });
 
@@ -154,5 +119,4 @@ clearHistoryBtn.addEventListener("click", () => {
   });
 });
 
-// Init
 loadHistory(renderHistory);
