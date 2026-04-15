@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lovable Helper Pro</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="icon.png" alt="Logo" class="logo" />
+      <h1>Lovable Helper <span class="accent">Pro</span></h1>
+    </header>
+
+    <div id="status-bar" class="status-bar hidden"></div>
+
+    <section class="prompt-section">
+      <label for="prompt-input">Seu prompt:</label>
+      <textarea id="prompt-input" rows="4" placeholder="Descreva o que deseja que o Lovable faça..."></textarea>
+      <button id="send-btn" class="btn btn-primary">
+        <span class="btn-icon">🚀</span> Enviar para Lovable
+      </button>
+    </section>
+
+    <section class="templates-section">
+      <h2>Templates Rápidos</h2>
+      <div class="templates-grid">
+        <button class="template-btn" data-prompt="Crie um site profissional completo com hero, serviços, depoimentos e formulário de contato. Use design moderno e responsivo.">🌐 Criar Site</button>
+        <button class="template-btn" data-prompt="Corrija o layout da página atual. Verifique espaçamentos, alinhamentos, responsividade mobile e consistência visual.">🔧 Corrigir Layout</button>
+        <button class="template-btn" data-prompt="Melhore os textos (copy) do site atual. Torne mais persuasivo, claro e com call-to-actions eficientes. Mantenha tom profissional.">✍️ Melhorar Copy</button>
+        <button class="template-btn" data-prompt="Gere um sistema CRM completo com Kanban de leads, filtros, disparo de mensagens WhatsApp e dashboard de métricas.">📊 Gerar CRM</button>
+        <button class="template-btn" data-prompt="Revise o código em busca de bugs. Verifique erros de TypeScript, lógica quebrada, imports faltando e problemas de estado React.">🐛 Revisar Bug</button>
+      </div>
+    </section>
+
+    <section class="history-section">
+      <div class="history-header">
+        <h2>Histórico</h2>
+        <button id="clear-history" class="btn btn-ghost btn-sm">Limpar</button>
+      </div>
+      <div id="history-list" class="history-list">
+        <p class="empty-msg">Nenhum prompt enviado ainda.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

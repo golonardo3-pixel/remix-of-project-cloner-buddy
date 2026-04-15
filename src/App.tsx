@@ -11,6 +11,7 @@ import SiteEditor from "./pages/SiteEditor.tsx";
 import MessageDispatch from "./pages/MessageDispatch.tsx";
 import LeadMining from "./pages/LeadMining.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ExtensionDownload from "./pages/ExtensionDownload.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/crm/editor/:id" element={<SiteEditor />} />
           <Route path="/crm/disparo" element={<MessageDispatch />} />
           <Route path="/crm/mineracao" element={<LeadMining />} />
+          <Route path="/extensao" element={<ExtensionDownload />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
