@@ -89,9 +89,9 @@ function sanitizeCompanyName(value?: string | null): string {
 function normalizeMessage(text: string): string {
   return text
     .replace(PHONE_LIKE_PATTERN, "")
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n[ \t]+/g, "\n")
-    .replace(/\s{2,}/g, " ")
+    .replace(/[ \t]+$/gm, "")
+    .replace(/^[ \t]+/gm, "")
+    .replace(/[ \t]{2,}/g, " ")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+([,.!?])/g, "$1")
     .trim();
@@ -133,7 +133,7 @@ function buildMessageForLead(template: string, lead: Lead, previousMessage?: str
     attempts += 1;
   }
 
-  return resolveSpintax(result);
+  return result;
 }
 
 function buildMessageSequence(template: string, leads: Lead[]): string[] {
