@@ -11,15 +11,16 @@
     <header>
       <img src="icon.png" alt="Logo" class="logo" />
       <h1>Lovable Helper <span class="accent">Pro</span></h1>
+      <p class="subtitle">Copie prompts prontos e cole no Lovable</p>
     </header>
 
     <div id="status-bar" class="status-bar hidden"></div>
 
     <section class="prompt-section">
       <label for="prompt-input">Seu prompt:</label>
-      <textarea id="prompt-input" rows="4" placeholder="Descreva o que deseja que o Lovable faça..."></textarea>
-      <button id="send-btn" class="btn btn-primary">
-        <span class="btn-icon">🚀</span> Enviar para Lovable
+      <textarea id="prompt-input" rows="4" placeholder="Escreva ou escolha um template abaixo..."></textarea>
+      <button id="copy-btn" class="btn btn-primary">
+        <span class="btn-icon">📋</span> Copiar Prompt
       </button>
     </section>
 
@@ -40,7 +41,7 @@
         <button id="clear-history" class="btn btn-ghost btn-sm">Limpar</button>
       </div>
       <div id="history-list" class="history-list">
-        <p class="empty-msg">Nenhum prompt enviado ainda.</p>
+        <p class="empty-msg">Nenhum prompt copiado ainda.</p>
       </div>
     </section>
   </div>
