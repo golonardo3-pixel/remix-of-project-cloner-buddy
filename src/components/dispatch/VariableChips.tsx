@@ -10,11 +10,22 @@ export interface VariableInfo {
 export const DISPATCH_VARIABLES: VariableInfo[] = [
   { key: "{nome}", label: "Nome", fallback: "tudo bem" },
   { key: "{empresa}", label: "Empresa", fallback: "seu negócio" },
-  { key: "{telefone}", label: "Telefone", fallback: "" },
   { key: "{link}", label: "Link do site", fallback: "" },
   { key: "{cidade}", label: "Cidade", fallback: "" },
   { key: "{nicho}", label: "Nicho", fallback: "" },
 ];
+
+function stripSpintaxBlocks(template: string): string {
+  let result = template;
+  let previous = "";
+
+  while (result !== previous) {
+    previous = result;
+    result = result.replace(/\{[^{}]*\|[^{}]*\}/g, " ");
+  }
+
+  return result;
+}
 
 export function applyVariables(
   template: string,
@@ -35,15 +46,14 @@ export function isSpintax(token: string): boolean {
 
 export function validateTemplate(template: string): string[] {
   const warnings: string[] = [];
-  // Match all {...} tokens
-  const found = template.match(/\{[^}]+\}/g) || [];
+  const sanitizedTemplate = stripSpintaxBlocks(template);
+  const found = sanitizedTemplate.match(/\{[^{}]+\}/g) || [];
   const validKeys = new Set(DISPATCH_VARIABLES.map((v) => v.key.toLowerCase()));
+  const ignoredLegacyKeys = new Set(["{telefone}"]);
+
   for (const match of found) {
-    // Skip spintax (contains pipe)
-    if (match.includes("|")) continue;
-    // Skip if it's a known variable
+    if (ignoredLegacyKeys.has(match.toLowerCase())) continue;
     if (validKeys.has(match.toLowerCase())) continue;
-    // Check if the content contains a known variable (e.g. leftover from bad nesting)
     const inner = match.slice(1, -1).toLowerCase();
     const containsVar = DISPATCH_VARIABLES.some((v) => inner.includes(v.key.slice(1, -1).toLowerCase()));
     if (containsVar) continue;
