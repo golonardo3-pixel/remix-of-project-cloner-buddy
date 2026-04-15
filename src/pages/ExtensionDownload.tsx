@@ -6,21 +6,7 @@ import { useNavigate } from "react-router-dom";
 const ExtensionDownload = () => {
   const navigate = useNavigate();
 
-  const handleDownload = () => {
-    fetch("/lovable-helper-pro.zip")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Download falhou: ${res.status}`);
-        return res.blob();
-      })
-      .then((blob) => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "lovable-helper-pro.zip";
-        a.click();
-        URL.revokeObjectURL(a.href);
-      })
-      .catch((err) => alert(err.message));
-  };
+  const downloadUrl = `${window.location.origin}/lovable-helper-pro.zip`;
 
   const steps = [
     "Baixe o arquivo ZIP clicando no botão acima",
@@ -57,10 +43,12 @@ const ExtensionDownload = () => {
             </p>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Button onClick={handleDownload} className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
-              <Download className="w-4 h-4" />
-              Baixar Extensão (.zip)
-            </Button>
+            <a href={downloadUrl} download="lovable-helper-pro.zip">
+              <Button className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
+                <Download className="w-4 h-4" />
+                Baixar Extensão (.zip)
+              </Button>
+            </a>
           </CardContent>
         </Card>
 
