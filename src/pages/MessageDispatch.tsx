@@ -33,6 +33,8 @@ const MIN_CLICK_INTERVAL_SEC = 25;
 
 const DAILY_KEY = "dispatch_daily_count";
 const DAILY_DATE_KEY = "dispatch_daily_date";
+const INVALID_CITY_VALUES = ["não informada", "não informado", "n/a", "sem dados"];
+const PHONE_LIKE_PATTERN = /(?:\+?\d[\d\s().-]{7,}\d)/g;
 
 function getDailyCount(): number {
   const today = new Date().toDateString();
@@ -65,38 +67,83 @@ function getDailyLimit(): number {
 }
 
 const DEFAULT_MESSAGE =
-  "{Oi|Olá}, tudo bem?\n\nVi {empresa} no Google em {cidade} e me chamou atenção.\n\n{Posso te mostrar uma ideia rápida?|Te explico em 1 minuto?|Tem 1 minutinho?}";
+  "{Oi|Olá|Fala}, tudo bem?\n\n{Vi|Dei uma olhada em} {seu perfil|seu negócio} no Google e {me chamou atenção|achei interessante}.\n\n{Acho que dá pra melhorar algumas coisas|Percebi algumas oportunidades simples} por aí.\n\nPosso te mostrar rapidinho?";
 
 const FALLBACKS: Record<string, string> = {};
 DISPATCH_VARIABLES.forEach((v) => {
   FALLBACKS[v.key] = v.fallback;
 });
 
-function buildMessageForLead(template: string, lead: Lead): string {
-  const cityValid = lead.city && !["não informada", "não informado", "n/a", "sem dados"].includes(lead.city.toLowerCase());
+function sanitizeText(value?: string | null): string {
+  return (value ?? "")
+    .replace(PHONE_LIKE_PATTERN, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function sanitizeCompanyName(value?: string | null): string {
+  const base = (value ?? "").split(",")[0] ?? "";
+  return sanitizeText(base);
+}
+
+function normalizeMessage(text: string): string {
+  return text
+    .replace(PHONE_LIKE_PATTERN, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\s+([,.!?])/g, "$1")
+    .trim();
+}
+
+function buildMessageForLead(template: string, lead: Lead, previousMessage?: string): string {
+  const companyName = sanitizeCompanyName(lead.company_name) || FALLBACKS["{empresa}"];
+  const cityName = sanitizeText(lead.city);
+  const nicheName = sanitizeText(lead.niche);
+  const cityValid = Boolean(cityName) && !INVALID_CITY_VALUES.includes(cityName.toLowerCase());
 
   const values: Record<string, string> = {
-    "{nome}": lead.company_name || FALLBACKS["{nome}"],
-    "{empresa}": lead.company_name || FALLBACKS["{empresa}"],
-    "{telefone}": lead.phone || FALLBACKS["{telefone}"],
+    "{nome}": companyName || FALLBACKS["{nome}"],
+    "{empresa}": companyName,
     "{link}": "",
-    "{cidade}": cityValid ? lead.city : "",
-    "{nicho}": lead.niche || FALLBACKS["{nicho}"],
+    "{cidade}": cityValid ? cityName : "",
+    "{nicho}": nicheName || FALLBACKS["{nicho}"],
   };
 
-  let result = template.replace(/\{link\}/gi, "").replace(/\s{2,}/g, " ").trim();
+  let interpolated = template
+    .replace(/\{telefone\}/gi, "")
+    .replace(/\{link\}/gi, "")
+    .trim();
 
   if (!cityValid) {
-    result = result.replace(/em\s*\{cidade\}\s*/gi, "");
+    interpolated = interpolated.replace(/\s*em\s*\{cidade\}/gi, "");
   }
 
   for (const [key, val] of Object.entries(values)) {
-    result = result.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
+    interpolated = interpolated.replace(new RegExp(key.replace(/[{}]/g, "\\$&"), "gi"), val);
   }
 
-  result = result.replace(/\s{2,}/g, " ").replace(/,\s*\./g, ".").trim();
+  const hasSpintax = /\{[^{}]*\|[^{}]*\}/.test(interpolated);
+  let result = normalizeMessage(resolveSpintax(interpolated));
+  let attempts = 0;
+
+  while (hasSpintax && previousMessage && result === previousMessage && attempts < 6) {
+    result = normalizeMessage(resolveSpintax(interpolated));
+    attempts += 1;
+  }
 
   return resolveSpintax(result);
+}
+
+function buildMessageSequence(template: string, leads: Lead[]): string[] {
+  let previousMessage = "";
+
+  return leads.map((lead) => {
+    const nextMessage = buildMessageForLead(template, lead, previousMessage);
+    previousMessage = nextMessage;
+    return nextMessage;
+  });
 }
 
 const MessageDispatch = () => {
@@ -110,6 +157,7 @@ const MessageDispatch = () => {
   const [log, setLog] = useState<LogEntry[]>([]);
   const [cooldown, setCooldown] = useState(0);
   const [previewMessages, setPreviewMessages] = useState<string[]>([]);
+  const [queueMessages, setQueueMessages] = useState<string[]>([]);
 
   const dailyCount = getDailyCount();
   const dailyLimit = getDailyLimit();
@@ -177,6 +225,7 @@ const MessageDispatch = () => {
     setCurrentIndex(0);
     setLog([]);
     setCooldown(0);
+    setQueueMessages(buildMessageSequence(message, eligibleLeads));
   };
 
   const handleSendCurrent = async () => {
@@ -184,7 +233,8 @@ const MessageDispatch = () => {
     if (cooldown > 0) return;
 
     const lead = eligibleLeads[currentIndex];
-    const text = buildMessageForLead(message, lead);
+    const text = queueMessages[currentIndex] ?? buildMessageForLead(message, lead, queueMessages[currentIndex - 1]);
+    const safeLeadName = sanitizeCompanyName(lead.company_name) || "Lead sem nome";
 
     // Open WhatsApp externally — single user-initiated click
     window.open(buildWhatsAppUrl(lead.phone, text), "_blank", "noopener,noreferrer");
@@ -198,12 +248,12 @@ const MessageDispatch = () => {
 
       setLog((prev) => [
         ...prev,
-        { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString() },
+        { leadId: lead.id, name: safeLeadName, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString() },
       ]);
     } catch {
       setLog((prev) => [
         ...prev,
-        { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "error", time: new Date().toLocaleTimeString() },
+        { leadId: lead.id, name: safeLeadName, phone: lead.phone, status: "error", time: new Date().toLocaleTimeString() },
       ]);
     }
 
@@ -234,9 +284,10 @@ const MessageDispatch = () => {
   const handleSkipCurrent = () => {
     if (currentIndex >= eligibleLeads.length) return;
     const lead = eligibleLeads[currentIndex];
+    const safeLeadName = sanitizeCompanyName(lead.company_name) || "Lead sem nome";
     setLog((prev) => [
       ...prev,
-      { leadId: lead.id, name: lead.company_name, phone: lead.phone, status: "skipped", time: new Date().toLocaleTimeString() },
+      { leadId: lead.id, name: safeLeadName, phone: lead.phone, status: "skipped", time: new Date().toLocaleTimeString() },
     ]);
     const nextIndex = currentIndex + 1;
     if (nextIndex >= eligibleLeads.length) {
@@ -251,13 +302,14 @@ const MessageDispatch = () => {
   const stopDispatch = () => {
     setStatus("idle");
     setCooldown(0);
+    setQueueMessages([]);
     toast({ title: "Disparo interrompido" });
   };
 
   const sentCount = log.filter((l) => l.status === "sent").length;
   const progress = eligibleLeads.length > 0 ? Math.round((sentCount / eligibleLeads.length) * 100) : 0;
   const currentLead = status === "running" && currentIndex < eligibleLeads.length ? eligibleLeads[currentIndex] : null;
-  const currentPreview = currentLead ? buildMessageForLead(message, currentLead) : null;
+  const currentPreview = currentLead ? queueMessages[currentIndex] ?? null : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -369,10 +421,8 @@ const MessageDispatch = () => {
                 className="gap-2"
                 disabled={status === "running"}
                 onClick={() => {
-                  const sampleLeads = eligibleLeads.length > 0
-                    ? eligibleLeads.slice(0, 5)
-                    : [{ company_name: "Barbearia Teste", phone: "11999999999", city: "São Paulo", niche: "barbearia" } as Lead];
-                  const previews = sampleLeads.map((lead) => buildMessageForLead(message, lead));
+                  const sampleLead = eligibleLeads[0] ?? ({ company_name: "Barbearia Teste", phone: "11999999999", city: "São Paulo", niche: "barbearia" } as Lead);
+                  const previews = buildMessageSequence(message, Array.from({ length: 5 }, () => sampleLead));
                   setPreviewMessages(previews);
                 }}
               >
@@ -382,9 +432,9 @@ const MessageDispatch = () => {
               {previewMessages.length > 0 && (
                 <div className="space-y-1.5">
                   {previewMessages.map((msg, i) => (
-                    <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border">
-                      <span className="font-medium text-muted-foreground">#{i + 1}:</span>{" "}
-                      <span className="text-foreground">{msg}</span>
+                    <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border whitespace-pre-line">
+                      <span className="font-medium text-muted-foreground">#{i + 1}:</span>
+                      <p className="text-foreground mt-1">{msg}</p>
                     </div>
                   ))}
                 </div>
