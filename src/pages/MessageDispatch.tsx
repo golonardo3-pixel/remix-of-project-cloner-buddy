@@ -266,6 +266,7 @@ const MessageDispatch = () => {
     setCurrentIndex(0);
     setLog([]);
     setCooldown(0);
+    resetSpintaxMemory();
     setQueueMessages(buildMessageSequence(message, eligibleLeads));
   };
 
