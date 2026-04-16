@@ -14,7 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
 import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
-import { resolveSpintax } from "@/lib/spintax";
+import { resolveSpintax, resetSpintaxMemory } from "@/lib/spintax";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 import { CONVERSATION_STAGES, getRandomTemplate } from "@/lib/conversation-flows";
@@ -140,7 +140,9 @@ function buildMessageForLead(template: string, lead: Lead, previousMessage?: str
   let result = normalizeMessage(resolveSpintax(interpolated));
   let attempts = 0;
 
-  while (hasSpintax && previousMessage && result === previousMessage && attempts < 6) {
+  // Try up to 10 times to avoid repeating the previous message
+  while (hasSpintax && previousMessage && result === previousMessage && attempts < 10) {
+    resetSpintaxMemory();
     result = normalizeMessage(resolveSpintax(interpolated));
     attempts += 1;
   }
@@ -264,6 +266,7 @@ const MessageDispatch = () => {
     setCurrentIndex(0);
     setLog([]);
     setCooldown(0);
+    resetSpintaxMemory();
     setQueueMessages(buildMessageSequence(message, eligibleLeads));
   };
 
