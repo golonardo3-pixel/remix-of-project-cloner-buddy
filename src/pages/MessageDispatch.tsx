@@ -14,7 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
 import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
-import { resolveSpintax } from "@/lib/spintax";
+import { resolveSpintax, resetSpintaxMemory } from "@/lib/spintax";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 import { CONVERSATION_STAGES, getRandomTemplate } from "@/lib/conversation-flows";
