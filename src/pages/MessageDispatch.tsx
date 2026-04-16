@@ -1,11 +1,15 @@
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, Square, MessageSquare, CheckCircle2, AlertCircle, ShieldAlert, Info, Eye, Send } from "lucide-react";
+import {
+  ArrowLeft, Play, Square, MessageSquare, CheckCircle2, AlertCircle,
+  ShieldAlert, Info, Eye, Send, Copy, History, Layers, Trash2
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
@@ -13,6 +17,8 @@ import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/component
 import { resolveSpintax } from "@/lib/spintax";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
+import { CONVERSATION_STAGES, getRandomTemplate } from "@/lib/conversation-flows";
+import { getMessageHistory, addToMessageHistory, clearMessageHistory, type MessageHistoryEntry } from "@/lib/message-history";
 
 type DispatchStatus = "idle" | "running" | "done";
 
@@ -29,7 +35,8 @@ interface LogEntry {
 const DAILY_LIMIT_MIN = 140;
 const DAILY_LIMIT_MAX = 160;
 const MAX_LEADS_PER_ROUND = 160;
-const MIN_CLICK_INTERVAL_SEC = 25;
+const MIN_CLICK_INTERVAL_SEC = 30;
+const MAX_CLICK_INTERVAL_SEC = 90;
 
 const DAILY_KEY = "dispatch_daily_count";
 const DAILY_DATE_KEY = "dispatch_daily_date";
@@ -66,8 +73,13 @@ function getDailyLimit(): number {
   return limit;
 }
 
+/** Random cooldown between MIN and MAX to simulate human timing */
+function getRandomCooldown(): number {
+  return MIN_CLICK_INTERVAL_SEC + Math.floor(Math.random() * (MAX_CLICK_INTERVAL_SEC - MIN_CLICK_INTERVAL_SEC + 1));
+}
+
 const DEFAULT_MESSAGE =
-  "{Oi|Olá|Fala}, tudo bem?\n\n{Vi|Dei uma olhada em} {seu perfil|seu negócio} no Google e {me chamou atenção|achei interessante}.\n\n{Acho que dá pra melhorar algumas coisas|Percebi algumas oportunidades simples} por aí.\n\nPosso te mostrar rapidinho?";
+  "{Oi|Olá|Fala|E aí|Tudo bem|Bom dia|Boa tarde}, tudo {bem|certo|tranquilo}?\n\n{Vi|Dei uma olhada em|Analisei rapidamente|Passei pelo} {seu perfil|seu negócio|sua empresa} no Google {hoje|agora pouco|esses dias|recentemente} e {me chamou atenção|achei interessante|curti|notei algumas coisas}.\n\n{Acho que dá pra melhorar algumas coisas|Percebi algumas oportunidades simples|Notei alguns pontos que podem melhorar} {no perfil de vocês|por aí}.\n\n{Posso te mostrar rapidinho?|Quer que eu te explique?|Te mostro em 1 minuto?}";
 
 const FALLBACKS: Record<string, string> = {};
 DISPATCH_VARIABLES.forEach((v) => {
@@ -138,7 +150,6 @@ function buildMessageForLead(template: string, lead: Lead, previousMessage?: str
 
 function buildMessageSequence(template: string, leads: Lead[]): string[] {
   let previousMessage = "";
-
   return leads.map((lead) => {
     const nextMessage = buildMessageForLead(template, lead, previousMessage);
     previousMessage = nextMessage;
@@ -158,6 +169,9 @@ const MessageDispatch = () => {
   const [cooldown, setCooldown] = useState(0);
   const [previewMessages, setPreviewMessages] = useState<string[]>([]);
   const [queueMessages, setQueueMessages] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [history, setHistory] = useState<MessageHistoryEntry[]>(() => getMessageHistory());
+  const [showStages, setShowStages] = useState(false);
 
   const dailyCount = getDailyCount();
   const dailyLimit = getDailyLimit();
@@ -204,6 +218,31 @@ const MessageDispatch = () => {
     });
   };
 
+  const handleUseStage = (stageId: string) => {
+    const template = getRandomTemplate(stageId);
+    setMessage(template);
+    setShowStages(false);
+    toast({ title: "Template aplicado!" });
+  };
+
+  const handleAppendStage = (stageId: string) => {
+    const template = getRandomTemplate(stageId);
+    setMessage((prev) => (prev ? prev + "\n\n" + template : template));
+    toast({ title: "Etapa adicionada!" });
+  };
+
+  const handleCopyMessage = () => {
+    const sampleLead = eligibleLeads[0] ?? ({
+      company_name: "Negócio Teste",
+      phone: "11999999999",
+      city: "São Paulo",
+      niche: "serviços",
+    } as Lead);
+    const resolved = buildMessageForLead(message, sampleLead);
+    navigator.clipboard.writeText(resolved);
+    toast({ title: "Mensagem copiada!" });
+  };
+
   const handleStartQueue = () => {
     if (templateWarnings.length > 0) {
       toast({
@@ -236,8 +275,15 @@ const MessageDispatch = () => {
     const text = queueMessages[currentIndex] ?? buildMessageForLead(message, lead, queueMessages[currentIndex - 1]);
     const safeLeadName = sanitizeCompanyName(lead.company_name) || "Lead sem nome";
 
-    // Open WhatsApp externally — single user-initiated click
     window.open(buildWhatsAppUrl(lead.phone, text), "_blank", "noopener,noreferrer");
+
+    // Save to history
+    addToMessageHistory({
+      text,
+      leadName: safeLeadName,
+      timestamp: new Date().toISOString(),
+    });
+    setHistory(getMessageHistory());
 
     try {
       incrementDailyCount();
@@ -248,7 +294,7 @@ const MessageDispatch = () => {
 
       setLog((prev) => [
         ...prev,
-        { leadId: lead.id, name: safeLeadName, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString() },
+        { leadId: lead.id, name: safeLeadName, phone: lead.phone, status: "sent", time: new Date().toLocaleTimeString(), message: text },
       ]);
     } catch {
       setLog((prev) => [
@@ -268,8 +314,9 @@ const MessageDispatch = () => {
 
     setCurrentIndex(nextIndex);
 
-    // Enforce minimum interval between clicks
-    setCooldown(MIN_CLICK_INTERVAL_SEC);
+    // Random cooldown between 30-90s for human-like behavior
+    const cd = getRandomCooldown();
+    setCooldown(cd);
     const interval = setInterval(() => {
       setCooldown((prev) => {
         if (prev <= 1) {
@@ -306,6 +353,19 @@ const MessageDispatch = () => {
     toast({ title: "Disparo interrompido" });
   };
 
+  const handleCopyCurrentPreview = () => {
+    if (currentPreview) {
+      navigator.clipboard.writeText(currentPreview);
+      toast({ title: "Mensagem copiada!" });
+    }
+  };
+
+  const handleClearHistory = () => {
+    clearMessageHistory();
+    setHistory([]);
+    toast({ title: "Histórico limpo!" });
+  };
+
   const sentCount = log.filter((l) => l.status === "sent").length;
   const progress = eligibleLeads.length > 0 ? Math.round((sentCount / eligibleLeads.length) * 100) : 0;
   const currentLead = status === "running" && currentIndex < eligibleLeads.length ? eligibleLeads[currentIndex] : null;
@@ -336,21 +396,22 @@ const MessageDispatch = () => {
             <div className="flex items-start gap-2">
               <ShieldAlert className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-foreground">Proteção anti-ban ativa</p>
+                <p className="text-sm font-medium text-foreground">Proteção anti-bloqueio ativa</p>
                 <ul className="text-[11px] text-muted-foreground space-y-0.5">
                   <li>• Cada envio exige seu clique (simula comportamento humano)</li>
-                  <li>• Intervalo mínimo de {MIN_CLICK_INTERVAL_SEC}s entre envios</li>
+                  <li>• Intervalo variável de {MIN_CLICK_INTERVAL_SEC}s a {MAX_CLICK_INTERVAL_SEC}s entre envios</li>
                   <li>• Limite diário: {dailyLimit} msgs ({dailyCount} enviadas hoje)</li>
-                  <li>• Variação automática de saudação e texto</li>
+                  <li>• Variação automática de texto a cada envio</li>
+                  <li>• Alternância entre mensagens curtas e médias</li>
+                  <li>• Nunca repete mensagem consecutiva</li>
                   <li>• Links bloqueados na 1ª mensagem</li>
-                  <li>• Abre direto no WhatsApp (fora do navegador)</li>
                 </ul>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Daily limit warning */}
+        {/* Daily limit warnings */}
         {remainingToday <= 10 && remainingToday > 0 && (
           <Card className="border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20">
             <CardContent className="pt-3 pb-3">
@@ -373,6 +434,62 @@ const MessageDispatch = () => {
           </Card>
         )}
 
+        {/* Conversation flow stages */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Layers className="w-4 h-4" /> Fluxo de Conversa
+              </CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1.5"
+                onClick={() => setShowStages(!showStages)}
+              >
+                {showStages ? "Fechar" : "Ver etapas"}
+              </Button>
+            </div>
+          </CardHeader>
+          {showStages && (
+            <CardContent className="pt-0 space-y-2">
+              {CONVERSATION_STAGES.map((stage) => (
+                <div key={stage.id} className="bg-muted/50 border border-border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <span className="text-xs font-semibold text-foreground">{stage.label}</span>
+                      <span className="text-[10px] text-muted-foreground ml-2">{stage.description}</span>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-[10px] px-2"
+                        onClick={() => handleAppendStage(stage.id)}
+                        disabled={status === "running"}
+                      >
+                        + Adicionar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-6 text-[10px] px-2"
+                        onClick={() => handleUseStage(stage.id)}
+                        disabled={status === "running"}
+                      >
+                        Usar só esta
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed whitespace-pre-line mt-1">
+                    {stage.templates[0].substring(0, 120)}...
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          )}
+        </Card>
+
         {/* Message config */}
         <Card>
           <CardHeader className="pb-3">
@@ -386,12 +503,12 @@ const MessageDispatch = () => {
                 ref={textareaRef}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                rows={5}
+                rows={6}
                 disabled={status === "running"}
                 placeholder="Use {opção1|opção2} para variar automaticamente..."
               />
               <p className="text-[10px] text-muted-foreground">
-                💡 Use <code className="bg-muted px-1 rounded">{"{Oi|Olá|Fala}"}</code> para variar saudações automaticamente
+                💡 Use <code className="bg-muted px-1 rounded">{"{Oi|Olá|Fala}"}</code> para variar saudações automaticamente. Nunca repete a mesma mensagem consecutiva.
               </p>
               {templateWarnings.length > 0 && (
                 <div className="flex items-start gap-2 text-xs text-destructive">
@@ -413,12 +530,12 @@ const MessageDispatch = () => {
 
             <VariableChips onInsert={insertVariable} disabled={status === "running"} />
 
-            <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="gap-2"
+                className="gap-1.5 text-xs"
                 disabled={status === "running"}
                 onClick={() => {
                   const sampleLead = eligibleLeads[0] ?? ({ company_name: "Barbearia Teste", phone: "11999999999", city: "São Paulo", niche: "barbearia" } as Lead);
@@ -427,21 +544,108 @@ const MessageDispatch = () => {
                 }}
               >
                 <Eye className="w-3.5 h-3.5" />
-                Pré-visualizar 5 variações
+                Preview 5 variações
               </Button>
-              {previewMessages.length > 0 && (
-                <div className="space-y-1.5">
-                  {previewMessages.map((msg, i) => (
-                    <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border whitespace-pre-line">
-                      <span className="font-medium text-muted-foreground">#{i + 1}:</span>
-                      <p className="text-foreground mt-1">{msg}</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs"
+                disabled={status === "running"}
+                onClick={handleCopyMessage}
+              >
+                <Copy className="w-3.5 h-3.5" />
+                Copiar mensagem
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs"
+                onClick={() => setShowHistory(!showHistory)}
+              >
+                <History className="w-3.5 h-3.5" />
+                Histórico ({history.length})
+              </Button>
+            </div>
+
+            {/* Preview */}
+            {previewMessages.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-medium text-muted-foreground">Variações geradas (cada envio será diferente):</p>
+                {previewMessages.map((msg, i) => (
+                  <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border whitespace-pre-line">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-muted-foreground">#{i + 1}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-5 px-1.5 text-[10px]"
+                        onClick={() => {
+                          navigator.clipboard.writeText(msg);
+                          toast({ title: "Variação copiada!" });
+                        }}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <p className="text-foreground">{msg}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Message History */}
+        {showHistory && (
+          <Card>
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <History className="w-4 h-4" /> Histórico de mensagens
+                </CardTitle>
+                {history.length > 0 && (
+                  <Button variant="ghost" size="sm" className="text-xs text-destructive gap-1" onClick={handleClearHistory}>
+                    <Trash2 className="w-3 h-3" /> Limpar
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {history.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-4">Nenhuma mensagem enviada ainda.</p>
+              ) : (
+                <div className="space-y-2 max-h-[40vh] overflow-y-auto">
+                  {history.slice(0, 20).map((entry) => (
+                    <div key={entry.id} className="bg-muted/50 rounded-lg p-2.5 border border-border">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] font-semibold text-muted-foreground">{entry.leadName}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-muted-foreground">
+                            {new Date(entry.timestamp).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-5 px-1"
+                            onClick={() => {
+                              navigator.clipboard.writeText(entry.text);
+                              toast({ title: "Copiada!" });
+                            }}
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-foreground whitespace-pre-line leading-relaxed">{entry.text}</p>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Google Sheets import */}
         <GoogleSheetsImport />
@@ -476,9 +680,21 @@ const MessageDispatch = () => {
 
               {/* Message preview */}
               <div className="bg-muted/60 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground mb-1 font-medium">Mensagem que será enviada:</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-muted-foreground font-medium">Mensagem que será enviada:</p>
+                  <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px] gap-1" onClick={handleCopyCurrentPreview}>
+                    <Copy className="w-3 h-3" /> Copiar
+                  </Button>
+                </div>
                 <p className="text-sm text-foreground whitespace-pre-line">{currentPreview}</p>
               </div>
+
+              {cooldown > 0 && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <ShieldAlert className="w-3.5 h-3.5 text-orange-500" />
+                  <span>Aguardando {cooldown}s para simular comportamento humano...</span>
+                </div>
+              )}
 
               <div className="flex gap-2">
                 <Button
@@ -529,11 +745,26 @@ const MessageDispatch = () => {
                         <AlertCircle className="w-4 h-4 text-destructive shrink-0" />
                       )}
                       <span className="truncate text-xs">
-                        {entry.message || entry.name}
+                        {entry.name}
                         {entry.status === "skipped" && " (pulado)"}
                       </span>
                     </div>
-                    <span className="text-xs text-muted-foreground shrink-0 ml-2">{entry.time}</span>
+                    <div className="flex items-center gap-1 shrink-0 ml-2">
+                      {entry.message && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-5 px-1"
+                          onClick={() => {
+                            navigator.clipboard.writeText(entry.message!);
+                            toast({ title: "Copiada!" });
+                          }}
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                      )}
+                      <span className="text-xs text-muted-foreground">{entry.time}</span>
+                    </div>
                   </div>
                 ))}
               </div>
