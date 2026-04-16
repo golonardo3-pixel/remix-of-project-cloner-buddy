@@ -140,7 +140,9 @@ function buildMessageForLead(template: string, lead: Lead, previousMessage?: str
   let result = normalizeMessage(resolveSpintax(interpolated));
   let attempts = 0;
 
-  while (hasSpintax && previousMessage && result === previousMessage && attempts < 6) {
+  // Try up to 10 times to avoid repeating the previous message
+  while (hasSpintax && previousMessage && result === previousMessage && attempts < 10) {
+    resetSpintaxMemory();
     result = normalizeMessage(resolveSpintax(interpolated));
     attempts += 1;
   }
