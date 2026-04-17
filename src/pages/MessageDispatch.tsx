@@ -79,8 +79,9 @@ function getRandomCooldown(): number {
   return MIN_CLICK_INTERVAL_SEC + Math.floor(Math.random() * (MAX_CLICK_INTERVAL_SEC - MIN_CLICK_INTERVAL_SEC + 1));
 }
 
-const DEFAULT_MESSAGE =
-  "{Oi|Olá|Fala|E aí|Tudo bem|Bom dia|Boa tarde}, tudo {bem|certo|tranquilo}?\n\n{Vi|Dei uma olhada em|Analisei rapidamente|Passei pelo} {seu perfil|seu negócio|sua empresa} no Google {hoje|agora pouco|esses dias|recentemente} e {me chamou atenção|achei interessante|curti|notei algumas coisas}.\n\n{Acho que dá pra melhorar algumas coisas|Percebi algumas oportunidades simples|Notei alguns pontos que podem melhorar} {no perfil de vocês|por aí}.\n\n{Posso te mostrar rapidinho?|Quer que eu te explique?|Te mostro em 1 minuto?}";
+// Modo premium é o único caminho de envio. Mantemos string vazia apenas
+// para satisfazer o componente <Textarea> (oculto via UI quando premium ativo).
+const DEFAULT_MESSAGE = "";
 
 const FALLBACKS: Record<string, string> = {};
 DISPATCH_VARIABLES.forEach((v) => {
