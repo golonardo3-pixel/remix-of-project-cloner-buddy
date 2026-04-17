@@ -120,10 +120,10 @@ export function getNicheTone(niche: string): NicheTone {
 }
 
 /**
- * 8 variações premium de abertura.
- * Curtas (3-4 linhas), terminam em pergunta, geram curiosidade.
- * Não usam "proposta", "serviço", "oportunidade".
- * {empresa}, {cidade}, {nicho_noun}, {nicho_action}, {nicho_hook} são placeholders.
+ * 8 variações premium de abertura — estilo "vizinho que reparou em algo".
+ * Máx 3 linhas. Cita cidade + traço específico do nicho. Termina em pergunta.
+ * Gera curiosidade + leve sensação de perda. Conversa natural de WhatsApp.
+ * Placeholders: {empresa}, {cidade}, {nicho_noun}, {nicho_trait}, {nicho_outcome}
  */
 export const PREMIUM_OPENINGS: string[] = [
   // 1
