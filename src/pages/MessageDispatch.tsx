@@ -1,23 +1,21 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  ArrowLeft, Play, Square, MessageSquare, CheckCircle2, AlertCircle,
-  ShieldAlert, Info, Eye, Send, Copy, History, Layers, Trash2
+  ArrowLeft, Play, Square, CheckCircle2, AlertCircle,
+  ShieldAlert, Eye, Send, Copy, History, Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
-import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
+import { DISPATCH_VARIABLES } from "@/components/dispatch/VariableChips";
 import { resolveSpintax, resetSpintaxMemory } from "@/lib/spintax";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
-import { CONVERSATION_STAGES, getRandomTemplate } from "@/lib/conversation-flows";
 import { getMessageHistory, addToMessageHistory, clearMessageHistory, type MessageHistoryEntry } from "@/lib/message-history";
 import { pickFollowup, PREMIUM_OPENINGS, getNicheTone } from "@/lib/premium-prospecting";
 
