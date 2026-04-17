@@ -175,7 +175,7 @@ function buildPremiumSequence(leads: Lead[]): string[] {
   });
 }
 
-/** Escolhe o template cru (com placeholders nicho_*) já adaptado ao tom do nicho. */
+/** Escolhe o template cru já adaptado ao tom do nicho. */
 function pickRawOpening(niche: string, recentRaw: string[]): string {
   const available = PREMIUM_OPENINGS.filter((t) => !recentRaw.includes(t));
   const pool = available.length > 0 ? available : PREMIUM_OPENINGS;
@@ -183,8 +183,8 @@ function pickRawOpening(niche: string, recentRaw: string[]): string {
   const tone = getNicheTone(niche);
   return chosen
     .replace(/\{nicho_noun\}/g, tone.noun)
-    .replace(/\{nicho_action\}/g, tone.customerAction)
-    .replace(/\{nicho_hook\}/g, tone.hook.replace(/\{nicho\}/g, niche || "negócios"));
+    .replace(/\{nicho_trait\}/g, tone.trait)
+    .replace(/\{nicho_outcome\}/g, tone.outcome);
 }
 
 const MessageDispatch = () => {
