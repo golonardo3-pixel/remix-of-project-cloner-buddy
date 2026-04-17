@@ -19,6 +19,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
 import { CONVERSATION_STAGES, getRandomTemplate } from "@/lib/conversation-flows";
 import { getMessageHistory, addToMessageHistory, clearMessageHistory, type MessageHistoryEntry } from "@/lib/message-history";
+import { pickOpening, pickFollowup, PREMIUM_OPENINGS } from "@/lib/premium-prospecting";
 
 type DispatchStatus = "idle" | "running" | "done";
 
