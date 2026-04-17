@@ -189,7 +189,6 @@ function pickRawOpening(niche: string, recentRaw: string[]): string {
 const MessageDispatch = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [message] = useState(DEFAULT_MESSAGE);
   const [status, setStatus] = useState<DispatchStatus>("idle");
