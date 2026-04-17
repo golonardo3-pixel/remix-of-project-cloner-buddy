@@ -223,14 +223,6 @@ const MessageDispatch = () => {
     .slice(0, Math.min(MAX_LEADS_PER_ROUND, remainingToday));
 
   const handleStartQueue = () => {
-    if (!premiumMode && templateWarnings.length > 0) {
-      toast({
-        title: "Corrija as variáveis antes de disparar",
-        description: templateWarnings.join(", "),
-        variant: "destructive",
-      });
-      return;
-    }
     if (remainingToday <= 0) {
       toast({
         title: "Limite diário atingido",
@@ -244,11 +236,12 @@ const MessageDispatch = () => {
     setLog([]);
     setCooldown(0);
     resetSpintaxMemory();
-    setQueueMessages(
-      premiumMode
-        ? buildPremiumSequence(eligibleLeads)
-        : buildMessageSequence(message, eligibleLeads)
-    );
+    // Único caminho: script premium adaptado por nicho
+    setQueueMessages(buildPremiumSequence(eligibleLeads));
+    toast({
+      title: "✓ Disparo usando script premium ativo",
+      description: `${eligibleLeads.length} leads · 8 variações curtas adaptadas por nicho/cidade.`,
+    });
   };
 
   const handleSendCurrent = async () => {
