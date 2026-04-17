@@ -202,6 +202,7 @@ const MessageDispatch = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<MessageHistoryEntry[]>(() => getMessageHistory());
   const [showStages, setShowStages] = useState(false);
+  const [premiumMode, setPremiumMode] = useState(true);
 
   const dailyCount = getDailyCount();
   const dailyLimit = getDailyLimit();
