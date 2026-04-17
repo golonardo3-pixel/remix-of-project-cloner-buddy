@@ -193,7 +193,7 @@ const MessageDispatch = () => {
   const queryClient = useQueryClient();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [message, setMessage] = useState(DEFAULT_MESSAGE);
+  const [message] = useState(DEFAULT_MESSAGE);
   const [status, setStatus] = useState<DispatchStatus>("idle");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [log, setLog] = useState<LogEntry[]>([]);
@@ -202,8 +202,6 @@ const MessageDispatch = () => {
   const [queueMessages, setQueueMessages] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<MessageHistoryEntry[]>(() => getMessageHistory());
-  const [showStages, setShowStages] = useState(false);
-  const [premiumMode, setPremiumMode] = useState(true);
 
   const dailyCount = getDailyCount();
   const dailyLimit = getDailyLimit();
@@ -223,57 +221,6 @@ const MessageDispatch = () => {
 
   const eligibleLeads = (leads?.filter((l) => l.lead_status === "novo") ?? [])
     .slice(0, Math.min(MAX_LEADS_PER_ROUND, remainingToday));
-
-  const templateWarnings = validateTemplate(message);
-
-  const antiBanWarnings: string[] = [];
-  if (/https?:\/\/|www\.|\.com|\.br|\{link\}/i.test(message)) {
-    antiBanWarnings.push("⚠️ Evite links na primeira mensagem — risco de ban no WhatsApp");
-  }
-
-  const insertVariable = (variable: string) => {
-    const ta = textareaRef.current;
-    if (!ta) {
-      setMessage((prev) => prev + variable);
-      return;
-    }
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const before = message.slice(0, start);
-    const after = message.slice(end);
-    const newMsg = before + variable + after;
-    setMessage(newMsg);
-    requestAnimationFrame(() => {
-      ta.focus();
-      const pos = start + variable.length;
-      ta.setSelectionRange(pos, pos);
-    });
-  };
-
-  const handleUseStage = (stageId: string) => {
-    const template = getRandomTemplate(stageId);
-    setMessage(template);
-    setShowStages(false);
-    toast({ title: "Template aplicado!" });
-  };
-
-  const handleAppendStage = (stageId: string) => {
-    const template = getRandomTemplate(stageId);
-    setMessage((prev) => (prev ? prev + "\n\n" + template : template));
-    toast({ title: "Etapa adicionada!" });
-  };
-
-  const handleCopyMessage = () => {
-    const sampleLead = eligibleLeads[0] ?? ({
-      company_name: "Negócio Teste",
-      phone: "11999999999",
-      city: "São Paulo",
-      niche: "serviços",
-    } as Lead);
-    const resolved = buildMessageForLead(message, sampleLead);
-    navigator.clipboard.writeText(resolved);
-    toast({ title: "Mensagem copiada!" });
-  };
 
   const handleStartQueue = () => {
     if (!premiumMode && templateWarnings.length > 0) {
