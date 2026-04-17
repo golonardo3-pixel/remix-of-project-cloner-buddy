@@ -160,6 +160,39 @@ function buildMessageSequence(template: string, leads: Lead[]): string[] {
   });
 }
 
+/**
+ * Modo Premium: cada lead recebe uma das 8 aberturas adaptadas ao nicho dele.
+ * Evita repetir os últimos 3 templates escolhidos (dedupe entre leads próximos).
+ */
+function buildPremiumSequence(leads: Lead[]): string[] {
+  const recentRaw: string[] = [];
+  return leads.map((lead) => {
+    const rawTemplate = pickRawOpening(lead.niche, recentRaw);
+    recentRaw.push(rawTemplate);
+    if (recentRaw.length > 3) recentRaw.shift();
+    // Aplica spintax + interpolação como template normal
+    return buildMessageForLead(rawTemplate, lead);
+  });
+}
+
+/** Escolhe o template cru (com placeholders nicho_*) já adaptado ao tom do nicho. */
+function pickRawOpening(niche: string, recentRaw: string[]): string {
+  // pickOpening já aplica tone; passamos os recentes como strings adaptadas
+  // mas para dedupe precisamos comparar templates crus — então pegamos por índice
+  const available = PREMIUM_OPENINGS.filter((t) => !recentRaw.includes(t));
+  const pool = available.length > 0 ? available : PREMIUM_OPENINGS;
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
+  // Aplica tom (nicho_noun, nicho_hook etc.) usando pickOpening sobre o escolhido
+  // Workaround: chamamos pickOpening passando os recentes para garantir consistência se possível
+  void pickOpening; // mantém import; fluxo real abaixo
+  // Inline tone application replicando pickOpening:
+  const tone = require("@/lib/premium-prospecting").getNicheTone(niche);
+  return chosen
+    .replace(/\{nicho_noun\}/g, tone.noun)
+    .replace(/\{nicho_action\}/g, tone.customerAction)
+    .replace(/\{nicho_hook\}/g, tone.hook.replace(/\{nicho\}/g, niche || "negócios"));
+}
+
 const MessageDispatch = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
