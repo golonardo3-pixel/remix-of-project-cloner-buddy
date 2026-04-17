@@ -471,8 +471,7 @@ const MessageDispatch = () => {
           </Card>
         )}
 
-        {/* Conversation flow stages */}
-        <Card>
+        {/* Card "Fluxo de Conversa" antigo removido — agora 100% premium */}
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
