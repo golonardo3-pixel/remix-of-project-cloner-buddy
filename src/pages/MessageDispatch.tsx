@@ -177,16 +177,10 @@ function buildPremiumSequence(leads: Lead[]): string[] {
 
 /** Escolhe o template cru (com placeholders nicho_*) já adaptado ao tom do nicho. */
 function pickRawOpening(niche: string, recentRaw: string[]): string {
-  // pickOpening já aplica tone; passamos os recentes como strings adaptadas
-  // mas para dedupe precisamos comparar templates crus — então pegamos por índice
   const available = PREMIUM_OPENINGS.filter((t) => !recentRaw.includes(t));
   const pool = available.length > 0 ? available : PREMIUM_OPENINGS;
   const chosen = pool[Math.floor(Math.random() * pool.length)];
-  // Aplica tom (nicho_noun, nicho_hook etc.) usando pickOpening sobre o escolhido
-  // Workaround: chamamos pickOpening passando os recentes para garantir consistência se possível
-  void pickOpening; // mantém import; fluxo real abaixo
-  // Inline tone application replicando pickOpening:
-  const tone = require("@/lib/premium-prospecting").getNicheTone(niche);
+  const tone = getNicheTone(niche);
   return chosen
     .replace(/\{nicho_noun\}/g, tone.noun)
     .replace(/\{nicho_action\}/g, tone.customerAction)
