@@ -1,23 +1,21 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  ArrowLeft, Play, Square, MessageSquare, CheckCircle2, AlertCircle,
-  ShieldAlert, Info, Eye, Send, Copy, History, Layers, Trash2
+  ArrowLeft, Play, Square, CheckCircle2, AlertCircle,
+  ShieldAlert, Eye, Send, Copy, History, Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Lead } from "@/components/KanbanBoard";
-import VariableChips, { DISPATCH_VARIABLES, validateTemplate } from "@/components/dispatch/VariableChips";
+import { DISPATCH_VARIABLES } from "@/components/dispatch/VariableChips";
 import { resolveSpintax, resetSpintaxMemory } from "@/lib/spintax";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import GoogleSheetsImport from "@/components/dispatch/GoogleSheetsImport";
-import { CONVERSATION_STAGES, getRandomTemplate } from "@/lib/conversation-flows";
 import { getMessageHistory, addToMessageHistory, clearMessageHistory, type MessageHistoryEntry } from "@/lib/message-history";
 import { pickFollowup, PREMIUM_OPENINGS, getNicheTone } from "@/lib/premium-prospecting";
 
@@ -79,8 +77,9 @@ function getRandomCooldown(): number {
   return MIN_CLICK_INTERVAL_SEC + Math.floor(Math.random() * (MAX_CLICK_INTERVAL_SEC - MIN_CLICK_INTERVAL_SEC + 1));
 }
 
-const DEFAULT_MESSAGE =
-  "{Oi|Olá|Fala|E aí|Tudo bem|Bom dia|Boa tarde}, tudo {bem|certo|tranquilo}?\n\n{Vi|Dei uma olhada em|Analisei rapidamente|Passei pelo} {seu perfil|seu negócio|sua empresa} no Google {hoje|agora pouco|esses dias|recentemente} e {me chamou atenção|achei interessante|curti|notei algumas coisas}.\n\n{Acho que dá pra melhorar algumas coisas|Percebi algumas oportunidades simples|Notei alguns pontos que podem melhorar} {no perfil de vocês|por aí}.\n\n{Posso te mostrar rapidinho?|Quer que eu te explique?|Te mostro em 1 minuto?}";
+// Modo premium é o único caminho de envio. Mantemos string vazia apenas
+// para satisfazer o componente <Textarea> (oculto via UI quando premium ativo).
+const DEFAULT_MESSAGE = "";
 
 const FALLBACKS: Record<string, string> = {};
 DISPATCH_VARIABLES.forEach((v) => {
@@ -190,9 +189,8 @@ function pickRawOpening(niche: string, recentRaw: string[]): string {
 const MessageDispatch = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [message, setMessage] = useState(DEFAULT_MESSAGE);
+  const [message] = useState(DEFAULT_MESSAGE);
   const [status, setStatus] = useState<DispatchStatus>("idle");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [log, setLog] = useState<LogEntry[]>([]);
@@ -201,8 +199,6 @@ const MessageDispatch = () => {
   const [queueMessages, setQueueMessages] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<MessageHistoryEntry[]>(() => getMessageHistory());
-  const [showStages, setShowStages] = useState(false);
-  const [premiumMode, setPremiumMode] = useState(true);
 
   const dailyCount = getDailyCount();
   const dailyLimit = getDailyLimit();
@@ -223,66 +219,7 @@ const MessageDispatch = () => {
   const eligibleLeads = (leads?.filter((l) => l.lead_status === "novo") ?? [])
     .slice(0, Math.min(MAX_LEADS_PER_ROUND, remainingToday));
 
-  const templateWarnings = validateTemplate(message);
-
-  const antiBanWarnings: string[] = [];
-  if (/https?:\/\/|www\.|\.com|\.br|\{link\}/i.test(message)) {
-    antiBanWarnings.push("⚠️ Evite links na primeira mensagem — risco de ban no WhatsApp");
-  }
-
-  const insertVariable = (variable: string) => {
-    const ta = textareaRef.current;
-    if (!ta) {
-      setMessage((prev) => prev + variable);
-      return;
-    }
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const before = message.slice(0, start);
-    const after = message.slice(end);
-    const newMsg = before + variable + after;
-    setMessage(newMsg);
-    requestAnimationFrame(() => {
-      ta.focus();
-      const pos = start + variable.length;
-      ta.setSelectionRange(pos, pos);
-    });
-  };
-
-  const handleUseStage = (stageId: string) => {
-    const template = getRandomTemplate(stageId);
-    setMessage(template);
-    setShowStages(false);
-    toast({ title: "Template aplicado!" });
-  };
-
-  const handleAppendStage = (stageId: string) => {
-    const template = getRandomTemplate(stageId);
-    setMessage((prev) => (prev ? prev + "\n\n" + template : template));
-    toast({ title: "Etapa adicionada!" });
-  };
-
-  const handleCopyMessage = () => {
-    const sampleLead = eligibleLeads[0] ?? ({
-      company_name: "Negócio Teste",
-      phone: "11999999999",
-      city: "São Paulo",
-      niche: "serviços",
-    } as Lead);
-    const resolved = buildMessageForLead(message, sampleLead);
-    navigator.clipboard.writeText(resolved);
-    toast({ title: "Mensagem copiada!" });
-  };
-
   const handleStartQueue = () => {
-    if (!premiumMode && templateWarnings.length > 0) {
-      toast({
-        title: "Corrija as variáveis antes de disparar",
-        description: templateWarnings.join(", "),
-        variant: "destructive",
-      });
-      return;
-    }
     if (remainingToday <= 0) {
       toast({
         title: "Limite diário atingido",
@@ -296,11 +233,12 @@ const MessageDispatch = () => {
     setLog([]);
     setCooldown(0);
     resetSpintaxMemory();
-    setQueueMessages(
-      premiumMode
-        ? buildPremiumSequence(eligibleLeads)
-        : buildMessageSequence(message, eligibleLeads)
-    );
+    // Único caminho: script premium adaptado por nicho
+    setQueueMessages(buildPremiumSequence(eligibleLeads));
+    toast({
+      title: "✓ Disparo usando script premium ativo",
+      description: `${eligibleLeads.length} leads · 8 variações curtas adaptadas por nicho/cidade.`,
+    });
   };
 
   const handleSendCurrent = async () => {
@@ -470,202 +408,72 @@ const MessageDispatch = () => {
           </Card>
         )}
 
-        {/* Conversation flow stages */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Layers className="w-4 h-4" /> Fluxo de Conversa
-              </CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1.5"
-                onClick={() => setShowStages(!showStages)}
-              >
-                {showStages ? "Fechar" : "Ver etapas"}
-              </Button>
-            </div>
-          </CardHeader>
-          {showStages && (
-            <CardContent className="pt-0 space-y-2">
-              {CONVERSATION_STAGES.map((stage) => (
-                <div key={stage.id} className="bg-muted/50 border border-border rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <div>
-                      <span className="text-xs font-semibold text-foreground">{stage.label}</span>
-                      <span className="text-[10px] text-muted-foreground ml-2">{stage.description}</span>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 text-[10px] px-2"
-                        onClick={() => handleAppendStage(stage.id)}
-                        disabled={status === "running"}
-                      >
-                        + Adicionar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-6 text-[10px] px-2"
-                        onClick={() => handleUseStage(stage.id)}
-                        disabled={status === "running"}
-                      >
-                        Usar só esta
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed whitespace-pre-line mt-1">
-                    {stage.templates[0].substring(0, 120)}...
-                  </p>
-                </div>
-              ))}
-            </CardContent>
-          )}
-        </Card>
+        {/* Card "Fluxo de Conversa" antigo removido — agora 100% premium */}
 
-        {/* Premium mode toggle */}
-        <Card className="border-accent/40 bg-accent/5">
-          <CardContent className="pt-4 pb-4 space-y-3">
+        {/* Script Premium Ativo — único modo de envio */}
+        <Card className="border-accent/50 bg-accent/5">
+          <CardContent className="pt-4 pb-4 space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  ✨ Modo Premium por nicho
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  Disparo usando script premium ativo
                 </p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Ignora o template abaixo e gera uma das 8 aberturas curtas, humanas e adaptadas ao nicho de cada lead. Termina em pergunta, gera curiosidade e evita repetir as últimas 3.
+                  Cada lead recebe uma das 8 aberturas curtas (máx 3 linhas) com cidade + característica real do nicho. Termina sempre em pergunta. Dedupe das últimas 3 escolhas. Mensagens antigas removidas.
                 </p>
               </div>
-              <Button
-                variant={premiumMode ? "default" : "outline"}
-                size="sm"
-                className="text-xs shrink-0"
-                onClick={() => setPremiumMode((v) => !v)}
-                disabled={status === "running"}
-              >
-                {premiumMode ? "✓ Ativo" : "Ativar"}
-              </Button>
+              <Badge variant="outline" className="text-[10px] shrink-0 border-green-500/50 text-green-700 dark:text-green-400">
+                v2 Premium
+              </Badge>
             </div>
-            {premiumMode && (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[11px] gap-1.5 h-7"
-                  onClick={() => {
-                    const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "São Paulo", niche: "salão de beleza" } as Lead);
-                    const previews = buildPremiumSequence(Array.from({ length: 6 }, () => sample));
-                    setPreviewMessages(previews);
-                  }}
-                >
-                  <Eye className="w-3 h-3" /> Ver 6 variações premium
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[11px] gap-1.5 h-7"
-                  onClick={() => {
-                    const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "São Paulo", niche: "salão de beleza" } as Lead);
-                    const fu = pickFollowup(sample.niche);
-                    const text = buildMessageForLead(fu, sample);
-                    navigator.clipboard.writeText(text);
-                    toast({ title: "Follow-up copiado!", description: "Mensagem leve para quem visualizou e não respondeu." });
-                  }}
-                >
-                  <Copy className="w-3 h-3" /> Copiar follow-up
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Message config */}
-        <Card className={premiumMode ? "opacity-60" : ""}>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" /> Mensagem manual {premiumMode && <span className="text-[10px] text-muted-foreground font-normal">(desativada — modo premium ativo)</span>}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Textarea
-                ref={textareaRef}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={6}
-                disabled={status === "running"}
-                placeholder="Use {opção1|opção2} para variar automaticamente..."
-              />
-              <p className="text-[10px] text-muted-foreground">
-                💡 Use <code className="bg-muted px-1 rounded">{"{Oi|Olá|Fala}"}</code> para variar saudações automaticamente. Nunca repete a mesma mensagem consecutiva.
-              </p>
-              {templateWarnings.length > 0 && (
-                <div className="flex items-start gap-2 text-xs text-destructive">
-                  <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  <span>{templateWarnings.join(", ")}</span>
-                </div>
-              )}
-              {antiBanWarnings.length > 0 && (
-                <div className="space-y-1">
-                  {antiBanWarnings.map((w, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-orange-600 dark:text-orange-400">
-                      <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                      <span>{w}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <VariableChips onInsert={insertVariable} disabled={status === "running"} />
 
             <div className="flex flex-wrap gap-2">
               <Button
-                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-xs"
-                disabled={status === "running"}
+                className="text-[11px] gap-1.5 h-7"
                 onClick={() => {
-                  const sampleLead = eligibleLeads[0] ?? ({ company_name: "Barbearia Teste", phone: "11999999999", city: "São Paulo", niche: "barbearia" } as Lead);
-                  const previews = buildMessageSequence(message, Array.from({ length: 5 }, () => sampleLead));
+                  const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "Campinas", niche: "salão de beleza" } as Lead);
+                  const previews = buildPremiumSequence(Array.from({ length: 6 }, () => sample));
                   setPreviewMessages(previews);
                 }}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                Preview 5 variações
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-xs"
                 disabled={status === "running"}
-                onClick={handleCopyMessage}
               >
-                <Copy className="w-3.5 h-3.5" />
-                Copiar mensagem
+                <Eye className="w-3 h-3" /> Ver 6 mensagens reais
               </Button>
               <Button
-                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-xs"
+                className="text-[11px] gap-1.5 h-7"
+                onClick={() => {
+                  const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "Campinas", niche: "salão de beleza" } as Lead);
+                  const fu = pickFollowup(sample.niche);
+                  const text = buildMessageForLead(fu, sample);
+                  navigator.clipboard.writeText(text);
+                  toast({ title: "Follow-up copiado!", description: "Mensagem leve para quem visualizou e não respondeu." });
+                }}
+              >
+                <Copy className="w-3 h-3" /> Copiar follow-up
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-[11px] gap-1.5 h-7"
                 onClick={() => setShowHistory(!showHistory)}
               >
-                <History className="w-3.5 h-3.5" />
-                Histórico ({history.length})
+                <History className="w-3 h-3" /> Histórico ({history.length})
               </Button>
             </div>
 
-            {/* Preview */}
+            {/* Preview real */}
             {previewMessages.length > 0 && (
               <div className="space-y-1.5">
-                <p className="text-[10px] font-medium text-muted-foreground">Variações geradas (cada envio será diferente):</p>
+                <p className="text-[10px] font-medium text-muted-foreground">
+                  ✓ Estas são mensagens reais do script premium (geradas com o nicho/cidade do lead):
+                </p>
                 {previewMessages.map((msg, i) => (
-                  <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border whitespace-pre-line">
+                  <div key={i} className="text-xs bg-background rounded-md p-2 border border-border whitespace-pre-line">
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-medium text-muted-foreground">#{i + 1}</span>
                       <Button
