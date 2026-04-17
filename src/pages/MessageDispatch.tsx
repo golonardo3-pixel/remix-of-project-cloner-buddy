@@ -527,146 +527,70 @@ const MessageDispatch = () => {
           )}
         </Card>
 
-        {/* Premium mode toggle */}
-        <Card className="border-accent/40 bg-accent/5">
-          <CardContent className="pt-4 pb-4 space-y-3">
+        {/* Script Premium Ativo — único modo de envio */}
+        <Card className="border-accent/50 bg-accent/5">
+          <CardContent className="pt-4 pb-4 space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  ✨ Modo Premium por nicho
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  Disparo usando script premium ativo
                 </p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Ignora o template abaixo e gera uma das 8 aberturas curtas, humanas e adaptadas ao nicho de cada lead. Termina em pergunta, gera curiosidade e evita repetir as últimas 3.
+                  Cada lead recebe uma das 8 aberturas curtas (máx 3 linhas) com cidade + característica real do nicho. Termina sempre em pergunta. Dedupe das últimas 3 escolhas. Mensagens antigas removidas.
                 </p>
               </div>
-              <Button
-                variant={premiumMode ? "default" : "outline"}
-                size="sm"
-                className="text-xs shrink-0"
-                onClick={() => setPremiumMode((v) => !v)}
-                disabled={status === "running"}
-              >
-                {premiumMode ? "✓ Ativo" : "Ativar"}
-              </Button>
+              <Badge variant="outline" className="text-[10px] shrink-0 border-green-500/50 text-green-700 dark:text-green-400">
+                v2 Premium
+              </Badge>
             </div>
-            {premiumMode && (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[11px] gap-1.5 h-7"
-                  onClick={() => {
-                    const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "São Paulo", niche: "salão de beleza" } as Lead);
-                    const previews = buildPremiumSequence(Array.from({ length: 6 }, () => sample));
-                    setPreviewMessages(previews);
-                  }}
-                >
-                  <Eye className="w-3 h-3" /> Ver 6 variações premium
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[11px] gap-1.5 h-7"
-                  onClick={() => {
-                    const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "São Paulo", niche: "salão de beleza" } as Lead);
-                    const fu = pickFollowup(sample.niche);
-                    const text = buildMessageForLead(fu, sample);
-                    navigator.clipboard.writeText(text);
-                    toast({ title: "Follow-up copiado!", description: "Mensagem leve para quem visualizou e não respondeu." });
-                  }}
-                >
-                  <Copy className="w-3 h-3" /> Copiar follow-up
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Message config */}
-        <Card className={premiumMode ? "opacity-60" : ""}>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" /> Mensagem manual {premiumMode && <span className="text-[10px] text-muted-foreground font-normal">(desativada — modo premium ativo)</span>}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Textarea
-                ref={textareaRef}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={6}
-                disabled={status === "running"}
-                placeholder="Use {opção1|opção2} para variar automaticamente..."
-              />
-              <p className="text-[10px] text-muted-foreground">
-                💡 Use <code className="bg-muted px-1 rounded">{"{Oi|Olá|Fala}"}</code> para variar saudações automaticamente. Nunca repete a mesma mensagem consecutiva.
-              </p>
-              {templateWarnings.length > 0 && (
-                <div className="flex items-start gap-2 text-xs text-destructive">
-                  <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  <span>{templateWarnings.join(", ")}</span>
-                </div>
-              )}
-              {antiBanWarnings.length > 0 && (
-                <div className="space-y-1">
-                  {antiBanWarnings.map((w, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-orange-600 dark:text-orange-400">
-                      <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                      <span>{w}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <VariableChips onInsert={insertVariable} disabled={status === "running"} />
 
             <div className="flex flex-wrap gap-2">
               <Button
-                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-xs"
-                disabled={status === "running"}
+                className="text-[11px] gap-1.5 h-7"
                 onClick={() => {
-                  const sampleLead = eligibleLeads[0] ?? ({ company_name: "Barbearia Teste", phone: "11999999999", city: "São Paulo", niche: "barbearia" } as Lead);
-                  const previews = buildMessageSequence(message, Array.from({ length: 5 }, () => sampleLead));
+                  const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "Campinas", niche: "salão de beleza" } as Lead);
+                  const previews = buildPremiumSequence(Array.from({ length: 6 }, () => sample));
                   setPreviewMessages(previews);
                 }}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                Preview 5 variações
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-xs"
                 disabled={status === "running"}
-                onClick={handleCopyMessage}
               >
-                <Copy className="w-3.5 h-3.5" />
-                Copiar mensagem
+                <Eye className="w-3 h-3" /> Ver 6 mensagens reais
               </Button>
               <Button
-                type="button"
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-xs"
+                className="text-[11px] gap-1.5 h-7"
+                onClick={() => {
+                  const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "Campinas", niche: "salão de beleza" } as Lead);
+                  const fu = pickFollowup(sample.niche);
+                  const text = buildMessageForLead(fu, sample);
+                  navigator.clipboard.writeText(text);
+                  toast({ title: "Follow-up copiado!", description: "Mensagem leve para quem visualizou e não respondeu." });
+                }}
+              >
+                <Copy className="w-3 h-3" /> Copiar follow-up
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-[11px] gap-1.5 h-7"
                 onClick={() => setShowHistory(!showHistory)}
               >
-                <History className="w-3.5 h-3.5" />
-                Histórico ({history.length})
+                <History className="w-3 h-3" /> Histórico ({history.length})
               </Button>
             </div>
 
-            {/* Preview */}
+            {/* Preview real */}
             {previewMessages.length > 0 && (
               <div className="space-y-1.5">
-                <p className="text-[10px] font-medium text-muted-foreground">Variações geradas (cada envio será diferente):</p>
+                <p className="text-[10px] font-medium text-muted-foreground">
+                  ✓ Estas são mensagens reais do script premium (geradas com o nicho/cidade do lead):
+                </p>
                 {previewMessages.map((msg, i) => (
-                  <div key={i} className="text-xs bg-muted/60 rounded-md p-2 border border-border whitespace-pre-line">
+                  <div key={i} className="text-xs bg-background rounded-md p-2 border border-border whitespace-pre-line">
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-medium text-muted-foreground">#{i + 1}</span>
                       <Button
