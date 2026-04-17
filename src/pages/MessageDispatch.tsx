@@ -526,11 +526,66 @@ const MessageDispatch = () => {
           )}
         </Card>
 
+        {/* Premium mode toggle */}
+        <Card className="border-accent/40 bg-accent/5">
+          <CardContent className="pt-4 pb-4 space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  ✨ Modo Premium por nicho
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Ignora o template abaixo e gera uma das 8 aberturas curtas, humanas e adaptadas ao nicho de cada lead. Termina em pergunta, gera curiosidade e evita repetir as últimas 3.
+                </p>
+              </div>
+              <Button
+                variant={premiumMode ? "default" : "outline"}
+                size="sm"
+                className="text-xs shrink-0"
+                onClick={() => setPremiumMode((v) => !v)}
+                disabled={status === "running"}
+              >
+                {premiumMode ? "✓ Ativo" : "Ativar"}
+              </Button>
+            </div>
+            {premiumMode && (
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-[11px] gap-1.5 h-7"
+                  onClick={() => {
+                    const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "São Paulo", niche: "salão de beleza" } as Lead);
+                    const previews = buildPremiumSequence(Array.from({ length: 6 }, () => sample));
+                    setPreviewMessages(previews);
+                  }}
+                >
+                  <Eye className="w-3 h-3" /> Ver 6 variações premium
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-[11px] gap-1.5 h-7"
+                  onClick={() => {
+                    const sample = eligibleLeads[0] ?? ({ company_name: "Salão Teste", phone: "11999999999", city: "São Paulo", niche: "salão de beleza" } as Lead);
+                    const fu = pickFollowup(sample.niche);
+                    const text = buildMessageForLead(fu, sample);
+                    navigator.clipboard.writeText(text);
+                    toast({ title: "Follow-up copiado!", description: "Mensagem leve para quem visualizou e não respondeu." });
+                  }}
+                >
+                  <Copy className="w-3 h-3" /> Copiar follow-up
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Message config */}
-        <Card>
+        <Card className={premiumMode ? "opacity-60" : ""}>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" /> Mensagem (com variação automática)
+              <MessageSquare className="w-4 h-4" /> Mensagem manual {premiumMode && <span className="text-[10px] text-muted-foreground font-normal">(desativada — modo premium ativo)</span>}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
