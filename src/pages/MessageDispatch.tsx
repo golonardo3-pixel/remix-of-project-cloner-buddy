@@ -275,7 +275,7 @@ const MessageDispatch = () => {
   };
 
   const handleStartQueue = () => {
-    if (templateWarnings.length > 0) {
+    if (!premiumMode && templateWarnings.length > 0) {
       toast({
         title: "Corrija as variáveis antes de disparar",
         description: templateWarnings.join(", "),
@@ -296,7 +296,11 @@ const MessageDispatch = () => {
     setLog([]);
     setCooldown(0);
     resetSpintaxMemory();
-    setQueueMessages(buildMessageSequence(message, eligibleLeads));
+    setQueueMessages(
+      premiumMode
+        ? buildPremiumSequence(eligibleLeads)
+        : buildMessageSequence(message, eligibleLeads)
+    );
   };
 
   const handleSendCurrent = async () => {
