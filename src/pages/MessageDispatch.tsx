@@ -472,59 +472,6 @@ const MessageDispatch = () => {
         )}
 
         {/* Card "Fluxo de Conversa" antigo removido — agora 100% premium */}
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Layers className="w-4 h-4" /> Fluxo de Conversa
-              </CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs gap-1.5"
-                onClick={() => setShowStages(!showStages)}
-              >
-                {showStages ? "Fechar" : "Ver etapas"}
-              </Button>
-            </div>
-          </CardHeader>
-          {showStages && (
-            <CardContent className="pt-0 space-y-2">
-              {CONVERSATION_STAGES.map((stage) => (
-                <div key={stage.id} className="bg-muted/50 border border-border rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <div>
-                      <span className="text-xs font-semibold text-foreground">{stage.label}</span>
-                      <span className="text-[10px] text-muted-foreground ml-2">{stage.description}</span>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 text-[10px] px-2"
-                        onClick={() => handleAppendStage(stage.id)}
-                        disabled={status === "running"}
-                      >
-                        + Adicionar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-6 text-[10px] px-2"
-                        onClick={() => handleUseStage(stage.id)}
-                        disabled={status === "running"}
-                      >
-                        Usar só esta
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed whitespace-pre-line mt-1">
-                    {stage.templates[0].substring(0, 120)}...
-                  </p>
-                </div>
-              ))}
-            </CardContent>
-          )}
-        </Card>
 
         {/* Script Premium Ativo — único modo de envio */}
         <Card className="border-accent/50 bg-accent/5">
