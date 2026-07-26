@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gurias Beauty </title>
+<meta name="description" content="Gurias Beauty - salão de beleza. Cuidado e atenção em cada detalhe. Agende pelo WhatsApp.">
+<meta property="og:title" content="Gurias Beauty">
+<meta property="og:description" content="Gurias Beauty - salão de beleza. Cuidado e atenção em cada detalhe. Agende pelo WhatsApp.">
+<meta property="og:type" content="business.business">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Gurias Beauty"}</script>
+<style>
+  :root{ --primary:#C5A880; --secondary:#D4AF37; --dark:#241F1A; --light:#FAF8F5; --accent:#D4AF37; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Plus Jakarta Sans',sans-serif;color:#241F1A;background:#fff;line-height:1.6;overflow-x:hidden;}
+  h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+  a{text-decoration:none;}
+  .container{max-width:1180px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
+  section{padding:110px 0;position:relative;overflow:hidden;}
+  .reveal{opacity:0;transition:opacity .8s ease, transform .8s ease;}
+  .reveal.visible{opacity:1;transform:none !important;}
+  .r-up{transform:translateY(30px);} .r-left{transform:translateX(-40px);} .r-right{transform:translateX(40px);} .r-zoom{transform:scale(0.9);}
+  .glass{background:rgba(255,255,255,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.4);}
+
+  /* Floating decorative blobs */
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.35;z-index:0;animation:floaty 9s ease-in-out infinite;}
+  @keyframes floaty{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-26px) translateX(14px);}}
+
+  /* Navbar */
+  .navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;
+    background:rgba(255,255,255,0.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.3);transition:.3s;}
+  .navbar .logo{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .navbar a.nav-cta{background:linear-gradient(135deg,#25D366,#128C4A);color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:0 8px 20px rgba(18,140,74,0.35);}
+
+  /* Hero */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;}
+  .hero-bg{position:absolute;inset:0;z-index:0;
+    background:linear-gradient(135deg, var(--primary), var(--dark));
+    background-attachment:fixed;}
+  .hero-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg, rgba(10,8,15,0.45), rgba(10,8,15,0.8));}
+  .hero-content{position:relative;z-index:2;padding:0 20px;max-width:780px;}
+  .hero-content h1{font-size:clamp(2.6rem,6.5vw,4.2rem);margin-bottom:16px;text-shadow:0 4px 24px rgba(0,0,0,0.35);}
+  .hero-content p{font-size:clamp(1rem,2.5vw,1.35rem);opacity:0.95;margin-bottom:38px;font-weight:300;}
+  .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .btn-pill{position:relative;overflow:hidden;padding:16px 32px;border-radius:999px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .25s ease, box-shadow .25s ease;isolation:isolate;}
+  .btn-pill:hover{transform:translateY(-3px) scale(1.03);}
+  .btn-primary{background:linear-gradient(135deg,#25D366,#128C4A);color:#fff;box-shadow:0 14px 34px rgba(18,140,74,0.4), 0 0 0 1px rgba(255,255,255,0.15) inset;}
+  .btn-outline{border:2px solid rgba(255,255,255,0.85);color:#fff;background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);}
+  .btn-insta{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);color:#fff;box-shadow:0 12px 32px rgba(0,0,0,0.3);}
+  .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.5);transform:scale(0);animation:ripple-anim .6s ease-out;pointer-events:none;}
+  @keyframes ripple-anim{to{transform:scale(3.5);opacity:0;}}
+  .scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:#fff;opacity:0.75;animation:bounce 2s infinite;font-size:22px;z-index:2;}
+  @keyframes bounce{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,10px);}}
+
+  /* Section titles */
+  .section-title{text-align:center;margin-bottom:56px;position:relative;z-index:2;}
+  .section-title span{color:var(--primary);text-transform:uppercase;letter-spacing:2px;font-size:12.5px;font-weight:700;}
+  .section-title h2{font-size:clamp(1.9rem,4vw,2.7rem);margin-top:8px;}
+
+  /* Gallery - masonry via CSS columns */
+  .gallery-grid{column-count:4;column-gap:16px;}
+  .gallery-item{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,0.1);
+    break-inside:avoid;margin-bottom:16px;}
+  .gallery-item img{width:100%;display:block;transition:transform .5s ease;}
+  .gallery-item:hover img{transform:scale(1.1);}
+  .gallery-overlay{position:absolute;inset:0;background:rgba(20,15,25,0.45);
+    display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease;color:#fff;font-size:26px;}
+  .gallery-item:hover .gallery-overlay{opacity:1;}
+  .gallery-placeholder{aspect-ratio:1/1;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:34px;cursor:default;}
+  .gallery-placeholder:hover img{transform:none;}
+  @media(max-width:900px){ .gallery-grid{column-count:3;} }
+  @media(max-width:600px){ .gallery-grid{column-count:2;} }
+
+  /* About */
+  .about-wrap{display:flex;gap:56px;align-items:center;flex-wrap:wrap;}
+  .about-wrap > div{flex:1;min-width:280px;}
+  .about-wrap p{font-size:16px;color:#4a4560;}
+  .about-badge{border-radius:22px;padding:36px;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,0.08);}
+  .about-badge i{font-size:42px;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px;}
+
+  /* Stats */
+  .stats-section{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:70px 0;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:30px;text-align:center;}
+  .stat-num{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.2rem);font-weight:700;display:inline;}
+  .stat-suffix{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.2rem);font-weight:700;display:inline;}
+  .stat-item p{opacity:0.9;font-size:14px;margin-top:6px;}
+
+  /* Services */
+  .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:26px;}
+  .service-card{background:#fff;border-radius:22px;padding:38px 28px;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid var(--accent);
+    transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;}
+  .service-card:hover{transform:translateY(-10px) scale(1.02);box-shadow:0 20px 46px rgba(0,0,0,0.14);border-color:var(--primary);}
+  .service-icon{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px;box-shadow:0 8px 20px rgba(0,0,0,0.18);}
+  .service-card h3{font-size:18px;margin-bottom:8px;}
+  .service-card p{font-size:14px;color:#6a6480;}
+
+  /* Differentials */
+  .diff-section{background:var(--light);}
+  .diff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px;text-align:center;}
+  .diff-card{border-radius:20px;padding:30px 20px;}
+  .diff-card i{font-size:36px;color:var(--primary);margin-bottom:14px;}
+  .diff-card h4{font-size:16px;margin-bottom:8px;}
+  .diff-card p{font-size:13.5px;color:#6a6480;}
+
+  /* Testimonials */
+  .testimonial-slider{position:relative;max-width:640px;margin:0 auto;overflow:hidden;}
+  .testimonial-track{display:flex;transition:transform .5s ease;}
+  .testimonial-slide{min-width:100%;padding:4px;}
+  .testimonial-card{border-radius:22px;padding:36px 32px;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid var(--accent);position:relative;text-align:center;}
+  .t-avatar{width:56px;height:56px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;margin:0 auto 14px;}
+  .testimonial-card .stars{color:var(--accent);margin-bottom:12px;font-size:15px;}
+  .testimonial-card p{font-style:italic;color:#4a4560;margin-bottom:16px;font-size:14.5px;}
+  .testimonial-card span{font-weight:600;font-size:13.5px;color:var(--primary);}
+  .testimonial-dots{display:flex;justify-content:center;gap:8px;margin-top:20px;}
+  .testimonial-dots span{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.15);cursor:pointer;transition:.25s;display:inline-block;}
+  .testimonial-dots span.active{background:var(--primary);width:22px;border-radius:5px;}
+  .testi-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--primary);z-index:5;}
+  .testi-prev{left:-6px;} .testi-next{right:-6px;}
+  @media(max-width:640px){ .testi-arrow{display:none;} }
+
+  /* FAQ */
+  .faq-item{border-bottom:1px solid rgba(0,0,0,0.08);}
+  .faq-q{width:100%;background:none;border:none;padding:22px 4px;display:flex;justify-content:space-between;align-items:center;
+    font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;color:#241F1A;}
+  .faq-q i{transition:transform .3s ease;color:var(--primary);}
+  .faq-item.open .faq-q i{transform:rotate(180deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{padding:0 4px 22px;color:#6a6480;font-size:14.5px;}
+
+  /* Location */
+  .location-wrap{border-radius:24px;overflow:hidden;box-shadow:0 16px 44px rgba(0,0,0,0.12);}
+  .map-frame-box{position:relative;height:380px;}
+  .location-wrap iframe{width:100%;height:380px;border:0;display:block;position:relative;z-index:2;background:var(--light);}
+  .map-fallback{display:none;position:absolute;inset:0;z-index:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    background:linear-gradient(135deg,var(--light),#fff);padding:32px;}
+  .map-fallback.show{display:flex;}
+  .map-fallback-pin{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;box-shadow:0 10px 24px rgba(0,0,0,0.18);}
+  .map-fallback-address{font-size:15px;color:#241F1A;margin-bottom:18px;max-width:340px;font-weight:500;}
+  .map-fallback-btn{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:12px 26px;border-radius:999px;
+    font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:8px;}
+  .map-corner-link{position:absolute;top:14px;right:14px;z-index:3;background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);
+    color:#241F1A;padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.15);}
+  .location-info{background:var(--light);padding:22px 26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+  .location-info a{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:12px 24px;border-radius:999px;font-size:13.5px;font-weight:600;}
+
+  /* Footer */
+  footer{background:#241F1A;color:#fff;padding:60px 0 26px;text-align:center;}
+  footer h3{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;}
+  footer p{opacity:0.65;font-size:13.5px;}
+  .footer-socials{display:flex;justify-content:center;gap:16px;margin:22px 0;}
+  .footer-socials a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#fff;transition:.25s;}
+  .footer-socials a:hover{background:linear-gradient(135deg,var(--primary),var(--secondary));transform:translateY(-3px);}
+  .footer-note{opacity:0.4;font-size:11px;margin-top:18px;}
+
+  /* Floating WhatsApp */
+  .wa-float{position:fixed;bottom:24px;right:24px;z-index:200;background:linear-gradient(135deg,#25D366,#128C4A);color:#fff;width:64px;height:64px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:29px;
+    box-shadow:0 20px 45px rgba(18,140,74,0.45), 0 4px 14px rgba(0,0,0,0.25);
+    animation:wa-pulse 2.2s infinite;}
+  @keyframes wa-pulse{
+    0%{box-shadow:0 20px 45px rgba(18,140,74,0.45), 0 0 0 0 rgba(37,211,102,0.55);}
+    70%{box-shadow:0 20px 45px rgba(18,140,74,0.45), 0 0 0 20px rgba(37,211,102,0);}
+    100%{box-shadow:0 20px 45px rgba(18,140,74,0.45), 0 0 0 0 rgba(37,211,102,0);}
+  }
+
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(10,8,15,0.94);z-index:300;display:none;align-items:center;justify-content:center;}
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:90vw;max-height:85vh;border-radius:14px;}
+  .lightbox-close{position:absolute;top:24px;right:32px;color:#fff;font-size:34px;cursor:pointer;}
+  .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:34px;cursor:pointer;padding:12px;}
+  .lightbox-prev{left:16px;} .lightbox-next{right:16px;}
+
+  @media(max-width:640px){ section{padding:70px 0;} .about-wrap{flex-direction:column;} .hero-bg{background-attachment:scroll;} }
+</style>
+</head>
+<body>
+
+<div class="blob" style="width:280px;height:280px;top:8%;left:-60px;background:var(--primary);"></div>
+<div class="blob" style="width:220px;height:220px;bottom:10%;right:-40px;background:var(--secondary);animation-delay:2s;"></div>
+
+<nav class="navbar">
+  <span class="logo">Gurias Beauty</span>
+  <a class="nav-cta ripple-btn" href="https://wa.me/55?text=Ol%C3%A1!%20Vi%20o%20site%20de%20voc%C3%AAs%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio." target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;vertical-align:-0.15em;"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.4 0-.5C11 9.2 10.5 8 10.3 7.5c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3 0 1.3 1 2.6 1.1 2.8.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3C8.5 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .8.8-2.9-.2-.3C3.7 15 3.2 13.5 3.2 12 3.2 7.2 7.2 3.2 12 3.2S20.8 7.2 20.8 12 16.8 20.2 12 20.2z"/></svg> Agendar</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="reveal r-zoom visible">Gurias Beauty</h1>
+    <p class="reveal r-up visible" style="transition-delay:.15s;">Cuidado e atenção em cada detalhe</p>
+    <div class="hero-btns reveal r-up visible" style="transition-delay:.3s;">
+      <a class="btn-pill btn-primary ripple-btn" href="https://wa.me/55?text=Ol%C3%A1!%20Vi%20o%20site%20de%20voc%C3%AAs%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio." target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;vertical-align:-0.15em;"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.4 0-.5C11 9.2 10.5 8 10.3 7.5c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3 0 1.3 1 2.6 1.1 2.8.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3C8.5 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .8.8-2.9-.2-.3C3.7 15 3.2 13.5 3.2 12 3.2 7.2 7.2 3.2 12 3.2S20.8 7.2 20.8 12 16.8 20.2 12 20.2z"/></svg> Falar no WhatsApp</a>
+      <a class="btn-pill btn-outline ripple-btn" href="https://www.google.com/maps/search/?api=1&query=Gurias%20Beauty" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M12 22s7-7.5 7-13a7 7 0 0 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.4"/></svg> Como chegar</a>
+      
+    </div>
+  </div>
+  <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="6 9 12 15 18 9"/></svg></div>
+</section>
+
+
+
+<section id="galeria">
+  <div class="container">
+    <div class="section-title reveal r-up"><span>Nosso espaço</span><h2>Galeria</h2></div>
+    <div class="gallery-grid">
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div>
+        <div class="gallery-item gallery-placeholder reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-3-3L3 16"/></svg>
+        </div></div>
+  </div>
+</section>
+
+<section style="background:var(--light);">
+  <div class="container about-wrap">
+    <div class="reveal r-left">
+      <div class="section-title" style="text-align:left;"><span>Quem somos</span><h2>Sobre nós</h2></div>
+      <p>Gurias Beauty é referência em salão de beleza na região, unindo técnica, produtos de qualidade e um atendimento acolhedor. Cada detalhe do espaço foi pensado para que você se sinta bem cuidado(a) do início ao fim — combinando profissionalismo com um ambiente convidativo, feito para realçar sua beleza e seu bem-estar.</p>
+    </div>
+    <div class="about-badge glass reveal r-right">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M12 21s-7.2-4.5-9.6-9C.9 8.7 2.3 4.8 6 4.3c2.1-.3 3.8 1 6 3.2 2.1-2.2 3.9-3.5 6-3.2 3.7.5 5.1 4.4 3.6 7.7C19.2 16.5 12 21 12 21z"/></svg>
+      <h4>Feito com cuidado</h4>
+      <p style="font-size:13.5px;color:#6a6480;">para cada cliente que passa pela nossa porta</p>
+    </div>
+  </div>
+</section>
+
+<section id="servicos">
+  <div class="container">
+    <div class="section-title reveal r-up"><span>O que fazemos</span><h2>Nossos serviços</h2></div>
+    <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.1" y2="15.9"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="8.1" y1="8.1" x2="12" y2="12"/></svg></div>
+          <h3>Corte e finalização</h3>
+          <p>Cortes modernos com acabamento profissional para todos os tipos de cabelo.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" style="width:1em;height:1em;"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.8-.8 1.8-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H16a5 5 0 0 0 5-5c0-4.4-4-8-9-8z"/><circle cx="9" cy="9.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="13.2" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.3" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="8.7" cy="13.5" r="1.2" fill="currentColor" stroke="none"/></svg></div>
+          <h3>Coloração e mechas</h3>
+          <p>Técnicas de coloração, luzes e mechas com produtos de alta qualidade.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z"/></svg></div>
+          <h3>Escova e progressiva</h3>
+          <p>Escova modelada, hidratação e alisamentos duradouros.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z"/></svg></div>
+          <h3>Penteados para eventos</h3>
+          <p>Penteados para festas, casamentos e ocasiões especiais.</p>
+        </div></div>
+  </div>
+</section>
+
+<section class="diff-section">
+  <div class="container">
+    <div class="section-title reveal r-up"><span>Por que nos escolher</span><h2>Diferenciais</h2></div>
+    <div class="diff-grid">
+        <div class="diff-card glass reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><circle cx="12" cy="8" r="5"/><path d="M8.2 12.8L6.5 21l5.5-3 5.5 3-1.7-8.2"/></svg>
+          <h4>Profissionais experientes</h4>
+          <p>Equipe qualificada e sempre atualizada com as últimas tendências.</p>
+        </div>
+        <div class="diff-card glass reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="width:1em;height:1em;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          <h4>Pontualidade e agilidade</h4>
+          <p>Seu tempo é valioso — atendimento organizado, sem enrolação.</p>
+        </div>
+        <div class="diff-card glass reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><path d="M12 2l7 3v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V5l7-3z"/><polyline points="9 12 11 14 15 9"/></svg>
+          <h4>Produtos de qualidade</h4>
+          <p>Utilizamos marcas profissionais para garantir o melhor resultado.</p>
+        </div>
+        <div class="diff-card glass reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="width:1em;height:1em;"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M8 14c1.2 2 3 3 4 3s2.8-1 4-3"/></svg>
+          <h4>Atendimento acolhedor</h4>
+          <p>Um ambiente pensado para você relaxar e se sentir bem cuidado(a).</p>
+        </div></div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title reveal r-up"><span>Depoimentos</span><h2>O que dizem sobre nós</h2></div>
+    <div class="testimonial-slider reveal">
+      <div class="testimonial-track" id="testiTrack">
+        <div class="testimonial-slide">
+          <div class="testimonial-card glass">
+            <div class="t-avatar" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">CS</div>
+            <div class="stars"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg></div>
+            <p>"Atendimento impecável, saí muito mais confiante. Recomendo demais o trabalho de Gurias!"</p>
+            <span>Cliente satisfeita</span>
+          </div>
+        </div>
+        <div class="testimonial-slide">
+          <div class="testimonial-card glass">
+            <div class="t-avatar" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">CF</div>
+            <div class="stars"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg></div>
+            <p>"Profissionais atenciosos e ambiente super agradável. Já virou meu lugar de confiança."</p>
+            <span>Cliente fiel</span>
+          </div>
+        </div>
+        <div class="testimonial-slide">
+          <div class="testimonial-card glass">
+            <div class="t-avatar" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">NC</div>
+            <div class="stars"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:1em;height:1em;"><polygon points="12 2 14.9 8.5 22 9.3 16.5 14.1 18.2 21 12 17.3 5.8 21 7.5 14.1 2 9.3 9.1 8.5"/></svg></div>
+            <p>"Gostei muito do resultado e do cuidado durante todo o atendimento. Voltarei com certeza!"</p>
+            <span>Nova cliente</span>
+          </div>
+        </div></div>
+      <div class="testimonial-dots" id="testiDots"></div>
+      <div class="testi-arrow testi-prev" onclick="testiMove(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="testi-arrow testi-next" onclick="testiMove(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--light);">
+  <div class="container">
+    <div class="section-title reveal r-up"><span>Dúvidas</span><h2>Perguntas frequentes</h2></div>
+    <div style="max-width:720px;margin:0 auto;">
+        <div class="faq-item reveal">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            <span>Preciso agendar horário?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a"><p>Sim, para garantir seu atendimento sem espera recomendamos agendar pelo WhatsApp com antecedência.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            <span>Quais formas de pagamento vocês aceitam?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a"><p>Trabalhamos com dinheiro, PIX e cartões de débito e crédito.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            <span>Vocês atendem cabelos cacheados e crespos?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-a"><p>Sim, temos profissionais especializados em todos os tipos e texturas de cabelo.</p></div>
+        </div></div>
+  </div>
+</section>
+
+<section id="localizacao">
+  <div class="container">
+    <div class="section-title reveal r-up"><span>Onde estamos</span><h2>Localização</h2></div>
+    <div class="location-wrap reveal r-zoom">
+      <div class="map-frame-box">
+        <div class="map-fallback" id="mapFallback">
+          <div class="map-fallback-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M12 22s7-7.5 7-13a7 7 0 0 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
+          <p class="map-fallback-address"></p>
+          <a class="map-fallback-btn" href="https://www.google.com/maps/search/?api=1&query=Gurias%20Beauty" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M12 22s7-7.5 7-13a7 7 0 0 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.4"/></svg> Abrir no Google Maps</a>
+        </div>
+        <a class="map-corner-link" href="https://www.google.com/maps/search/?api=1&query=Gurias%20Beauty" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M12 22s7-7.5 7-13a7 7 0 0 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.4"/></svg> Abrir no Maps</a>
+        <iframe src="https://maps.google.com/maps?q=Gurias%20Beauty&t=&z=15&ie=UTF8&iwloc=&output=embed" loading="lazy" allowfullscreen
+          onerror="document.getElementById('mapFallback').classList.add('show'); this.style.display='none';"></iframe>
+      </div>
+      <div class="location-info">
+        <span></span>
+        <a href="https://www.google.com/maps/search/?api=1&query=Gurias%20Beauty" target="_blank">Como chegar</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <h3>Gurias Beauty</h3>
+    <p>salão de beleza</p>
+    <div class="footer-socials">
+      <a href="https://wa.me/55?text=Ol%C3%A1!%20Vi%20o%20site%20de%20voc%C3%AAs%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio." target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;vertical-align:-0.15em;"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.4 0-.5C11 9.2 10.5 8 10.3 7.5c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3 0 1.3 1 2.6 1.1 2.8.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3C8.5 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .8.8-2.9-.2-.3C3.7 15 3.2 13.5 3.2 12 3.2 7.2 7.2 3.2 12 3.2S20.8 7.2 20.8 12 16.8 20.2 12 20.2z"/></svg></a>
+      
+      <a href="https://www.google.com/maps/search/?api=1&query=Gurias%20Beauty" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M12 22s7-7.5 7-13a7 7 0 0 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.4"/></svg></a>
+      <a href="tel:+55"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;vertical-align:-0.1em;"><path d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.3 1L6.6 10.8z"/></svg></a>
+    </div>
+    <p>© 2026 Gurias Beauty. Todos os direitos reservados.</p>
+    <p class="footer-note">Depoimentos ilustrativos para fins de demonstração.</p>
+  </div>
+</footer>
+
+<a class="wa-float ripple-btn" href="https://wa.me/55?text=Ol%C3%A1!%20Vi%20o%20site%20de%20voc%C3%AAs%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio." target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;vertical-align:-0.15em;"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.4 0-.5C11 9.2 10.5 8 10.3 7.5c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9 1-.9 2.3 0 1.3 1 2.6 1.1 2.8.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3C8.5 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3 .8.8-2.9-.2-.3C3.7 15 3.2 13.5 3.2 12 3.2 7.2 7.2 3.2 12 3.2S20.8 7.2 20.8 12 16.8 20.2 12 20.2z"/></svg></a>
+
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+  <span class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="15 18 9 12 15 6"/></svg></span>
+  <img id="lightbox-img" src="">
+  <span class="lightbox-nav lightbox-next" onclick="navLightbox(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;"><polyline points="9 18 15 12 9 6"/></svg></span>
+</div>
+
+<script>
+  const galleryImgs = [];
+  let lbIndex = 0;
+  function openLightbox(i){
+    if(!galleryImgs.length) return;
+    lbIndex = i;
+    document.getElementById('lightbox-img').src = galleryImgs[lbIndex];
+    document.getElementById('lightbox').classList.add('show');
+  }
+  function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); }
+  function navLightbox(dir){
+    lbIndex = (lbIndex + dir + galleryImgs.length) % galleryImgs.length;
+    document.getElementById('lightbox-img').src = galleryImgs[lbIndex];
+  }
+  document.querySelectorAll('.faq-item').forEach((el,i)=>{ if(i===0) el.classList.add('open'); });
+
+  // Scroll reveal
+  document.querySelectorAll('.reveal').forEach(el=>{ el.classList.remove('visible'); });
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  // hero elements are visible immediately (already have .visible class in markup)
+
+  // Navbar shadow on scroll
+  window.addEventListener('scroll', ()=>{
+    const nav = document.querySelector('.navbar');
+    nav.style.boxShadow = window.scrollY > 40 ? '0 4px 20px rgba(0,0,0,0.08)' : 'none';
+  });
+
+  // Animated counters
+  const counters = document.querySelectorAll('.stat-num');
+  const counterIO = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting && !entry.target.dataset.done){
+        entry.target.dataset.done = '1';
+        const target = parseInt(entry.target.dataset.target) || 0;
+        let cur = 0;
+        const step = Math.max(1, Math.ceil(target/60));
+        const tick = ()=>{
+          cur += step;
+          if(cur >= target){ entry.target.textContent = target; return; }
+          entry.target.textContent = cur;
+          requestAnimationFrame(tick);
+        };
+        tick();
+      }
+    });
+  }, {threshold:0.4});
+  counters.forEach(el=>counterIO.observe(el));
+
+  // Testimonial slider
+  const testiTrack = document.getElementById('testiTrack');
+  const testiDotsEl = document.getElementById('testiDots');
+  let testiIndex = 0;
+  let testiTimer = null;
+  if(testiTrack){
+    const slides = testiTrack.children.length;
+    for(let i=0;i<slides;i++){
+      const dot = document.createElement('span');
+      if(i===0) dot.className = 'active';
+      dot.onclick = ()=>testiGo(i);
+      testiDotsEl.appendChild(dot);
+    }
+    function testiGo(i){
+      testiIndex = (i + slides) % slides;
+      testiTrack.style.transform = `translateX(-${testiIndex*100}%)`;
+      Array.from(testiDotsEl.children).forEach((d,j)=>d.className = j===testiIndex ? 'active' : '');
+    }
+    window.testiMove = (dir)=>{ testiGo(testiIndex+dir); resetTestiTimer(); };
+    function resetTestiTimer(){
+      clearInterval(testiTimer);
+      testiTimer = setInterval(()=>testiGo(testiIndex+1), 5000);
+    }
+    resetTestiTimer();
+  }
+
+  // Ripple effect on buttons
+  document.querySelectorAll('.ripple-btn').forEach(btn=>{
+    btn.addEventListener('click', function(e){
+      const rect = this.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      this.appendChild(ripple);
+      setTimeout(()=>ripple.remove(), 650);
+    });
+  });
+</script>
+</body>
+</html>
